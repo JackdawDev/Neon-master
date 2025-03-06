@@ -1,0 +1,111 @@
+#########################################################
+#| \ | |                                                #
+#|  \| |/ _ \/ _ \| '_ \      Neon Main Locale File     #
+#| |\  |  __/ (_) | | | |                               #
+#|_| \_|\___|\___/|_| |_|      by Jackdaw1101           #
+#########################################################
+#
+# Your File Generated on v1.0.0
+#
+####################################################
+#                  Hex Color Help                  #
+####################################################
+#
+# Hex Colors Are Supported For Servers running versions above 1.16
+# Format Of Hex Colors
+# <#0000FF>Message</#FFFFFF>
+# &#0000FF
+#
+# Hex Colors Are Available On All Messages, Titles, Prefixes and...
+#
+########################################################
+#                Auto Announce System                  #
+########################################################
+# (!) If You Are Using XSound Utils Use minecraft Normal sound ids
+# but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
+#
+# Check Line 33 Of settings.yml For More Info About Sounds
+#
+# (!) Use Xsound Util For Better Experience
+#
+# Announcement System configurations (aka Auto Broadcast)
+# <announcement-name>:
+#   REQUIRE-PERMISSION: should this only get sent to certain players?
+#   PERMISSION: the permission to send the announcement (require REQUIRE-PERMISSION to be true)
+#   TEXT: Content of the announcement
+#   HOVER: should the announcement hav hover?
+#   PLAY-SOUND: Plays Sound For Player
+#   SOUND: Sound value
+#   HOVER-CONTENT: hover content if HOVER is set to true
+#   CLICK-COMMAND: do you want that when player click on announcement it run a command as the player?
+#   SUGGEST-COMMAND: do you want when they click on the message it write a command on their command bar?
+#   OPEN-URL: you want the message open a url on click?
+#   URL: link to open (provide https://)
+#   COMMAND: command for both CLICK-COMMAND & SUGGEST-COMMAND
+#   INTERVAL: announcement get sent every second you put on this value
+#
+# (!) you can only enable one of the command types of click event at once
+# you can add as many as you wish (add the required values from above)
+ANNOUNCEMENTS:
+  announcement1:
+    INTERVAL: 60
+    REQUIRE-PERMISSION: false
+    PLAY-SOUND: TRUE
+    sound: "VILLAGER_TRADE"
+    TEXT:
+      - "&aWelcome to the server!"
+      - "&eEnjoy your stay!"
+    HOVER: true
+    HOVER-CONTENT:
+      - "&bHover text for announcement 1."
+      - "&cYou can have multiple lines!"
+    CLICK-COMMAND: true
+    COMMAND: "/help"
+    SUGGEST-COMMAND: false
+    COMMAND-TO-SUGGEST: ""
+    OPEN-URL: false
+    URL: ""
+
+  announcement2:
+    INTERVAL: 120
+    REQUIRE-PERMISSION: true
+    PERMISSION: "neon.vip"
+    TEXT:
+      - "&6VIP players get extra perks!"
+    HOVER: true
+    HOVER-CONTENT:
+      - "&eClick to learn more!"
+    CLICK-COMMAND: true
+    COMMAND: "/vip"
+    SUGGEST-COMMAND: false
+    COMMAND-TO-SUGGEST: ""
+    OPEN-URL: true
+    URL: "https://example.com/vip"
+
+  announcement3:
+    INTERVAL: 300
+    REQUIRE-PERMISSION: false
+    TEXT:
+      - "&dCheck out our Discord!"
+    HOVER: false
+    CLICK-COMMAND: true
+    COMMAND: "/discord"
+    SUGGEST-COMMAND: true
+    COMMAND-TO-SUGGEST: "/discord"
+    OPEN-URL: true
+    URL: "https://discord.example.com"
+#
+########################################################
+#                Auto Response System                  #
+########################################################
+# Auto-response words (<word>: {answer})
+# The Words That You Want
+# you can add as many as you wish
+AUTO-RESPONSES:
+  hello:
+    - "&aHello, %player_name%!"
+    - "&bWelcome to the server!"
+  rules:
+    - "&cPlease check the rules at &6/server-rules."
+  help:
+    - "&bNeed help? Ask in chat or type &e/help."

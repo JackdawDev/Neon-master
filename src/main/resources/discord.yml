@@ -1,0 +1,47 @@
+##########################################################
+#                                                        #
+#| \ | |      by Jackdaw1101                             #
+#|  \| |/ _ \/ _ \| '_ \      Discord Configuration For  #
+#| |\  |  __/ (_) | | | |     Neon!                      #
+#|_| \_|\___|\___/|_| |_|   (1.0.0)                      #
+##########################################################
+#
+# if u got response code 204 ignore it (only visible if debug mode is turned on)
+# Global URL Link (not recommended)
+URL: "https://discord.com/api/webhooks/YOUR_WEBHOOK_URL"
+########################################################
+#                 Anti Swear System                    #
+########################################################
+#
+# Discord webhook configuration for AntiSwear feature
+ANTI-SWEAR:
+  ENABLED: false
+  URL: "https://discord.com/api/webhooks/your-webhook-id/your-webhook-token"  # Replace with actual webhook URL or use "GLOBAL" for global config
+  FORMAT:
+    title: "AntiSwear Logs"
+    description:
+      - '| **Player**: <swearer_name>'
+      - '| **Message**: <message>'
+      - '| **Server**: <server>'
+      - '| **Time**: <time>'
+      - ' '
+      - '-# Powered by Neon v<version>'
+  COLOR: "#ff0000"  # Color code for embeds
+#
+########################################################
+#              Anti Advertisement System               #
+########################################################
+#
+ANTI-LINK:
+  ENABLED: false
+  URL: "https://discord.com/api/webhooks/your-webhook-id/your-webhook-token"  # Replace with actual webhook URL or use "GLOBAL" for global config
+  FORMAT:
+    title: "AntiAdvertise Logs"
+    description:
+      - '| **Player**: <advertiser_name>'
+      - '| **Message**: <message>'
+      - '| **Server**: <server>'
+      - '| **Time**: <time>'
+      - ' '
+      - '-# Powered by Neon v<version>'
+  COLOR: "#ff0000"  # Color code for embeds

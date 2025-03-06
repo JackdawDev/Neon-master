@@ -1,0 +1,19 @@
+name: Neon
+version: '${project.version}'
+main: dev.jackdaw1101.neon.Neon
+api-version: "1.13"
+authors:
+  - Jackdaw1101
+description: ummmmmm
+softdepend:
+  - PlaceholderAPI
+  - LuckPerms
+loadbefore:
+  - Hexa
+commands:
+  neon:
+    description: Main command for Neon
+  chatclear:
+    description: chat clear command
+  togglechat:
+    description: Toggle chat messages on or off
