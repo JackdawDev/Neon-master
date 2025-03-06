@@ -28,3 +28,8 @@ all features are customizeable through the settings.yml!
 - Mention System: Mention players in chat with sound support
 
 - Command Log System: Log Commands That Players Use
+
+- Auto Response: Auto response to specific words with hover and sound support
+
+### Wiki
+information about how to use and how a section/feature work can be found here
