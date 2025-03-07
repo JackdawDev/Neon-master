@@ -61,10 +61,10 @@ public class AlertManager implements CommandExecutor {
     // New public method to toggle alerts, usable from other classes
     public void toggleAlerts(Player player) {
         if (alertsDisabled.contains(player.getUniqueId())) {
-            alertsDisabled.remove(player.getUniqueId());
+            this.setAlertsDisabled(player, true);
             player.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("ALERTS-ENABLED")));
         } else {
-            alertsDisabled.add(player.getUniqueId());
+            this.setAlertsDisabled(player, false);
             player.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("ALERTS-DISABLED")));
         }
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="maven-antrun-" default="main">
+  <target name="main">
+    <property name="runtime_classpath" refid="maven.runtime.classpath" />
+    <taskdef classname="com.yworks.yguard.YGuardTask" classpath="${runtime_classpath}" name="yguard" />
+    <yguard>
+      <inoutpair in="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/Neon-1.0.0.jar" out="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/Neon-1.0.0.jar" />
+      <rename logfile="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/yguard.log.xml" replaceClassNameStrings="true" scramble="true">
+        <property name="overload-enabled" value="true" />
+        <property name="naming-scheme" value="best" />
+        <property name="language-conformity" value="illegal" />
+        <keep>
+          <class name="dev.jackdaw1101.neon.Neon" />
+          <method name="void onEnable()" class="dev.jackdaw1101.neon.Neon" />
+          <method name="void onDisable()" class="dev.jackdaw1101.neon.Neon" />
+        </keep>
+      </rename>
+      <externalclasses>
+        <pathelement path="${mvn.classpath}" />
+      </externalclasses>
+    </yguard>
+  </target>
+</project>

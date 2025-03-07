@@ -186,7 +186,7 @@ public class NeonCommand implements CommandExecutor {
 
         // Create clickable and hoverable messages for each command
 
-        String togglealerts = ChatColor.translateAlternateColorCodes('&', " &f* &eAdmin Alerts &7&o(toggle)");
+        String togglealerts = ChatColor.translateAlternateColorCodes('&', " &f* &eAdmin Alerts &7&o(toggle) &c&o&nNot Available Yet");
         String togglealertsconsole = ChatColor.translateAlternateColorCodes('&', " &f- &eClears The Chat");
         TextComponent togglealert = createClickableMessage("/neon togglealerts", CC.GRAY + "Toggle The Alerts For Admins");
 

@@ -33,7 +33,6 @@ import dev.jackdaw1101.neon.Utils.Chat.CC;
 import dev.jackdaw1101.neon.Utils.Core.DebugUtil;
 import dev.jackdaw1101.neon.Utils.File.FileUtils;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
-import dev.respark.licensegate.LicenseGate;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,8 +44,6 @@ import java.util.List;
 public final class Neon extends JavaPlugin {
 
     private Settings settings;
-    final String PUBLIC_KEY = "-----BEGIN PUBLIC KEY----- MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkCGmv68OnRyOxKXcZJFH 4031ImtxVx0bZ72ch/0Se4UFzoacZwmTUQJ+8QZfFDq0XXik2UFm7tjO/p1pizTk y/UCGpfe9mGsgcFVGWAPbX02QTH8A5VOr1AGwWkg1WL0KEBkGCD1px8SBDi+MQmt 6nvjlZNpk6qN6vl+0WUEVXgk0HzKOrCESJb+tZP8p//rw8xrKmxCjy69wHJre9Qw QF0CGQRuwKhjuQb8ch3BHNwUG7Ij1dC0F/pMMOw99xjKfTCUghEsu57znpGv/Ch+ AOGF9QH1FXVTDFAd2ltdz/qA0WGVSwIskgmZ879PHaulo+eNQEhvXZcd5yzJ41Wg HQIDAQAB -----END PUBLIC KEY-----";
-    LicenseGate licenseGate = new LicenseGate("a1e45", PUBLIC_KEY);
     private Messages messageManager;
     private Permissions permissionManager;
     private Discord discord;
@@ -55,7 +52,6 @@ public final class Neon extends JavaPlugin {
     private AntiLinkSystem antilinksystem;
     private WelcomeListener welcomeListener;
     private SwearManager swearManager;
-    private License licenseManager;
     private AnnouncementManager announcementManager;
     private Locales locales;
     //private Database database;
@@ -146,11 +142,6 @@ public final class Neon extends JavaPlugin {
         unload();
     }
 
-    private String scope() {
-        String Scope = "neon-dev";
-        return Scope;
-    }
-
     private void unload() {
         long stopTime = System.currentTimeMillis();
         this.getNeonAPI().stopAPI();
@@ -172,100 +163,8 @@ public final class Neon extends JavaPlugin {
 
 
     public void load() {
-        String neonloader = "1.0";
         String debugversion = "1.1";
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Started Fetching Local Neon Loader Libraries " + "("+neonloader+")...");
-        try {
-            Thread.sleep(3250);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Successfully Fetched Local Neon Loader Libraries " + "("+neonloader+")...");
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Loading License.yml...");
-        this.licenseManager = new License(this);
-        File license = new File(getDataFolder(), "license.yml");
-
-        try {
-            ConfigUpdater.update(this, "license.yml", license);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        reloadConfig();
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Loaded License.yml");
-
-        String licensekey = this.licenseManager.getLicense("LICENSE-KEY");
-
-        LicenseGate.ValidationType result = licenseGate.verify(licensekey, scope());
-
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Started Fetching Neon ("+this.getDescription().getVersion() +")...");
-        // Sleep
-        try {
-            Thread.sleep(8000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
         long startTime = System.currentTimeMillis();
-        if (result == LicenseGate.ValidationType.VALID) {
-            // Enable
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Successfully Fetched Neon ("+this.getDescription().getVersion() +")!");
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Loading Neon ("+this.getDescription().getVersion() +")!");
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Successfully Loaded Neon ("+this.getDescription().getVersion() +")!");
-
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Checking for Dependencies...");
-            if (!isPlaceholderAPIInstalled()) {
-                Bukkit.getConsoleSender().sendMessage(CC.YELLOW + "[Neon] Placeholder API is Not Installed, You cant use placeholders");
-            } else {
-                Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Hooked with PlaceholderAPI!");
-            }
-            if (!isLuckpermsInstalled()) {
-                Bukkit.getConsoleSender().sendMessage(CC.YELLOW + "[Neon] LuckPerms is Not Installed, You Cant Use Internal Luckperms Placeholders!");
-            } else {
-                Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Hooked with LuckPerms!");
-            }
-
-        } else if (result == LicenseGate.ValidationType.IP_LIMIT_EXCEEDED) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): Too Many IPs!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else if (result == LicenseGate.ValidationType.CONNECTION_ERROR) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): Connection Error!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else if (result == LicenseGate.ValidationType.NOT_FOUND) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): License Not Found!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else if (result == LicenseGate.ValidationType.SERVER_ERROR) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): Server Error!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else if (result == LicenseGate.ValidationType.LICENSE_SCOPE_FAILED) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): Couldn't Verify The Required Data!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else if (result == LicenseGate.ValidationType.NOT_ACTIVE) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): Disabled License!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else if (result == LicenseGate.ValidationType.FAILED_CHALLENGE) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon ("+this.getDescription().getVersion() +"): Failed Challenge!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        } else {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Unable To Fetch Neon (" + this.getDescription().getVersion() + "): Error While Validating The License!");
-            Bukkit.getScheduler().cancelTasks(this);
-            Bukkit.getPluginManager().disablePlugin(this);
-            return;
-        }
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Configurations...");
         settings = new Settings(this);

@@ -9,14 +9,11 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.List;
 
@@ -50,7 +47,6 @@ public class WelcomeListener implements Listener {
         List<String> messages = (List<String>) plugin.getSettings().getValue("WELCOME-MESSAGE");
         if (messages == null) return;
 
-        // Hover Text Configuration
         boolean hoverEnabled = (boolean) plugin.getSettings().getValue("HOVER-TEXT.ENABLED", false);
         List<String> hoverMessages = (List<String>) plugin.getSettings().getValue("HOVER-TEXT.CONTENT");
         TextComponent hoverComponent = null;

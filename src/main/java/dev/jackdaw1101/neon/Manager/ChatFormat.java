@@ -127,6 +127,7 @@ public class ChatFormat implements Listener {
                     if (this.plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                         line = PlaceholderAPI.setPlaceholders(sender, line);
                         line = PlaceholderAPI.setRelationalPlaceholders(sender, viewer, line);
+                        line = handleLuckPermsPrefixSuffix(sender, line);
                     }
 
                     parsedHoverLines.add(ColorHandler.color(line));
