@@ -31,5 +31,5 @@ all features are customizeable through the settings.yml!
 
 - Auto Response: Auto response to specific words with hover and sound support
 
-### Wiki
+## Wiki
 information about how to use and how a section/feature work can be found here
