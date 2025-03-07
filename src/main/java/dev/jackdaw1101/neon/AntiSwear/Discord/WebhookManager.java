@@ -24,14 +24,14 @@ public class WebhookManager {
     public WebhookManager(Neon plugin) {
         this.plugin = plugin;
         // Get webhook URL from config, "GLOBAL" or specific URL
-        this.defaultWebhookUrl = (String) plugin.getDiscordManager().getDiscord("ANTI-SWEAR.URL", "");
+        this.defaultWebhookUrl = (String) plugin.getDiscordManager().getString("ANTI-SWEAR.URL");
         // Enable/disable the webhook from config
-        this.isWebhookEnabled = (boolean) plugin.getDiscordManager().getValue("ANTI-SWEAR.ENABLED", false);
+        this.isWebhookEnabled = (boolean) plugin.getDiscordManager().getBoolean("ANTI-SWEAR.ENABLED");
     }
 
     public void sendWebhook(Player player, String message, String type) {
         // Fetch the debug mode setting
-        boolean debugMode = (boolean) plugin.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
 
         if (!isWebhookEnabled) {
             return; // If webhook is disabled, do nothing
@@ -41,13 +41,13 @@ public class WebhookManager {
         String webhookUrl = determineWebhookUrl();
 
         // Get the formatted message data
-        String title = (String) plugin.getDiscordManager().getDiscord("ANTI-SWEAR.FORMAT.title");
+        String title = (String) plugin.getDiscordManager().getString("ANTI-SWEAR.FORMAT.title");
         if (title.equals("ANTI-SWEAR.FORMAT.title")) {
             Bukkit.getConsoleSender().sendMessage(CC.YELLOW +"[Neon] Config for title is missing or not set properly! Defaulting to 'Swear'");
         }
 
         // Get description lines from config, expecting a list
-        List<String> descriptionLines = (List<String>) plugin.getDiscordManager().getValue("ANTI-SWEAR.FORMAT.description", new ArrayList<>());
+        List<String> descriptionLines = (List<String>) plugin.getDiscordManager().getStringList("ANTI-SWEAR.FORMAT.description");
         if (descriptionLines.isEmpty()) {
                 Bukkit.getConsoleSender().sendMessage(CC.YELLOW +"[Neon] Config for description is missing or not set properly! Using default description.");
         }
@@ -77,11 +77,11 @@ public class WebhookManager {
 
     private String determineWebhookUrl() {
         String webhookUrl = this.defaultWebhookUrl;
-        boolean debugMode = (boolean) plugin.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
 
         // If it's a global setting, get the global URL
         if (this.defaultWebhookUrl.equalsIgnoreCase("GLOBAL")) {
-            webhookUrl = (String) plugin.getDiscordManager().getDiscord("ANTI-SWEAR.URL", ""); // Global URL fallback
+            webhookUrl = (String) plugin.getDiscordManager().getString("ANTI-SWEAR.URL"); // Global URL fallback
         }
 
         if (webhookUrl == null || webhookUrl.isEmpty()) {
@@ -98,7 +98,7 @@ public class WebhookManager {
     private List<String> formatDescription(List<String> descriptionLines, Player player, String message) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
         String formattedTime = dateFormat.format(new Date(System.currentTimeMillis()));
-        String servername = (String) plugin.getSettings().getValue("SERVER-NAME", "Unknown Server");
+        String servername = (String) plugin.getSettings().getString("SERVER-NAME");
         for (int i = 0; i < descriptionLines.size(); i++) {
             String line = descriptionLines.get(i);
             line = line.replace("<swearer_name>", player.getName())
@@ -114,7 +114,7 @@ public class WebhookManager {
 
     private void sendToWebhook(String webhookUrl, String jsonPayload) {
         // Asynchronously send the message to Discord webhook using a BukkitRunnable
-        boolean debugMode = (boolean) plugin.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
 
         new BukkitRunnable() {
             @Override
@@ -152,7 +152,7 @@ public class WebhookManager {
 
     private String getColorForType(String type) {
         // Get the color code based on the type (e.g., Censor or Silent)
-        String colorCode = (String) plugin.getDiscordManager().getDiscord("ANTI-SWEAR.COLOR", "#ff0000"); // Default to red if not set
+        String colorCode = (String) plugin.getDiscordManager().getString("ANTI-SWEAR.COLOR"); // Default to red if not set
         if (type.equals("censor") || type.equals("silent")) {
             return colorCode; // Censorship message color
         }
