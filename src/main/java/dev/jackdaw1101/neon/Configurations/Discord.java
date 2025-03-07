@@ -2,6 +2,7 @@ package dev.jackdaw1101.neon.Configurations;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -14,6 +15,7 @@ import java.util.Map;
 
 public class Discord {
     private final Neon plugin;
+    private File discordFile;
     private final Map<String, String> discord = new HashMap<>();
 
     public Discord(Neon plugin) {
@@ -22,10 +24,16 @@ public class Discord {
     }
 
     private void loadDiscord() {
-        File discordFile = new File(this.plugin.getDataFolder(), "discord.yml");
-        if (!discordFile.exists()) {
-            this.plugin.saveResource("discord.yml", false); // Save the default file if it doesn't exist
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
         }
+
+        discordFile = new File(pluginDir, "discord.yml");
 
         FileConfiguration discordConfig = YamlConfiguration.loadConfiguration(discordFile);
 

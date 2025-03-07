@@ -2,6 +2,7 @@ package dev.jackdaw1101.neon.Configurations;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -29,11 +30,17 @@ public class Database {
     }
 
     private void createDBfile() {
-        dbFile = new File(plugin.getDataFolder(), "database.yml");
 
-        if (!dbFile.exists()) {
-            plugin.saveResource("database.yml", false); // This saves the default settings.yml from resources
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
         }
+
+        dbFile = new File(pluginDir, "database.yml");
 
         dbSettings = YamlConfiguration.loadConfiguration(dbFile);
 

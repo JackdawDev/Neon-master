@@ -3,6 +3,7 @@ package dev.jackdaw1101.neon.Configurations;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -30,11 +31,16 @@ public class Settings {
     }
 
     private void createSettingsFile() {
-        settingsFile = new File(plugin.getDataFolder(), "settings.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
 
-        if (!settingsFile.exists()) {
-            plugin.saveResource("settings.yml", false); // This saves the default settings.yml from resources
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
         }
+
+        File settingsFile = new File(pluginDir, "permissions.yml");
 
         settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
 

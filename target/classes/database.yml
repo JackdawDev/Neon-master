@@ -1,0 +1,30 @@
+########################################################
+#                                                      #
+# | \ | |      by Jackdaw1101                          #
+# |  \| |/ _ \/ _ \| '_ \      Main Configuration For  #
+# | |\  |  __/ (_) | | | |     Neon Databases!         #
+# |_| \_|\___|\___/|_| |_|   (0.0.3)                   #
+########################################################
+#
+########################################################
+#     Messages & Reply System  (Not Available Yet)     #
+########################################################
+#
+# (!) Predicted for 0.0.3 - So Currently the /msg Wont be Handled by Neon
+# Data base for /msg system
+# TYPE: redis, mysql (mysql is mariadb also)
+GNM-DATABASE:
+  USE-REDIS: true
+  USE-MYSQL: false
+# Redis Settings
+  REDIS:
+    host: "localhost"
+    port: 6379
+    password: "" # Add your Redis password if needed
+# Redis Settings
+  MYSQL:
+    host: "localhost"
+    port: 3306
+    database: "minecraft"
+    username: "root"
+    password: "" # Add your MySQL password if needed
