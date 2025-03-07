@@ -1,6 +1,5 @@
 package dev.jackdaw1101.neon;
 
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.API.NeonAPI;
 import dev.jackdaw1101.neon.AddonHandler.AddonManager;
 import dev.jackdaw1101.neon.Announcements.AnnouncementManager;

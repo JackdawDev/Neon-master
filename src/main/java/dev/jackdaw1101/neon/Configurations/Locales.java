@@ -1,6 +1,5 @@
 package dev.jackdaw1101.neon.Configurations;
 
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
 import org.bukkit.Bukkit;

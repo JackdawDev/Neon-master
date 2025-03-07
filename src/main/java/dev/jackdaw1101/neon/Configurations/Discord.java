@@ -1,6 +1,5 @@
 package dev.jackdaw1101.neon.Configurations;
 
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -75,16 +74,18 @@ public class Discord {
         File discordFile = new File(pluginDir, "discord.yml");
 
         try {
-            ConfigUpdater.update(this.plugin, "discord.yml", discordFile);
+            // ConfigUpdater.update(this.plugin, "discord.yml", discordFile);
             this.plugin.reloadConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+            //} catch (IOException e) {
+            //  e.printStackTrace();
+            //     return false;
+            // }
 
-        this.loadDiscord();
-        return true;
-    }
-}
+            this.loadDiscord();
+            return true;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }}
 
 

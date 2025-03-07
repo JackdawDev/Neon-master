@@ -1,6 +1,5 @@
 package dev.jackdaw1101.neon.Configurations;
 
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -57,13 +56,8 @@ public class Permissions {
 
         File permissionFile = new File(pluginDir, "permissions.yml");
 
-        try {
-            ConfigUpdater.update(this.plugin, "permissions.yml", permissionFile);
-            this.plugin.reloadConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+        // ConfigUpdater.update(this.plugin, "permissions.yml", permissionFile);
+        this.plugin.reloadConfig();
 
         this.loadPermissions();
         return true;

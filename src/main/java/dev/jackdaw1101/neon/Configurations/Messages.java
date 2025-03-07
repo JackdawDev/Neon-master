@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -85,13 +84,8 @@ public class Messages {
 
         File messagesFile = new File(pluginDir, "messages.yml");
 
-        try {
-            ConfigUpdater.update(this.plugin, "messages.yml", messagesFile);
-            this.plugin.reloadConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
+        //    ConfigUpdater.update(this.plugin, "messages.yml", messagesFile);
+        this.plugin.reloadConfig();
 
         this.loadMessages();
         return true;

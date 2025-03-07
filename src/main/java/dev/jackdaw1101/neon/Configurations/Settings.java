@@ -1,6 +1,5 @@
 package dev.jackdaw1101.neon.Configurations;
 
-import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
 import lombok.SneakyThrows;
@@ -75,18 +74,13 @@ public class Settings {
     }
 
     public boolean reloadSettings() {
-        try {
-            settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
+        settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
 
-            ConfigUpdater.update(this.plugin, "settings.yml", settingsFile); // Assuming this is a utility method
+        //ConfigUpdater.update(this.plugin, "settings.yml", settingsFile); // Assuming this is a utility method
 
-            this.plugin.reloadConfig();
+        this.plugin.reloadConfig();
 
-            return true;
+        return true;
 
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
     }
 }
