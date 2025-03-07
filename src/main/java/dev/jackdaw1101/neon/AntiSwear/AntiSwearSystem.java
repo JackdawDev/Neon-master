@@ -39,22 +39,22 @@ public class AntiSwearSystem implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
-        if ((Boolean) this.plugin.getSettings().getValue("ANTI-SWEAR.ENABLED", true)) {
+        if ((Boolean) this.plugin.getSettings().getBoolean("ANTI-SWEAR.ENABLED")) {
             handleSwearCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if ((Boolean) this.plugin.getSettings().getValue("ANTI-SWEAR.CHECK-COMMANDS", false)) {
+        if ((Boolean) this.plugin.getSettings().getBoolean("ANTI-SWEAR.CHECK-COMMANDS")) {
             handleSwearCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
 
     private void handleSwearCheck(Player player, String message, Cancellable cancellable) {
-        if (!player.hasPermission(this.plugin.getPermissionManager().getPermission("ANTI-SWEAR-BYPASS"))) {
+        if (!player.hasPermission(this.plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
             // Check if SENSITIVE-CHECK is enabled
-            boolean sensitiveCheckEnabled = (Boolean) this.plugin.getSettings().getValue("ANTI-SWEAR.SENSITIVE-CHECK", false);
+            boolean sensitiveCheckEnabled = (Boolean) this.plugin.getSettings().getBoolean("ANTI-SWEAR.SENSITIVE-CHECK");
             String sanitizedMessage = message;
 
             if (sensitiveCheckEnabled) {
@@ -63,7 +63,7 @@ public class AntiSwearSystem implements Listener {
 
             List<String> blacklist = getSettingList("ANTI-SWEAR.BLACKLIST");
             List<String> whitelist = getSettingList("ANTI-SWEAR.WHITELIST");
-            String censorSymbol = (String) this.plugin.getSettings().getValue("ANTI-SWEAR.CENSOR.SYMBOL", "#");
+            String censorSymbol = (String) this.plugin.getSettings().getString("ANTI-SWEAR.CENSOR.SYMBOL");
 
             for (String swear : blacklist) {
                 // Check if the message contains a blacklisted word and not a whitelisted word
@@ -71,12 +71,12 @@ public class AntiSwearSystem implements Listener {
                     break;
                 }
 
-                boolean alertAdmins = (boolean) plugin.getSettings().getValue("ANTI-SWEAR.ALERT-ADMINS", true);
-                boolean log = (boolean) plugin.getSettings().getValue("ANTI-SWEAR.LOG", true);
+                boolean alertAdmins = (boolean) plugin.getSettings().getBoolean("ANTI-SWEAR.ALERT-ADMINS");
+                boolean log = (boolean) plugin.getSettings().getBoolean("ANTI-SWEAR.LOG");
 
                 if (sanitizedMessage.contains(swear)) {
                     String censoredMessage = censorMessage(message, swear, censorSymbol);
-                    String cancelType = (String) this.plugin.getSettings().getValue("ANTI-SWEAR.CANCEL-TYPE", "silent");
+                    String cancelType = (String) this.plugin.getSettings().getString("ANTI-SWEAR.CANCEL-TYPE");
                     cancelType = cancelType.toLowerCase(); // Safely calling toLowerCase()
 
                     // Cancel the event to prevent the original message from being sent
@@ -100,7 +100,7 @@ public class AntiSwearSystem implements Listener {
                         case "silent":
                             WebhookManager webhook2 = new WebhookManager(plugin);
                             webhook2.sendWebhook(player, message, "silent"); // For silent handling
-                            String warnMessage = this.plugin.getMessageManager().getMessage("SWEAR-WARN-MESSAGE");
+                            String warnMessage = this.plugin.getMessageManager().getString("SWEAR-WARN-MESSAGE");
                             Bukkit.getScheduler().runTask(this.plugin, () -> {
                                 if (alertAdmins) {
                                     notifyAdmins(player, message);
@@ -109,12 +109,12 @@ public class AntiSwearSystem implements Listener {
                                     new AntiSwearLogger(player, message, plugin);
                                 }
                                 player.sendMessage(ColorHandler.color( warnMessage.replace("%message%", message)));
-                                if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                                    if ((boolean) plugin.getSettings().getValue("ANTI-SWEAR.WARN-SOUND-ENABLED", true)) {
-                                        SoundUtil.playSound(player, (String) plugin.getSettings().getValue("ANTI-SWEAR.WARN-SOUND"), 1.0f, 1.0f);
+                                if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                                    if ((boolean) plugin.getSettings().getBoolean("ANTI-SWEAR.WARN-SOUND-ENABLED")) {
+                                        SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SWEAR.WARN-SOUND"), 1.0f, 1.0f);
                                     }
-                                } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                                    XSounds.playSound(player, (String) plugin.getSettings().getValue("ANTI-SWEAR.WARN-SOUND"), 1.0f, 1.0f);
+                                } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                                    XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SWEAR.WARN-SOUND"), 1.0f, 1.0f);
                                 }
                             });
                             break;
@@ -128,11 +128,11 @@ public class AntiSwearSystem implements Listener {
 
                     // Add strike and check for punishment
                     int strikes = this.plugin.getSwearManager().addSwear(player);
-                    int punishLimit = (Integer) this.plugin.getSettings().getValue("PUNISH.LIMIT", 3);
-                    boolean punishEnabled = (Boolean) this.plugin.getSettings().getValue("PUNISH.ENABLED", true);
+                    int punishLimit = (Integer) this.plugin.getSettings().getInt("PUNISH.LIMIT");
+                    boolean punishEnabled = (Boolean) this.plugin.getSettings().getBoolean("PUNISH.ENABLED");
 
                     if (strikes >= punishLimit && punishEnabled) {
-                        String command = (String) this.plugin.getSettings().getValue("PUNISH.COMMAND", "kick %player%");
+                        String command = (String) this.plugin.getSettings().getString("PUNISH.COMMAND");
                         Bukkit.getScheduler().runTask(this.plugin, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName())));
                     }
 
@@ -144,7 +144,7 @@ public class AntiSwearSystem implements Listener {
 
     private String sanitizeMessage(String message) {
         // Perform the character replacements
-        boolean threereturnE = (Boolean) this.plugin.getSettings().getValue("ANTI-SWEAR.SENSITIVE-CHECK-THREE-RETURN-E", false);
+        boolean threereturnE = (Boolean) this.plugin.getSettings().getBoolean("ANTI-SWEAR.SENSITIVE-CHECK-THREE-RETURN-E");
 
         if (threereturnE) {
             message = message
@@ -209,18 +209,18 @@ public class AntiSwearSystem implements Listener {
     }
 
     public void notifyAdmins(Player player, String message) {
-        String alert = this.plugin.getMessageManager().getMessage("ADMIN-ALERT");
+        String alert = this.plugin.getMessageManager().getString("ADMIN-ALERT");
         String formattedAlert = alert.replace("<player>", player.getName()).replace("%message%", message);
         formattedAlert = ColorHandler.color(formattedAlert);
-        String permission = this.plugin.getPermissionManager().getPermission("ADMIN-ALERT");
+        String permission = this.plugin.getPermissionManager().getString("ADMIN-ALERT");
 
         for (Player admin : Bukkit.getOnlinePlayers()) {
             if (admin != null && admin.hasPermission(permission) && !alertManager.isAlertsDisabled(player)) {
                 admin.sendMessage(formattedAlert);
-                if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                    if ((boolean) plugin.getSettings().getValue("ANTI-SWEAR.ALERT-SOUND-ENABLED", true)) {
+                if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                    if ((boolean) plugin.getSettings().getBoolean("ANTI-SWEAR.ALERT-SOUND-ENABLED")) {
                         admin.playSound(admin.getLocation(), Sound.valueOf(
-                                (String) plugin.getSettings().getValue("ANTI-SWEAR.ALERT-SOUND")), 1.0f, 1.0f);
+                                (String) plugin.getSettings().getString("ANTI-SWEAR.ALERT-SOUND")), 1.0f, 1.0f);
                     }
                 }
             }
@@ -228,7 +228,7 @@ public class AntiSwearSystem implements Listener {
     }
 
     public boolean checkForSwear(Player player, String message) {
-        if (player.hasPermission(this.plugin.getPermissionManager().getPermission("ANTI-SWEAR-BYPASS"))) {
+        if (player.hasPermission(this.plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
             return false;
         } else {
             String sanitizedMessage = ignorePattern.matcher(message.toLowerCase()).replaceAll("");
@@ -250,6 +250,6 @@ public class AntiSwearSystem implements Listener {
     }
 
     private List<String> getSettingList(String path) {
-        return (List<String>) this.plugin.getSettings().getValue(path, Arrays.asList());
+        return (List<String>) this.plugin.getSettings().getStringList(path);
     }
 }
