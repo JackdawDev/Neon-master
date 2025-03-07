@@ -167,19 +167,21 @@ public final class Neon extends JavaPlugin {
         long startTime = System.currentTimeMillis();
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Configurations...");
+        loadAntiAdLogFolder();
+        loadCOmmandLOgger();
+        loadChatLogLogFolder();
+        loadAntiSwearLogFolder();
+
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "Neon";
+        File pluginDir = new File(pluginsDir, pluginName);
         settings = new Settings(this);
         //database = new Database(this);
         locales = new Locales(this);
         this.messageManager = new Messages(this);
         this.discord = new Discord(this);
         this.permissionManager = new Permissions(this);
-        loadAntiAdLogFolder();
-        loadCOmmandLOgger();
-
-        File serverDir = Bukkit.getServer().getWorldContainer();
-        File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "NeonLoader";
-        File pluginDir = new File(pluginsDir, pluginName);
 
         File file = new File(pluginDir, "settings.yml");
 

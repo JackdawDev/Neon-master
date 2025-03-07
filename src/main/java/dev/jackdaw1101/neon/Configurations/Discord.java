@@ -23,7 +23,7 @@ public class Discord {
     private void loadDiscord() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "NeonLoader";
+        String pluginName = "Neon";
         File pluginDir = new File(pluginsDir, pluginName);
 
         File discordFile = new File(pluginDir, "discord.yml");

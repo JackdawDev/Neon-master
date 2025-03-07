@@ -20,7 +20,6 @@ dev\jackdaw1101\neon\Configurations\Permissions.class
 dev\jackdaw1101\neon\Manager\MOTD\WelcomeListener.class
 dev\jackdaw1101\neon\Command\ChatClear\ChatClearCommand.class
 dev\jackdaw1101\neon\Configurations\Locales.class
-dev\jackdaw1101\neon\Loader.class
 dev\jackdaw1101\neon\Command\NeonCommand.class
 dev\jackdaw1101\neon\Command\API\CommandManager$CommandWrapper.class
 dev\jackdaw1101\neon\Command\Logger\CommandLoggerListener.class
@@ -37,7 +36,6 @@ dev\jackdaw1101\neon\Command\ChatClear\ClearChatCommand.class
 dev\jackdaw1101\neon\Utils\Color\ColorHandler.class
 dev\jackdaw1101\neon\AntiAdvertise\Discord\WebhookManager$1.class
 dev\jackdaw1101\neon\Configurations\Discord.class
-dev\jackdaw1101\neon\Configurations\License.class
 dev\jackdaw1101\neon\GrammerAPI\GrammerAPI.class
 dev\jackdaw1101\neon\AntiSwear\SwearManager.class
 dev\jackdaw1101\neon\Configurations\Messages.class
@@ -56,6 +54,5 @@ dev\jackdaw1101\neon\AntiSwear\Discord\WebhookManager$1.class
 dev\jackdaw1101\neon\AntiSwear\AntiSwearSystem.class
 dev\jackdaw1101\neon\Command\ToggleChat\Listener\ChatListener.class
 dev\jackdaw1101\neon\Command\Chat\MuteChatCommandNormal.class
-dev\jackdaw1101\neon\IGUI\NeonGUI.class
 dev\jackdaw1101\neon\Utils\ISounds\XSounds.class
 dev\jackdaw1101\neon\Announcements\AnnouncementManager$AnnouncementTask.class

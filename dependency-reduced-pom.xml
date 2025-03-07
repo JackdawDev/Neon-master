@@ -87,17 +87,18 @@
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
     </repository>
-    <repository>
-      <id>respark-releases</id>
-      <name>Respark - Maven Repository</name>
-      <url>https://maven.respark.dev/releases</url>
-    </repository>
   </repositories>
   <dependencies>
     <dependency>
       <groupId>net.luckperms</groupId>
       <artifactId>api</artifactId>
       <version>5.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.36</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

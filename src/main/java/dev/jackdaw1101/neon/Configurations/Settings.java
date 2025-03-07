@@ -24,7 +24,7 @@ public class Settings {
     private void createSettingsFile() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "NeonLoader";
+        String pluginName = "Neon";
         File pluginDir = new File(pluginsDir, pluginName);
 
         settingsFile = new File(pluginDir, "settings.yml");
