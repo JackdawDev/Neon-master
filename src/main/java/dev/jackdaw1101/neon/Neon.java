@@ -176,7 +176,12 @@ public final class Neon extends JavaPlugin {
         loadAntiAdLogFolder();
         loadCOmmandLOgger();
 
-        File file = new File(getDataFolder(), "settings.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File file = new File(pluginDir, "settings.yml");
 
         try {
 
@@ -198,7 +203,7 @@ public final class Neon extends JavaPlugin {
 
        // reloadConfig();
 
-        File messages = new File(getDataFolder(), "messages.yml");
+        File messages = new File(pluginDir, "messages.yml");
 
         try {
             ConfigUpdater.update(this, "messages.yml", messages);
@@ -208,7 +213,7 @@ public final class Neon extends JavaPlugin {
 
         reloadConfig();
 
-        File permission = new File(getDataFolder(), "permissions.yml");
+        File permission = new File(pluginDir, "permissions.yml");
 
         try {
             ConfigUpdater.update(this, "permissions.yml", permission);
@@ -218,7 +223,7 @@ public final class Neon extends JavaPlugin {
 
         reloadConfig();
 
-        File discord = new File(getDataFolder(), "discord.yml");
+        File discord = new File(pluginDir, "discord.yml");
 
         try {
             ConfigUpdater.update(this, "discord.yml", discord);

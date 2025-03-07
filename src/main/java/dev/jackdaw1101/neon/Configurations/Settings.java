@@ -3,6 +3,7 @@ package dev.jackdaw1101.neon.Configurations;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -15,32 +16,24 @@ public class Settings {
     private File settingsFile;
     private FileConfiguration settingsConfig;
 
-    private static final String HEADER =
-            "########################################################\n" +
-                    "# _   _   by Jackdaw1101                             #\n" +
-                    "#| \\ | | ___  ___  _ __      Main Configuration For  #\n" +
-                    "#|  \\| |/ _ \\/ _ \\| '_ \\     NeonPlugin!            #\n" +
-                    "#| |\\  |  __/ (_) | | | |                             #\n" +
-                    "#|_| \\_|\\___|\\___/|_| |_|  (0.0.1-fe45618)         #\n" +
-                    "########################################################";
-
     public Settings(Neon plugin) {
         this.plugin = plugin;
         createSettingsFile();
     }
 
     private void createSettingsFile() {
-        settingsFile = new File(plugin.getDataFolder(), "settings.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        settingsFile = new File(pluginDir, "settings.yml");
 
         if (!settingsFile.exists()) {
             plugin.saveResource("settings.yml", false); // This saves the default settings.yml from resources
         }
 
         settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
-
-        if (!settingsConfig.contains("header")) {
-            settingsConfig.options().header(HEADER);
-        }
 
         ConfigUpdate();
     }
@@ -66,7 +59,6 @@ public class Settings {
         return settingsConfig.get(path, defaultValue);
     }
 
-
     public void addValue(String path, Object value, String comment) {
         settingsConfig.set(path, value);
 
@@ -77,11 +69,9 @@ public class Settings {
         saveSettings();
     }
 
-
     public FileConfiguration getSettingsConfig() {
         return settingsConfig;
     }
-
 
     public boolean reloadSettings() {
         try {

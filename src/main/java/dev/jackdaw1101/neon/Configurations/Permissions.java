@@ -2,14 +2,13 @@ package dev.jackdaw1101.neon.Configurations;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Permissions {
@@ -22,7 +21,13 @@ public class Permissions {
     }
 
     private void loadPermissions() {
-        File permissionFile = new File(this.plugin.getDataFolder(), "permissions.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File permissionFile = new File(pluginDir, "permissions.yml");
+
         if (!permissionFile.exists()) {
             this.plugin.saveResource("permissions.yml", false); // Save the default file if it doesn't exist
         }
@@ -37,17 +42,19 @@ public class Permissions {
     }
 
     public String getPermission(String key) {
-        String message = this.permission.getOrDefault(key, key); // Get the message or use the key as fallback
-        return message;
+        return this.permission.getOrDefault(key, key); // Get the permission or use the key as fallback
     }
 
-
     public boolean reloadPermissions() {
-        File permissionFile = new File(this.plugin.getDataFolder(), "permissions.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File permissionFile = new File(pluginDir, "permissions.yml");
 
         try {
             ConfigUpdater.update(this.plugin, "permissions.yml", permissionFile);
-
             this.plugin.reloadConfig();
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,9 +62,6 @@ public class Permissions {
         }
 
         this.loadPermissions();
-
         return true;
     }
 }
-
-

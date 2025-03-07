@@ -2,14 +2,13 @@ package dev.jackdaw1101.neon.Configurations;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Discord {
@@ -22,7 +21,13 @@ public class Discord {
     }
 
     private void loadDiscord() {
-        File discordFile = new File(this.plugin.getDataFolder(), "discord.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File discordFile = new File(pluginDir, "discord.yml");
+
         if (!discordFile.exists()) {
             this.plugin.saveResource("discord.yml", false); // Save the default file if it doesn't exist
         }
@@ -54,11 +59,15 @@ public class Discord {
     }
 
     public boolean reloadDiscord() {
-        File discordFile = new File(this.plugin.getDataFolder(), "discord.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File discordFile = new File(pluginDir, "discord.yml");
 
         try {
             ConfigUpdater.update(this.plugin, "discord.yml", discordFile);
-
             this.plugin.reloadConfig();
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,7 +75,6 @@ public class Discord {
         }
 
         this.loadDiscord();
-
         return true;
     }
 }

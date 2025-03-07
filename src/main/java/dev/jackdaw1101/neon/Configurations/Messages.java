@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -23,7 +24,13 @@ public class Messages {
     }
 
     private void loadMessages() {
-        File messagesFile = new File(this.plugin.getDataFolder(), "messages.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File messagesFile = new File(pluginDir, "messages.yml");
+
         if (!messagesFile.exists()) {
             this.plugin.saveResource("messages.yml", false); // Save the default file if it doesn't exist
         }
@@ -63,11 +70,15 @@ public class Messages {
     }
 
     public boolean reloadMessages() {
-        File messagesFile = new File(this.plugin.getDataFolder(), "messages.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        File messagesFile = new File(pluginDir, "messages.yml");
 
         try {
             ConfigUpdater.update(this.plugin, "messages.yml", messagesFile);
-
             this.plugin.reloadConfig();
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,7 +86,6 @@ public class Messages {
         }
 
         this.loadMessages();
-
         return true;
     }
 }

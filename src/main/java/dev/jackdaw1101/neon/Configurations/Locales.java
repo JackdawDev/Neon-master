@@ -3,6 +3,7 @@ package dev.jackdaw1101.neon.Configurations;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -30,7 +31,12 @@ public class Locales {
     }
 
     public void createLocalesFile() {
-        LocaleConfig = new File(plugin.getDataFolder(), "locale.yml");
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+        String pluginName = "NeonLoader";
+        File pluginDir = new File(pluginsDir, pluginName);
+
+        LocaleConfig = new File(pluginDir, "locale.yml");
 
         if (!LocaleConfig.exists()) {
             plugin.saveResource("locale.yml", false); // This saves the default settings.yml from resources
@@ -38,9 +44,7 @@ public class Locales {
 
         LocaleFile = YamlConfiguration.loadConfiguration(LocaleConfig);
 
-        if (!LocaleFile.contains("header")) {
-            LocaleFile.options().header(HEADER);
-        }
+        ConfigUpdate();
     }
 
     public void ConfigUpdate() {
