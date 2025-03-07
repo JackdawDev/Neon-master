@@ -25,7 +25,7 @@ public class AntiCapsSystem implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
-        if ((Boolean) this.plugin.getSettings().getValue("ANTI-CAPS.ENABLED", true)) {
+        if (plugin.getSettings().getBoolean("ANTI-CAPS.ENABLED")) {
             handleCapsCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
@@ -34,20 +34,20 @@ public class AntiCapsSystem implements Listener {
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         if (event.isCancelled()) return;
 
-        if ((Boolean) this.plugin.getSettings().getValue("ANTI-CAPS.CHECK-COMMANDS", false)) {
+        if (plugin.getSettings().getBoolean("ANTI-CAPS.CHECK-COMMANDS")) {
             handleCapsCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
 
     private void handleCapsCheck(Player player, String message, Cancellable cancellable) {
-        if (player.hasPermission(this.plugin.getPermissionManager().getPermission("ANTI-CAPS-BYPASS"))) {
+        if (player.hasPermission(this.plugin.getPermissionManager().getString("ANTI-CAPS-BYPASS"))) {
             return;
         }
 
         int upperChar = 0;
         int lowerChar = 0;
-        int minLength = (Integer) this.plugin.getSettings().getValue("ANTI-CAPS.MIN-MESSAGE-LENGTH", 5);
-        int requiredPercentage = (Integer) this.plugin.getSettings().getValue("ANTI-CAPS.REQUIRED-PERCENTAGE", 70);
+        int minLength = plugin.getSettings().getInt("ANTI-CAPS.MIN-MESSAGE-LENGTH");
+        int requiredPercentage = plugin.getSettings().getInt("ANTI-CAPS.REQUIRED-PERCENTAGE");
 
         if (message.length() >= minLength) {
             for (char c : message.toCharArray()) {
@@ -64,13 +64,13 @@ public class AntiCapsSystem implements Listener {
                 double capsPercentage = (double) upperChar / (upperChar + lowerChar) * 100;
                 if (capsPercentage >= requiredPercentage) {
                     cancellable.setCancelled(true);
-                    player.sendMessage(ColorHandler.color((String) this.plugin.getMessageManager().getMessage("ANTI-CAPS-WARNING")));
-                    if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                        if ((boolean) plugin.getSettings().getValue("ANTI-CAPS.SOUND-ENABLED", true)) {
-                            SoundUtil.playSound(player, (String) plugin.getSettings().getValue("ANTI-CAPS.SOUND"), 1.0f, 1.0f);
+                    player.sendMessage(ColorHandler.color((String) this.plugin.getMessageManager().getString("ANTI-CAPS-WARNING")));
+                    if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                        if (plugin.getSettings().getBoolean("ANTI-CAPS.SOUND-ENABLED")) {
+                            SoundUtil.playSound(player, plugin.getSettings().getString("ANTI-CAPS.SOUND"), 1.0f, 1.0f);
                         }
-                    } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                        XSounds.playSound(player, (String) plugin.getSettings().getValue("ANTI-CAPS.SOUND"), 1.0f, 1.0f);
+                    } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                        XSounds.playSound(player, plugin.getSettings().getString("ANTI-CAPS.SOUND"), 1.0f, 1.0f);
                     }
                 }
             }

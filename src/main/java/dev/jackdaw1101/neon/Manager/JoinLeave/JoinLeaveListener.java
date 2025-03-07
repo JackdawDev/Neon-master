@@ -1,5 +1,6 @@
 package dev.jackdaw1101.neon.Manager.JoinLeave;
 
+import dev.jackdaw1101.neon.Configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Configurations.Settings;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
@@ -23,7 +24,7 @@ import java.util.List;
 public class JoinLeaveListener implements Listener {
 
     private final Neon plugin;
-    private final Settings settings;
+    private final ConfigFile settings;
 
     public JoinLeaveListener(Neon plugin) {
         this.plugin = plugin;
@@ -33,22 +34,22 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
-        if (!(boolean) settings.getValue("JOIN.ENABLED")) return;
+        if (!(boolean) settings.getBoolean("JOIN.ENABLED")) return;
 
-        boolean delayEnabled = (boolean) settings.getValue("ASYNC.ENABLED", false);
-        int delayTicks = (int) settings.getValue("ASYNC.DELAY-TICKS", 0);
+        boolean delayEnabled = (boolean) settings.getBoolean("ASYNC.ENABLED");
+        int delayTicks = (int) settings.getInt("ASYNC.DELAY-TICKS");
 
         processJoinEvent(event);
     }
 
     private void processJoinEvent(PlayerJoinEvent event) {
-        String message = (String) settings.getValue("JOIN.FORMAT");
+        String message = (String) settings.getString("JOIN.FORMAT");
         if (message != null) {
             message = message.replace("<player>", event.getPlayer().getName());
             message = apply(ColorHandler.color(message), event.getPlayer());
 
-            boolean requirePermission = (boolean) settings.getValue("JOIN.REQUIRE-PERMISSION", false);
-            if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getPermission("JOIN-MESSAGE-PERMISSION"))) {
+            boolean requirePermission = (boolean) settings.getBoolean("JOIN.REQUIRE-PERMISSION");
+            if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getString("JOIN-MESSAGE-PERMISSION"))) {
                 return;
             }
 
@@ -59,21 +60,21 @@ public class JoinLeaveListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage("");
-        if (!(boolean) settings.getValue("LEAVE.ENABLED")) return;
+        if (!(boolean) settings.getBoolean("LEAVE.ENABLED")) return;
 
-        boolean delayEnabled = (boolean) settings.getValue("ASYNC.ENABLED", false);
-        int delayTicks = (int) settings.getValue("ASYNC.DELAY-TICKS", 15);
+        boolean delayEnabled = (boolean) settings.getBoolean("ASYNC.ENABLED");
+        int delayTicks = (int) settings.getInt("ASYNC.DELAY-TICKS");
         processLeaveEvent(event);
     }
 
     private void processLeaveEvent(PlayerQuitEvent event) {
-        String message = (String) settings.getValue("LEAVE.FORMAT");
+        String message = (String) settings.getString("LEAVE.FORMAT");
         if (message != null) {
             message = message.replace("<player>", event.getPlayer().getName());
             message = apply(ColorHandler.color(message), event.getPlayer());
 
-            boolean requirePermission = (boolean) settings.getValue("LEAVE.REQUIRE-PERMISSION", false);
-            if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getPermission("LEAVE-MESSAGE-PERMISSION"))) {
+            boolean requirePermission = (boolean) settings.getBoolean("LEAVE.REQUIRE-PERMISSION");
+            if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getString("LEAVE-MESSAGE-PERMISSION"))) {
                 return;
             }
 
@@ -86,13 +87,13 @@ public class JoinLeaveListener implements Listener {
     }
 
     private void sendJoinLeaveMessage(Player player, String message, boolean isJoin) {
-        boolean isHoverEnabled = (boolean) settings.getValue("HOVER-SUPPORT", true);
-        boolean isClickEnabled = (boolean) settings.getValue("CLICK-SUPPORT", true);
-        boolean isRunCommand = (boolean) settings.getValue("JOIN.RUN-COMMAND", true);
-        boolean isSuggestCommand = (boolean) settings.getValue("LEAVE.SUGGEST-COMMAND", true);
+        boolean isHoverEnabled = (boolean) settings.getBoolean("HOVER-SUPPORT");
+        boolean isClickEnabled = (boolean) settings.getBoolean("CLICK-SUPPORT");
+        boolean isRunCommand = (boolean) settings.getBoolean("JOIN.RUN-COMMAND");
+        boolean isSuggestCommand = (boolean) settings.getBoolean("LEAVE.SUGGEST-COMMAND");
 
         String commandKey = isJoin ? "JOIN.CLICK-COMMAND" : "LEAVE.CLICK-COMMAND";
-        String command = (String) settings.getValue(commandKey);
+        String command = (String) settings.getString(commandKey);
         if (command != null) {
             command = command.replace("<player>", player.getName());
         }
@@ -127,7 +128,7 @@ public class JoinLeaveListener implements Listener {
 
     private List<String> getHoverText(Player player, boolean isJoin) {
         String path = isJoin ? "JOIN.HOVER.TEXT" : "LEAVE.HOVER.TEXT";
-        return (List<String>) settings.getValue(path);
+        return (List<String>) settings.getStringList(path);
     }
 
     private String[] getDefaultHoverText(Player player, boolean isJoin) {

@@ -1,6 +1,7 @@
 package dev.jackdaw1101.neon.Command.ToggleChat;
 
 import dev.jackdaw1101.neon.Neon;
+import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
 import org.bukkit.ChatColor;
@@ -27,17 +28,17 @@ public class ToggleChatCommand implements CommandExecutor {
     public ToggleChatCommand(Neon plugin) {
         this.plugin = plugin;
 
-        toggleOnMessage = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("CHAT-ON"));
-        toggleOffMessage = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("CHAT-OFF"));
-        noPermissionMessage = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("NO-PERMISSION"));
-        permissionRequired = (boolean) plugin.getSettings().getValue("CHAT-TOGGLE.REQUIRE-PERMISSION", false);
-        requiredPermission = plugin.getPermissionManager().getPermission("CHAT-TOGGLE-USE");
+        toggleOnMessage = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getString("CHAT-ON"));
+        toggleOffMessage = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getString("CHAT-OFF"));
+        noPermissionMessage = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getString("NO-PERMISSION"));
+        permissionRequired = (boolean) plugin.getSettings().getBoolean("CHAT-TOGGLE.REQUIRE-PERMISSION");
+        requiredPermission = plugin.getPermissionManager().getString("CHAT-TOGGLE-USE");
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("PLAYER-ONLY")));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("PLAYER-ONLY")));
             return true;
         }
 
@@ -46,13 +47,13 @@ public class ToggleChatCommand implements CommandExecutor {
         // Check permission
         if (permissionRequired && !player.hasPermission(requiredPermission)) {
             player.sendMessage(noPermissionMessage);
-            if ((boolean) plugin.getSettings().getValue("NO-PERMISSION.USE-SOUND", true)) {
-                if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                    if ((boolean) plugin.getSettings().getValue("NO-PERMISSION.USE-SOUND", true)) {
-                        SoundUtil.playSound((Player) sender, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+            if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
+                if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                    if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
+                        SoundUtil.playSound((Player) sender, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
                     }
-                } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                    XSounds.playSound((Player) sender, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+                } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                    XSounds.playSound((Player) sender, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
                 }
             }
             return true;

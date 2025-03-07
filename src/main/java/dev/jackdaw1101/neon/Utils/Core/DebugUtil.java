@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 
 public class DebugUtil {
     public static void checkDebug(Neon plugin) {
-        boolean debug = (boolean) plugin.getSettings().getValue("DEBUG-MODE", false);
+        boolean debug = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");
 
         if (debug) {
             int loadedClasses = getLoadedClassCount();

@@ -25,15 +25,15 @@ public class AlertManager implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("PLAYER-ONLY")));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("PLAYER-ONLY")));
             return true;
         }
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission(plugin.getPermissionManager().getPermission("TOGGLE-ALERTS"))) {
+        if (!player.hasPermission(plugin.getPermissionManager().getString("TOGGLE-ALERTS"))) {
             String noPermissionMessage = ColorHandler.color(
-                    plugin.getMessageManager().getMessage("NO-PERMISSION"));
+                    plugin.getMessageManager().getString("NO-PERMISSION"));
 
             player.sendMessage(noPermissionMessage);
             playNoPermissionSound(player);
@@ -62,20 +62,20 @@ public class AlertManager implements CommandExecutor {
     public void toggleAlerts(Player player) {
         if (alertsDisabled.contains(player.getUniqueId())) {
             this.setAlertsDisabled(player, true);
-            player.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("ALERTS-ENABLED")));
+            player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("ALERTS-ENABLED")));
         } else {
             this.setAlertsDisabled(player, false);
-            player.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("ALERTS-DISABLED")));
+            player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("ALERTS-DISABLED")));
         }
     }
 
     // Private method to play sound when the player lacks permission
     private void playNoPermissionSound(Player player) {
-        if ((boolean) plugin.getSettings().getValue("NO-PERMISSION.USE-SOUND", true)) {
-            if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                SoundUtil.playSound(player, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
-            } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                XSounds.playSound(player, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+        if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
+            if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                SoundUtil.playSound(player, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+            } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                XSounds.playSound(player, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
             }
         }
     }

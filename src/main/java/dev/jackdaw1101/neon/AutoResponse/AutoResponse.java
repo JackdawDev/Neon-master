@@ -33,10 +33,10 @@ public class AutoResponse implements Listener {
         String message = event.getMessage();
 
         // Check if the auto-response system is enabled
-        if (!(boolean) plugin.getSettings().getValue("AUTO-RESPONSE-ENABLED", false)) return;
+        if (!plugin.getSettings().getBoolean("AUTO-RESPONSE-ENABLED")) return;
 
         // Get the auto-response configuration section
-        ConfigurationSection autoResponsesSection = plugin.getLocales().getLocalesConfig().getConfigurationSection("AUTO-RESPONSES");
+        ConfigurationSection autoResponsesSection = plugin.getLocales().getConfig().getConfigurationSection("AUTO-RESPONSES");
         if (autoResponsesSection == null) return;
 
         // Iterate through the keys in the AUTO-RESPONSES section
@@ -47,13 +47,13 @@ public class AutoResponse implements Listener {
                 if (responses.isEmpty()) continue;
 
                 // Retrieve the response format from the config
-                String format = plugin.getMessageManager().getMessage("FORMAT");
+                String format = plugin.getMessageManager().getString("FORMAT");
                 format = ColorHandler.color(format);
 
                 // Prepare hover text if enabled
                 TextComponent hoverComponent = null;
-                if ((boolean) plugin.getSettings().getValue("AUTO-RESPONSE-HOVER-ENABLED", true)) {
-                    List<String> hoverLines = plugin.getSettings().getSettingsConfig().getStringList("AUTO-RESPONSE-HOVER");
+                if ((boolean) plugin.getSettings().getBoolean("AUTO-RESPONSE-HOVER-ENABLED")) {
+                    List<String> hoverLines = plugin.getSettings().getConfig().getStringList("AUTO-RESPONSE-HOVER");
                     if (!hoverLines.isEmpty()) {
                         StringBuilder hoverText = new StringBuilder();
                         for (String line : hoverLines) {
@@ -80,13 +80,13 @@ public class AutoResponse implements Listener {
                     // Send the formatted line to the player
                     Bukkit.getScheduler().runTask(plugin, () ->
                             player.spigot().sendMessage(textComponent));
-                    if ((boolean) plugin.getSettings().getValue("AUTO-RESPONSE-USE-SOUND", true)) {
-                        if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                            if ((boolean) plugin.getSettings().getValue("AUTO-RESPONSE-USE-SOUND", true)) {
-                                SoundUtil.playSound(player, (String) plugin.getSettings().getValue("AUTO-RESPONSE-SOUND"), 1.0f, 1.0f);
+                    if (plugin.getSettings().getBoolean("AUTO-RESPONSE-USE-SOUND")) {
+                        if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                            if (plugin.getSettings().getBoolean("AUTO-RESPONSE-USE-SOUND")) {
+                                SoundUtil.playSound(player, (String) plugin.getSettings().getString("AUTO-RESPONSE-SOUND"), 1.0f, 1.0f);
                             }
-                        } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                            XSounds.playSound(player, (String) plugin.getSettings().getValue("AUTO-RESPONSE-SOUND"), 1.0f, 1.0f);
+                        } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                            XSounds.playSound(player, (String) plugin.getSettings().getString("AUTO-RESPONSE-SOUND"), 1.0f, 1.0f);
                         }
                     }
                 }

@@ -27,12 +27,12 @@ public class WelcomeListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!(boolean) plugin.getSettings().getValue("ENABLE-WELCOME-SYSTEM", true)) {
+        if (!(boolean) plugin.getSettings().getBoolean("ENABLE-WELCOME-SYSTEM")) {
             return;
         }
 
-            if ((boolean) plugin.getSettings().getValue("ON-JOIN-CHAT-CLEAR", false)) {
-                clearChat(player, (int) plugin.getSettings().getValue("ON-JOIN-CHAT-CLEAR-LINE", 10));
+            if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
+                clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
             }
             sendMessage(player);
     }
@@ -44,11 +44,11 @@ public class WelcomeListener implements Listener {
     }
 
     private void sendMessage(Player player) {
-        List<String> messages = (List<String>) plugin.getSettings().getValue("WELCOME-MESSAGE");
+        List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-MESSAGE");
         if (messages == null) return;
 
-        boolean hoverEnabled = (boolean) plugin.getSettings().getValue("HOVER-TEXT.ENABLED", false);
-        List<String> hoverMessages = (List<String>) plugin.getSettings().getValue("HOVER-TEXT.CONTENT");
+        boolean hoverEnabled = (boolean) plugin.getSettings().getBoolean("HOVER-TEXT.ENABLED");
+        List<String> hoverMessages = (List<String>) plugin.getSettings().getStringList("HOVER-TEXT.CONTENT");
         TextComponent hoverComponent = null;
 
         if (hoverEnabled && hoverMessages != null && !hoverMessages.isEmpty()) {
@@ -60,14 +60,14 @@ public class WelcomeListener implements Listener {
         }
 
         // Click Events
-        boolean openUrlEnabled = (boolean) plugin.getSettings().getValue("OPEN-URL.ENABLED", false);
-        String openUrl = (String) plugin.getSettings().getValue("OPEN-URL.URL");
+        boolean openUrlEnabled = (boolean) plugin.getSettings().getBoolean("OPEN-URL.ENABLED");
+        String openUrl = (String) plugin.getSettings().getString("OPEN-URL.URL");
 
-        boolean clickCommandEnabled = (boolean) plugin.getSettings().getValue("RUN-COMMAND.ENABLED", false);
-        String clickCommand = (String) plugin.getSettings().getValue("RUN-COMMAND.COMMAND", "/help");
+        boolean clickCommandEnabled = (boolean) plugin.getSettings().getBoolean("RUN-COMMAND.ENABLED");
+        String clickCommand = (String) plugin.getSettings().getString("RUN-COMMAND.COMMAND");
 
-        boolean suggestCommandEnabled = (boolean) plugin.getSettings().getValue("SUGGEST-COMMAND.ENABLED", false);
-        String suggestCommand = (String) plugin.getSettings().getValue("SUGGEST-COMMAND.COMMAND", "/help");
+        boolean suggestCommandEnabled = (boolean) plugin.getSettings().getBoolean("SUGGEST-COMMAND.ENABLED");
+        String suggestCommand = (String) plugin.getSettings().getString("SUGGEST-COMMAND.COMMAND");
 
         for (String line : messages) {
             line = ColorHandler.color(PlaceholderAPI.setPlaceholders(player, line));
@@ -89,12 +89,12 @@ public class WelcomeListener implements Listener {
             }
 
             player.spigot().sendMessage((BaseComponent) messageComponent);
-            if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                if ((boolean) plugin.getSettings().getValue("PLAY-SOUND.ENABLED", true)) {
-                    SoundUtil.playSound(player, (String) plugin.getSettings().getValue("PLAY-SOUND.SOUND"), 1.0f, 1.0f);
+            if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED")) {
+                    SoundUtil.playSound(player, (String) plugin.getSettings().getString("PLAY-SOUND.SOUND"), 1.0f, 1.0f);
                 }
-            } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                XSounds.playSound(player, (String) plugin.getSettings().getValue("PLAY-SOUND.SOUND"), 1.0f, 1.0f);
+            } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                XSounds.playSound(player, (String) plugin.getSettings().getString("PLAY-SOUND.SOUND"), 1.0f, 1.0f);
         }
         }
     }

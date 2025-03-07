@@ -38,13 +38,13 @@ public class ChatFormat implements Listener {
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
-        boolean isChatFormatEnabled = (Boolean) this.plugin.getSettings().getValue("CHAT-FORMAT-ENABLED", true);
-        boolean isHoverEnabled = (Boolean) this.plugin.getSettings().getValue("HOVER-ENABLED", true);
-        boolean isClickEventEnabled = (Boolean) this.plugin.getSettings().getValue("CLICK-EVENT-ENABLED", true);
-        boolean isAntiSwearEnabled = (Boolean) this.plugin.getSettings().getValue("ANTI-SWEAR.ENABLED", true);
-        boolean isChatInConsoleEnabled = (Boolean) this.plugin.getSettings().getValue("CHAT-IN-CONSOLE", true);
-        boolean logchat = (boolean) plugin.getSettings().getValue("LOG-CHAT", true);
-        boolean isRunCommandEnabled = (Boolean) this.plugin.getSettings().getValue("RUN-COMMAND-ENABLED", true);
+        boolean isChatFormatEnabled = (Boolean) this.plugin.getSettings().getBoolean("CHAT-FORMAT-ENABLED");
+        boolean isHoverEnabled = (Boolean) this.plugin.getSettings().getBoolean("HOVER-ENABLED");
+        boolean isClickEventEnabled = (Boolean) this.plugin.getSettings().getBoolean("CLICK-EVENT-ENABLED");
+        boolean isAntiSwearEnabled = (Boolean) this.plugin.getSettings().getBoolean("ANTI-SWEAR.ENABLED");
+        boolean isChatInConsoleEnabled = (Boolean) this.plugin.getSettings().getBoolean("CHAT-IN-CONSOLE");
+        boolean logchat = (boolean) plugin.getSettings().getBoolean("LOG-CHAT");
+        boolean isRunCommandEnabled = (Boolean) this.plugin.getSettings().getBoolean("RUN-COMMAND-ENABLED");
 
         Player sender = event.getPlayer();
         String message = event.getMessage();
@@ -57,11 +57,11 @@ public class ChatFormat implements Listener {
                 event.setCancelled(true);
 
                 String censoredMessage = message;
-                List<String> blacklist = (List<String>) this.plugin.getSettings().getValue("ANTI-SWEAR.BLACKLIST", Arrays.asList());
+                List<String> blacklist = (List<String>) this.plugin.getSettings().getStringList("ANTI-SWEAR.BLACKLIST");
 
                 for (String swear : blacklist) {
                     if (message.toLowerCase().contains(swear.toLowerCase())) {
-                        censoredMessage = this.antiSwearSystem.censorMessage(message, swear, (String) plugin.getSettings().getValue("ANTI-SWEAR.CENSOR.SYMBOL"));
+                        censoredMessage = this.antiSwearSystem.censorMessage(message, swear, (String) plugin.getSettings().getString("ANTI-SWEAR.CENSOR.SYMBOL"));
                         event.setCancelled(true);
                         return;
                     }
@@ -83,17 +83,17 @@ public class ChatFormat implements Listener {
             message = this.processMessageColorCodes(sender, message);
 
             // Prepare chat format
-            String format = ColorHandler.color(this.plugin.getSettings().getValue("CHAT-FORMAT", "&7<player>: &f%message%").toString());
+            String format = ColorHandler.color(this.plugin.getSettings().getString("CHAT-FORMAT").toString());
             if (isLuckpermsInstalled()) {
                  format = handleLuckPermsPrefixSuffix(sender, format);
             } else {
                 format = format;
             }
 
-            String clickCommand = ColorHandler.color(this.plugin.getSettings().getValue("CLICK-COMMAND", "/message <player> ").toString());
+            String clickCommand = ColorHandler.color(this.plugin.getSettings().getString("CLICK-COMMAND").toString());
 
             // Get hover lines
-            List<String> hoverLines = (List) this.plugin.getSettings().getValue("HOVER");
+            List<String> hoverLines = (List) this.plugin.getSettings().getStringList("HOVER");
             if (hoverLines == null || hoverLines.isEmpty()) {
                 hoverLines = new ArrayList<>(Arrays.asList("&aDefault Hover Line: &7<player>"));
             }
@@ -108,10 +108,10 @@ public class ChatFormat implements Listener {
             }
 
             format = format.replace("{MESSAGE}", message);
-            if (sender.hasPermission(plugin.getPermissionManager().getPermission("COLOR-CODES"))) {
+            if (sender.hasPermission(plugin.getPermissionManager().getString("COLOR-CODES"))) {
                 ColorHandler.color(message);
                 //ColorHandler.color(message);
-            } else if (!sender.hasPermission(plugin.getPermissionManager().getPermission("COLOR-CODES"))) {
+            } else if (!sender.hasPermission(plugin.getPermissionManager().getString("COLOR-CODES"))) {
                 removeColorCodes(message);
             }
 
@@ -176,7 +176,7 @@ public class ChatFormat implements Listener {
 
     private String processMessageColorCodes(Player sender, String message) {
         // If the player has permission to use color codes, process the message for color codes
-        return sender.hasPermission(this.plugin.getPermissionManager().getPermission("COLOR-CODES")) ? ChatColor.translateAlternateColorCodes('&', message) : this.removeColorCodes(message);
+        return sender.hasPermission(this.plugin.getPermissionManager().getString("COLOR-CODES")) ? ChatColor.translateAlternateColorCodes('&', message) : this.removeColorCodes(message);
     }
 
     private String removeColorCodes(String message) {

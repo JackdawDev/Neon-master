@@ -23,10 +23,10 @@ public class GrammerAPI implements Listener {
         Player player = event.getPlayer();
         String message = event.getMessage();
 
-        if (message.length() < (int) plugin.getSettings().getValue("GRAMMAR-API.MIN-MESSAGE-LENGTH", 5) ||
-                !(boolean) plugin.getSettings().getValue("GRAMMAR-API.ENABLED", false)) return;
+        if (message.length() < (int) plugin.getSettings().getInt("GRAMMAR-API.MIN-MESSAGE-LENGTH") ||
+                !(boolean) plugin.getSettings().getBoolean("GRAMMAR-API.ENABLED")) return;
 
-        if (player.hasPermission(plugin.getPermissionManager().getPermission("BYPASS-GRAMMAR"))) return;
+        if (player.hasPermission(plugin.getPermissionManager().getString("BYPASS-GRAMMAR"))) return;
 
         // Capitalize first letter
         try {
@@ -40,7 +40,7 @@ public class GrammerAPI implements Listener {
         }
 
         // Auto-correct feature
-        if ((boolean) plugin.getSettings().getValue("GRAMMAR-API.AUTO-CORRECT.ENABLED", false)) {
+        if ((boolean) plugin.getSettings().getBoolean("GRAMMAR-API.AUTO-CORRECT.ENABLED")) {
             String[] messageSplit = message.split(" ");
             StringBuilder sb = new StringBuilder();
 

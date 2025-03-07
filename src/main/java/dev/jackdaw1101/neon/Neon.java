@@ -43,17 +43,17 @@ import java.util.List;
 
 public final class Neon extends JavaPlugin {
 
-    private Settings settings;
-    private Messages messageManager;
-    private Permissions permissionManager;
-    private Discord discord;
+    private ConfigFile settings;
+    private ConfigFile messageManager;
+    private ConfigFile permissionManager;
+    private ConfigFile discord;
     private ChatMuteManager chatMuteManager;
     private AntiSpamManager antiSpamManager;
     private AntiLinkSystem antilinksystem;
     private WelcomeListener welcomeListener;
     private SwearManager swearManager;
     private AnnouncementManager announcementManager;
-    private Locales locales;
+    private ConfigFile locales;
     //private Database database;
     private NeonAPI neonAPI;
     private AddonManager addonManager;
@@ -68,7 +68,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadChatLogLogFolder() {
         File logFolder = new File("plugins/Neon/Logs/Chat");
-        boolean debugMode = (boolean) this.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -85,7 +85,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadAntiAdLogFolder() {
         File logFolder = new File("plugins/Neon/Logs/AntiAdvertise");
-        boolean debugMode = (boolean) this.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -103,7 +103,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadAntiSwearLogFolder() {
         File logFolder = new File("plugins/Neon/Logs/AntiSwear");
-        boolean debugMode = (boolean) this.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -121,7 +121,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadCOmmandLOgger() {
         File logFolder = new File("plugins/Neon/Logs/Commands");
-        boolean debugMode = (boolean) this.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -174,66 +174,25 @@ public final class Neon extends JavaPlugin {
 
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "Neon";
+        String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
-        settings = new Settings(this);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
+        //settings = new Settings(this);
         //database = new Database(this);
-        locales = new Locales(this);
-        this.messageManager = new Messages(this);
-        this.discord = new Discord(this);
-        this.permissionManager = new Permissions(this);
+        //locales = new Locales(this);
+        //this.messageManager = new Messages(this);
+        settings = new ConfigFile("settings.yml");
+        messageManager = new ConfigFile("messages.yml");
+        discord = new ConfigFile("discord.yml");
+        permissionManager = new ConfigFile("permissions.yml");
+        locales= new ConfigFile("locale.yml");
+        messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"));
 
-        File file = new File(pluginDir, "settings.yml");
-
-        try {
-
-            ConfigUpdater.update(this, "settings.yml", file);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        reloadConfig();
-
-       // File database = new File(getDataFolder(), "database.yml");
-
-        //try {
-
-       //     ConfigUpdater.update(this, "database.yml", database);
-        //} catch (IOException e) {
-         //   e.printStackTrace();
-        //}
-
-       // reloadConfig();
-
-        File messages = new File(pluginDir, "messages.yml");
-
-        try {
-            ConfigUpdater.update(this, "messages.yml", messages);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        reloadConfig();
-
-        File permission = new File(pluginDir, "permissions.yml");
-
-        try {
-            ConfigUpdater.update(this, "permissions.yml", permission);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        reloadConfig();
-
-        File discord = new File(pluginDir, "discord.yml");
-
-        try {
-            ConfigUpdater.update(this, "discord.yml", discord);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        reloadConfig();
+        //this.discord = new Discord(this);
+        //this.permissionManager = new Permissions(this);
 
         if (!checkConfigVersion()) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Unable To Load Configurations: Invalid Config Version");
@@ -257,7 +216,7 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Fetched Debug Util " + "(" + debugversion + ")" + ".");
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Commands...");
-        boolean MuteChat = (boolean) this.getSettings().getValue("COMMANDS.MUTE-CHAT", true);
+        boolean MuteChat = getSettings().getBoolean("COMMANDS.MUTE-CHAT");
 
         NeonCommand neonCommand = new NeonCommand(this);
         getCommand("neon").setExecutor(neonCommand);
@@ -278,9 +237,9 @@ public final class Neon extends JavaPlugin {
 
         //* Features (event) registeries
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Features...");
-        boolean isdebug = (boolean) this.getSettings().getValue("DEBUG-MODE", true);
-        boolean ISound = (boolean) this.getSettings().getValue("ISOUNDS-UTIL", true);
-        boolean XSound = (boolean) this.getSettings().getValue("XSOUNDS-UTIL", true);
+        boolean isdebug = getSettings().getBoolean("DEBUG-MODE");
+        boolean ISound = getSettings().getBoolean("ISOUNDS-UTIL");
+        boolean XSound = getSettings().getBoolean("XSOUNDS-UTIL");
         String isoundversion = "0.0.1";
         String xsoundversion = "1.0";
 
@@ -393,15 +352,14 @@ public final class Neon extends JavaPlugin {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        this.neonAPI = new NeonAPI(this, settings, addonManager, messageManager);
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded And Booted The API!");
 
         // load message
-        boolean chatFormatEnabled = (boolean) this.getSettings().getValue("CHAT_FORMAT_ENABLED", true);
-        boolean hover = (boolean) this.getSettings().getValue("HOVER_ENABLED", true);
-        boolean clickevent = (boolean) this.getSettings().getValue("CLICK_EVENT_ENABLED", true);
-        boolean chatinconsole = (boolean) this.getSettings().getValue("CHAT-IN-CONSOLE", true);
-        boolean logchat = (boolean) this.getSettings().getValue("LOG-CHAT", true);
+        boolean chatFormatEnabled = getSettings().getBoolean("CHAT_FORMAT_ENABLED");
+        boolean hover = getSettings().getBoolean("HOVER_ENABLED");
+        boolean clickevent = getSettings().getBoolean("CLICK_EVENT_ENABLED");
+        boolean chatinconsole = getSettings().getBoolean("CHAT-IN-CONSOLE");
+        boolean logchat =getSettings().getBoolean("LOG-CHAT");
 
         String status = chatFormatEnabled ? CC.GREEN + "true" : CC.RED + "false";
         String fs = hover ? CC.GREEN + "true" : CC.RED + "false";
@@ -409,10 +367,10 @@ public final class Neon extends JavaPlugin {
         String sl = chatinconsole ? CC.GREEN + "true" : CC.RED + "false";
         String lkg = logchat ? CC.GREEN + "true" : CC.RED + "false";
 
-        boolean debugmode = (boolean) this.getSettings().getValue("DEBUG-MODE", true);
+        boolean debugmode = getSettings().getBoolean("DEBUG-MODE");
 
         String vaziat = debugmode ? CC.GREEN + "true " + CC.GRAY + "(" + debugversion + CC.GRAY + ")" : CC.RED + "false";
-        boolean debugMode = (boolean) this.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
 
         long loadTime = System.currentTimeMillis() - startTime;
         Bukkit.getConsoleSender().sendMessage(CC.D_AQUA + "=============================================");
@@ -456,7 +414,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private boolean checkConfigVersion() {
-        int configVersion = (int) settings.getValue("CONFIG-VERSION", 1);
+        int configVersion = getSettings().getInt("CONFIG-VERSION");
 
         if (configVersion != getLatestConfigVersion()) {
             return false;
@@ -474,7 +432,7 @@ public final class Neon extends JavaPlugin {
         return this.antiSpamManager;
     }
 
-    public Messages getMessageManager() {
+    public ConfigFile getMessageManager() {
         return this.messageManager;
     }
 
@@ -482,11 +440,11 @@ public final class Neon extends JavaPlugin {
         return alertManager;
     }
 
-    public Permissions getPermissionManager() {
+    public ConfigFile getPermissionManager() {
         return this.permissionManager;
     }
 
-    public Discord getDiscordManager() {
+    public ConfigFile getDiscordManager() {
         return this.discord;
     }
 
@@ -494,7 +452,7 @@ public final class Neon extends JavaPlugin {
         return 1;
     }
 
-    public Settings getSettings() {
+    public ConfigFile getSettings() {
         return settings;
     }
 
@@ -502,7 +460,7 @@ public final class Neon extends JavaPlugin {
     //    return database;
     //}
 
-    public Locales getLocales() {
+    public ConfigFile getLocales() {
         return locales;
     }
 

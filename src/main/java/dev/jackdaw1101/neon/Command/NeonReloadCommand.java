@@ -1,5 +1,6 @@
 package dev.jackdaw1101.neon.Command;
 
+import dev.jackdaw1101.neon.Configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 
 public class NeonReloadCommand implements CommandExecutor {
     private final Neon plugin;
+    private ConfigFile configAPI;
 
     public NeonReloadCommand(Neon plugin) {
         this.plugin = plugin;
@@ -19,15 +21,15 @@ public class NeonReloadCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission(plugin.getPermissionManager().getPermission("RELOAD"))) {
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("NO-PERMISSION")));
-            if ((boolean) plugin.getSettings().getValue("NO-PERMISSION.USE-SOUND", true)) {
-                if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                    if ((boolean) plugin.getSettings().getValue("MENTION.ENABLE-SOUND", true)) {
-                        SoundUtil.playSound((Player) sender, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+        if (!sender.hasPermission(plugin.getPermissionManager().getString("RELOAD"))) {
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("NO-PERMISSION")));
+            if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
+                if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                    if ((boolean) plugin.getSettings().getBoolean("MENTION.ENABLE-SOUND")) {
+                        SoundUtil.playSound((Player) sender, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
                     }
-                } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                    XSounds.playSound((Player) sender, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+                } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                    XSounds.playSound((Player) sender, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
                 }
             }
             return true;
@@ -38,16 +40,20 @@ public class NeonReloadCommand implements CommandExecutor {
     }
 
     public void executeReload(CommandSender sender) {
-        boolean messagesReloaded = plugin.getMessageManager().reloadMessages();
-        boolean settingsReloaded = plugin.getSettings().reloadSettings();
-        boolean discordReloaded = plugin.getMessageManager().reloadMessages();
-        boolean permsReloaded = plugin.getPermissionManager().reloadPermissions();
-        boolean localesReloaded = plugin.getLocales().reloadLocales();
+        //boolean messagesReloaded = plugin.getMessageManager().reloadMessages();
+       // boolean settingsReloaded = plugin.getSettings().reloadSettings();
+        //boolean discordReloaded = plugin.getMessageManager().reloadMessages();
+        //boolean permsReloaded = plugin.getPermissionManager().reloadPermissions();
+        //boolean localesReloaded = plugin.getLocales().reloadLocales();
+        configAPI.reloadAllConfigs();
+        plugin.getLocales().reloadConfig();
+        plugin.getSettings().reloadConfig();
+        plugin.getMessageManager().reloadConfig();
+        plugin.getPermissionManager().reloadConfig();
+        plugin.getDiscordManager().reloadConfig();
 
-        if (messagesReloaded && settingsReloaded && permsReloaded && discordReloaded && localesReloaded) {
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("RELOADED-SUCCESSFULLY")));
-        } else {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("RELOAD-FAILED")));
-        }
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("RELOADED-SUCCESSFULLY")));
+        } //else {
+        //    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("RELOAD-FAILED")));
+        //}
     }
-}

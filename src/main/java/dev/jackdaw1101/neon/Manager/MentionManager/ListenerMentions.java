@@ -30,24 +30,24 @@ public class ListenerMentions implements Listener {
         Player sender = event.getPlayer();
         String message = event.getMessage();
 
-        boolean permRequired = (boolean) plugin.getSettings().getValue("MENTION.PERMISSION-REQUIRED", true);
+        boolean permRequired = (boolean) plugin.getSettings().getBoolean("MENTION.PERMISSION-REQUIRED");
 
-        if (permRequired && !sender.hasPermission(plugin.getPermissionManager().getPermission("MENTION"))) return;
-        if (!(boolean) plugin.getSettings().getValue("MENTION.ENABLED", true)) return;
+        if (permRequired && !sender.hasPermission(plugin.getPermissionManager().getString("MENTION"))) return;
+        if (!(boolean) plugin.getSettings().getBoolean("MENTION.ENABLED")) return;
 
-        String mentionSymbol = (String) plugin.getSettings().getValue("MENTION.SYMBOL", "@");
-        String mentionColor = (String) plugin.getSettings().getValue("MENTION.COLOR", "§e");
-        boolean everyoneEnabled = (boolean) plugin.getSettings().getValue("MENTION.EVERYONE.ENABLED", true);
-        String everyoneWord = (String) plugin.getSettings().getValue("MENTION.EVERYONE.WORD", "everyone");
-        long cooldownTime = (int) plugin.getSettings().getValue("MENTION.COOLDOWN");
-        String afterMentionColor = (String) plugin.getSettings().getValue("MENTION.AFTER-COLOR", "&r");
-        boolean cooldownTimeEnabled = (boolean) plugin.getSettings().getValue("MENTION.COOLDOWN-ENABLED");
+        String mentionSymbol = (String) plugin.getSettings().getString("MENTION.SYMBOL");
+        String mentionColor = (String) plugin.getSettings().getString("MENTION.COLOR");
+        boolean everyoneEnabled = (boolean) plugin.getSettings().getBoolean("MENTION.EVERYONE.ENABLED");
+        String everyoneWord = (String) plugin.getSettings().getString("MENTION.EVERYONE.WORD");
+        long cooldownTime = (int) plugin.getSettings().getInt("MENTION.COOLDOWN");
+        String afterMentionColor = (String) plugin.getSettings().getString("MENTION.AFTER-COLOR");
+        boolean cooldownTimeEnabled = (boolean) plugin.getSettings().getBoolean("MENTION.COOLDOWN-ENABLED");
 
         // Handle Cooldown
-        if (cooldownTimeEnabled && !sender.hasPermission(plugin.getPermissionManager().getPermission("MENTION-COOLDOWN-BYPASS")) && mentionCooldowns.containsKey(sender.getUniqueId())) {
+        if (cooldownTimeEnabled && !sender.hasPermission(plugin.getPermissionManager().getString("MENTION-COOLDOWN-BYPASS")) && mentionCooldowns.containsKey(sender.getUniqueId())) {
             long lastMentionTime = mentionCooldowns.get(sender.getUniqueId());
             if (System.currentTimeMillis() - lastMentionTime < cooldownTime) {
-                sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("MENTION-COOLDOWN-WARN")));
+                sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MENTION-COOLDOWN-WARN")));
                 return;
             }
         }
@@ -56,7 +56,7 @@ public class ListenerMentions implements Listener {
         String newMessage = message;
 
         // Check for "@everyone" or just "everyone" if mention symbol is empty
-        if (everyoneEnabled && sender.hasPermission(plugin.getPermissionManager().getPermission("MENTION-EVERYONE"))) {
+        if (everyoneEnabled && sender.hasPermission(plugin.getPermissionManager().getString("MENTION-EVERYONE"))) {
             if ((!mentionSymbol.isEmpty() && message.contains(mentionSymbol + everyoneWord)) || (mentionSymbol.isEmpty() && message.contains(everyoneWord))) {
                 for (Player target : Bukkit.getOnlinePlayers()) {
                     notifyPlayer(target, sender);
@@ -97,23 +97,23 @@ public class ListenerMentions implements Listener {
 
     private void notifyPlayer(Player target, Player sender) {
         // Send chat message notification
-        String notifyMessage = plugin.getMessageManager().getMessage("MENTION-NOTIFY")
+        String notifyMessage = plugin.getMessageManager().getString("MENTION-NOTIFY")
                 .replace("%sender%", sender.getName());
         notifyMessage = applyPlaceholders(sender, notifyMessage);
         target.sendMessage(ColorHandler.color(notifyMessage));
 
-        if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-            if ((boolean) plugin.getSettings().getValue("MENTION.ENABLE-SOUND", true)) {
-                SoundUtil.playSound(target, (String) plugin.getSettings().getValue("MENTION.SOUND"), 1.0f, 1.0f);
+        if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+            if ((boolean) plugin.getSettings().getBoolean("MENTION.ENABLE-SOUND")) {
+                SoundUtil.playSound(target, (String) plugin.getSettings().getString("MENTION.SOUND"), 1.0f, 1.0f);
             }
-        } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-            XSounds.playSound(target, (String) plugin.getSettings().getValue("MENTION.SOUND"), 1.0f, 1.0f);
+        } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+            XSounds.playSound(target, (String) plugin.getSettings().getString("MENTION.SOUND"), 1.0f, 1.0f);
         }
 
         // Send title if enabled
-        if ((boolean) plugin.getSettings().getValue("MENTION.TITLE.ENABLED", false)) {
-            String title = (String) plugin.getSettings().getValue("MENTION.TITLE.HEADER", "&cMentioned!");
-            String subtitle = (String) plugin.getSettings().getValue("MENTION.TITLE.FOOTER", "&7%sender% mentioned you!");
+        if ((boolean) plugin.getSettings().getBoolean("MENTION.TITLE.ENABLED")) {
+            String title = (String) plugin.getSettings().getString("MENTION.TITLE.HEADER");
+            String subtitle = (String) plugin.getSettings().getString("MENTION.TITLE.FOOTER");
 
             title = applyPlaceholders(sender, title);
             subtitle = applyPlaceholders(sender, subtitle.replace("%sender%", sender.getName()));

@@ -28,7 +28,7 @@ public class NeonCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0 || args[0].equalsIgnoreCase("help")) if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
-            if (!sender.hasPermission(plugin.getPermissionManager().getPermission("HELP"))) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("HELP"))) {
                 sendNoPermissionMessage(sender);
                 return true;
             }
@@ -51,7 +51,7 @@ public class NeonCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("chatclear")) {
-            if (!sender.hasPermission(plugin.getPermissionManager().getPermission("CHAT_CLEAR.PERMISSION"))) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("CHAT_CLEAR.PERMISSION"))) {
                 sendNoPermissionMessage(sender);
                 return true;
             }
@@ -68,7 +68,7 @@ public class NeonCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("mutechat")) {
-            if (!sender.hasPermission(plugin.getPermissionManager().getPermission("MUTE-CHAT-USE"))) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("MUTE-CHAT-USE"))) {
                 sendNoPermissionMessage(sender);
                 return true;
             }
@@ -84,7 +84,7 @@ public class NeonCommand implements CommandExecutor {
         }
 
         if (args[0].equalsIgnoreCase("togglealerts")) {
-            if (!sender.hasPermission(plugin.getPermissionManager().getPermission("TOGGLE-ALERTS-USE"))) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("TOGGLE-ALERTS-USE"))) {
                 sendNoPermissionMessage(sender);
                 return true;
             }
@@ -93,7 +93,7 @@ public class NeonCommand implements CommandExecutor {
                 Player player = (Player) sender;
                 plugin.getAlertManager().toggleAlerts(player); // Use the shared AlertManager instance
             } else {
-                sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("PLAYER-ONLY")));
+                sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("PLAYER-ONLY")));
             }
 
             return true;
@@ -102,7 +102,7 @@ public class NeonCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("reload")) {
-            if (!sender.hasPermission(plugin.getPermissionManager().getPermission("RELOAD"))) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("RELOAD"))) {
                 sendNoPermissionMessage(sender);
                 return true;
             }
@@ -117,7 +117,7 @@ public class NeonCommand implements CommandExecutor {
     }
 
     public void sendHelp(CommandSender sender) {
-        String header = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("SECOND-THEME") + CC.STRIKE_THROUGH + "----------------------------------------");
+        String header = ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getString("SECOND-THEME") + CC.STRIKE_THROUGH + "----------------------------------------");
         String page = ChatColor.translateAlternateColorCodes('&', "   &ePage: &7(1/2)");
         String versionInfo = ChatColor.translateAlternateColorCodes('&', CC.B_GOLD + "NEON CHAT MANAGER " + "&7v" + plugin.getDescription().getVersion());
         String mainMessage = ChatColor.translateAlternateColorCodes('&', "&7 * &b&lBy Jackdaw1101&d");
@@ -170,17 +170,17 @@ public class NeonCommand implements CommandExecutor {
             sender.sendMessage(mainMessage);
             sender.sendMessage(page);
             sender.sendMessage(blank);
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("MAIN-THEME") + "/neon reload" + reloadconsole));
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("MAIN-THEME") + "/neon help <page>" + helpconsole));
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("MAIN-THEME") + "/neon chatclear" + chatclearconsole));
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("MAIN-THEME") + "/neon mutechat" + mutechatconsole));
-            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getMessage("MAIN-THEME") + "/togglechat" + togglechatconsole));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MAIN-THEME") + "/neon reload" + reloadconsole));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MAIN-THEME") + "/neon help <page>" + helpconsole));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MAIN-THEME") + "/neon chatclear" + chatclearconsole));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MAIN-THEME") + "/neon mutechat" + mutechatconsole));
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MAIN-THEME") + "/togglechat" + togglechatconsole));
             sender.sendMessage(header);
         }
     }
 
     public void sendHelpPage2(CommandSender sender) {
-        String header = ColorHandler.color(plugin.getMessageManager().getMessage("SECOND-THEME") + CC.STRIKE_THROUGH + "----------------------------------------");
+        String header = ColorHandler.color(plugin.getMessageManager().getString("SECOND-THEME") + CC.STRIKE_THROUGH + "----------------------------------------");
         String page = ChatColor.translateAlternateColorCodes('&', " &ePage: &7(2/2)");
         String blank = ChatColor.translateAlternateColorCodes('&', " ");
 
@@ -203,7 +203,7 @@ public class NeonCommand implements CommandExecutor {
             sender.sendMessage(header);
             sender.sendMessage(page);
             sender.sendMessage(blank);
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("MAIN-THEME") + "/neon togglealerts" + togglealertsconsole));
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getString("MAIN-THEME") + "/neon togglealerts" + togglealertsconsole));
             sender.sendMessage(header);
         }
     }
@@ -211,24 +211,24 @@ public class NeonCommand implements CommandExecutor {
 
         private void sendNoPermissionMessage(CommandSender sender) {
         String noPermissionMessage = ColorHandler.color(
-                plugin.getMessageManager().getMessage("NO-PERMISSION"));
-        if ((boolean) plugin.getSettings().getValue("NO-PERMISSION.USE-SOUND", true)) {
-            if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                if ((boolean) plugin.getSettings().getValue("NO-PERMISSION.USE-SOUND", true)) {
-                    SoundUtil.playSound((Player) sender, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+                plugin.getMessageManager().getString("NO-PERMISSION"));
+        if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
+            if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
+                    SoundUtil.playSound((Player) sender, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
                 }
-            } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                XSounds.playSound((Player) sender, (String) plugin.getSettings().getValue("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
+            } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                XSounds.playSound((Player) sender, (String) plugin.getSettings().getString("NO-PERMISSION.SOUND"), 1.0f, 1.0f);
             }
         }
         sender.sendMessage(noPermissionMessage);
     }
 
     private TextComponent createClickableMessage(String command, String hoverText) {
-        boolean isSuggestCommand = (boolean) plugin.getSettings().getValue("NEON-COMMAND.SUGGEST-COMMANDS", true);
-        boolean isRunCommand = (boolean) plugin.getSettings().getValue("NEON-COMMAND.RUN-COMMANDS", true);
+        boolean isSuggestCommand = (boolean) plugin.getSettings().getBoolean("NEON-COMMAND.SUGGEST-COMMANDS");
+        boolean isRunCommand = (boolean) plugin.getSettings().getBoolean("NEON-COMMAND.RUN-COMMANDS");
 
-        TextComponent message = new TextComponent(ColorHandler.color(plugin.getMessageManager().getMessage("MAIN-THEME") + command));
+        TextComponent message = new TextComponent(ColorHandler.color(plugin.getMessageManager().getString("MAIN-THEME") + command));
 
         if (isSuggestCommand && !isRunCommand) {
             message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));

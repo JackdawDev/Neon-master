@@ -26,6 +26,10 @@ public class Permissions {
         String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
 
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
+
         File permissionFile = new File(pluginDir, "permissions.yml");
 
         if (!permissionFile.exists()) {
@@ -48,7 +52,7 @@ public class Permissions {
     public boolean reloadPermissions() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "Neon";
+        String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
 
         File permissionFile = new File(pluginDir, "permissions.yml");

@@ -65,11 +65,11 @@ public class NeonAPI {
          * @param message The offending message.
          */
         public void handlePunishment(Player player, int strikes, String message) {
-            int punishLimit = (int) plugin.getSettings().getValue("PUNISH.LIMIT", 3);
-            boolean punishEnabled = (boolean) plugin.getSettings().getValue("PUNISH.ENABLED", true);
+            int punishLimit = (int) plugin.getSettings().getInt("PUNISH.LIMIT");
+            boolean punishEnabled = (boolean) plugin.getSettings().getBoolean("PUNISH.ENABLED");
 
             if (strikes >= punishLimit && punishEnabled) {
-                String command = (String) plugin.getSettings().getValue("PUNISH.COMMAND", "kick %player%");
+                String command = (String) plugin.getSettings().getString("PUNISH.COMMAND");
                 plugin.getServer().dispatchCommand(
                         plugin.getServer().getConsoleSender(),
                         command.replace("%player%", player.getName())
@@ -85,9 +85,9 @@ public class NeonAPI {
          * @param message The swear message.
          */
         public void notifyAdmins(Player player, String message) {
-            String alert = plugin.getMessageManager().getMessage("ADMIN_ALERT");
+            String alert = plugin.getMessageManager().getString("ADMIN_ALERT");
             String formattedAlert = alert.replace("<player>", player.getName()).replace("%message%", message);
-            String permission = plugin.getPermissionManager().getPermission("ADMIN-ALERT");
+            String permission = plugin.getPermissionManager().getString("ADMIN-ALERT");
 
             plugin.getServer().getOnlinePlayers().forEach(admin -> {
                 if (admin.hasPermission(permission)) {
@@ -103,7 +103,7 @@ public class NeonAPI {
          * @param message The offending message.
          */
         public void logSwearEvent(Player player, String message) {
-            boolean logEnabled = (boolean) plugin.getSettings().getValue("ANTI-SWEAR.LOG", true);
+            boolean logEnabled = (boolean) plugin.getSettings().getBoolean("ANTI-SWEAR.LOG");
             if (logEnabled) {
                 // Example logger, customize as needed
                 plugin.getLogger().info(player.getName() + " swore: " + message);
@@ -118,7 +118,7 @@ public class NeonAPI {
          * @param strikes The player's strike count.
          */
         public void sendPunishmentNotification(Player player, String message, int strikes) {
-            String punishMessage = plugin.getMessageManager().getMessage("PUNISH_NOTIFY");
+            String punishMessage = plugin.getMessageManager().getString("PUNISH_NOTIFY");
             if (punishMessage != null) {
                 player.sendMessage(
                         punishMessage
@@ -135,7 +135,7 @@ public class NeonAPI {
          * @return True if the word is blacklisted, false otherwise.
          */
         public boolean isWordBlacklisted(String word) {
-            List<String> blacklist = (List<String>) plugin.getSettings().getValue("ANTI-SWEAR.BLACKLIST");
+            List<String> blacklist = (List<String>) plugin.getSettings().getStringList("ANTI-SWEAR.BLACKLIST");
             return blacklist.stream().anyMatch(word::equalsIgnoreCase);
         }
 

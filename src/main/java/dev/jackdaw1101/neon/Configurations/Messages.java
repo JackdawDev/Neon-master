@@ -29,6 +29,10 @@ public class Messages {
         String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
 
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
+
         File messagesFile = new File(pluginDir, "messages.yml");
 
         if (!messagesFile.exists()) {
@@ -72,8 +76,12 @@ public class Messages {
     public boolean reloadMessages() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "Neon";
+        String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
 
         File messagesFile = new File(pluginDir, "messages.yml");
 

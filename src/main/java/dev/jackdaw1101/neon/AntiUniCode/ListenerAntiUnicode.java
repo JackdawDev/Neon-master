@@ -24,24 +24,24 @@ public class ListenerAntiUnicode implements Listener {
         Player player = event.getPlayer();
         String message = event.getMessage();
 
-        if (!(boolean) plugin.getSettings().getValue("ANTI-UNICODE.ENABLED", true)) return;
-        if (player.hasPermission((String) plugin.getPermissionManager().getPermission("ANTI-UNICODE-BYPASS"))) return;
+        if (!plugin.getSettings().getBoolean("ANTI-UNICODE.ENABLED")) return;
+        if (player.hasPermission((String) plugin.getPermissionManager().getString("ANTI-UNICODE-BYPASS"))) return;
 
         if (containsUnicode(message)) {
             event.setCancelled(true);
 
-            String blockMessage = ColorHandler.color(plugin.getMessageManager().getMessage("ANTI-UNICODE.BLOCK-MESSAGE"));
-            if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                if ((boolean) plugin.getSettings().getValue("ANTI-UNICODE.USE-SOUND", true)) {
-                    SoundUtil.playSound(player, (String) plugin.getSettings().getValue("ANTI-UNICODE.SOUND"), 1.0f, 1.0f);
+            String blockMessage = ColorHandler.color(plugin.getMessageManager().getString("ANTI-UNICODE.BLOCK-MESSAGE"));
+            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                if (plugin.getSettings().getBoolean("ANTI-UNICODE.USE-SOUND")) {
+                    SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-UNICODE.SOUND"), 1.0f, 1.0f);
                 }
-            } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                XSounds.playSound(player, (String) plugin.getSettings().getValue("ANTI-UNICODE.SOUND"), 1.0f, 1.0f);
+            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-UNICODE.SOUND"), 1.0f, 1.0f);
             }
             player.sendMessage(blockMessage);
 
-            if ((boolean) plugin.getSettings().getValue("ANTI-UNICODE.KICK-ENABLED", true)) {
-                String kickMessage = ColorHandler.color(plugin.getMessageManager().getMessage("ANTI-UNICODE.KICK-MESSAGE"));
+            if (plugin.getSettings().getBoolean("ANTI-UNICODE.KICK-ENABLED")) {
+                String kickMessage = ColorHandler.color(plugin.getMessageManager().getString("ANTI-UNICODE.KICK-MESSAGE"));
                 player.kickPlayer(kickMessage);
             }
         }

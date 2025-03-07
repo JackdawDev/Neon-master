@@ -34,7 +34,7 @@ public class AnnouncementManager {
     }
 
     private void updateSchedulers() {
-        ConfigurationSection announcementsSection = plugin.getLocales().getLocalesConfig().getConfigurationSection("ANNOUNCEMENTS");
+        ConfigurationSection announcementsSection = plugin.getLocales().getConfig().getConfigurationSection("ANNOUNCEMENTS");
 
         if (announcementsSection == null) return;
 
@@ -75,7 +75,7 @@ public class AnnouncementManager {
     }
 
     private void sendAnnouncement(String key) {
-        ConfigurationSection announcement = plugin.getLocales().getLocalesConfig().getConfigurationSection("ANNOUNCEMENTS." + key);
+        ConfigurationSection announcement = plugin.getLocales().getConfig().getConfigurationSection("ANNOUNCEMENTS." + key);
         if (announcement == null) return;
 
         boolean requirePermission = announcement.getBoolean("REQUIRE-PERMISSION", false);
@@ -126,11 +126,11 @@ public class AnnouncementManager {
         player.spigot().sendMessage(components);
 
         if (playSound) {
-            if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
+            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
                 if (playSound) {
                     SoundUtil.playSound(player, soundName, 1.0f, 1.0f);
                 }
-            } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
+            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
                 if (playSound) {
                     XSounds.playSound(player, soundName, 1.0f, 1.0f);
                 }

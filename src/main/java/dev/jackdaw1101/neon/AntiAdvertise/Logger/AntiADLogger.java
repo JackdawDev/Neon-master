@@ -32,7 +32,7 @@ public class AntiADLogger {
     private void logToFile() {
         File folder = new File(LOG_FOLDER);
 
-        boolean debugMode = (boolean) plugin.getSettings().getValue("DEBUG-MODE", true);  // Default to true if not set
+        boolean debugMode = plugin.getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!folder.exists() && !folder.mkdirs()) {
             if (debugMode && !loggedOnce) {
                 Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Failed to create log folder at " + CC.D_RED + LOG_FOLDER);

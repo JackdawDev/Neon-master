@@ -3,12 +3,14 @@ package dev.jackdaw1101.neon.Configurations;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
+import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Settings {
 
@@ -24,8 +26,12 @@ public class Settings {
     private void createSettingsFile() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "Neon";
+        String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
 
         settingsFile = new File(pluginDir, "settings.yml");
 
@@ -35,11 +41,6 @@ public class Settings {
 
         settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
 
-        ConfigUpdate();
-    }
-
-    public void ConfigUpdate() {
-        settingsConfig.options().copyDefaults(true);
     }
 
     public void saveSettings() {

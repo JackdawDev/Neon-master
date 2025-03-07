@@ -31,7 +31,7 @@ public class AntiLinkSystem implements Listener {
     public AntiLinkSystem(Neon plugin, AlertManager alertManager) {
         this.plugin = plugin;
         this.urlPattern = Pattern.compile("^(http://www\\.|https://www\\.|http://|https://)?[a-z0-9]+([\\-.][a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$");
-        this.whitelistedLinks = (List<String>) plugin.getSettings().getValue("ANTI-LINK.WHITELIST");
+        this.whitelistedLinks = plugin.getSettings().getStringList("ANTI-LINK.WHITELIST");
         this.alertManager = alertManager;
     }
 
@@ -39,34 +39,34 @@ public class AntiLinkSystem implements Listener {
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
-        if ((Boolean) this.plugin.getSettings().getValue("ANTI-LINK.ENABLED", true)) {
+        if (plugin.getSettings().getBoolean("ANTI-LINK.ENABLED")) {
             handleLinkCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
 
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
-        if ((Boolean) this.plugin.getSettings().getValue("ANTI-LINK.CHECK-COMMANDS", true)) {
+        if (plugin.getSettings().getBoolean("ANTI-LINK.CHECK-COMMANDS")) {
             handleLinkCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
 
     private void handleLinkCheck(Player player, String message, Cancellable cancellable) {
-        if (!player.hasPermission(this.plugin.getPermissionManager().getPermission("ANTI-LINK-BYPASS"))) {
+        if (!player.hasPermission(this.plugin.getPermissionManager().getString("ANTI-LINK-BYPASS"))) {
             // Clean message to remove obfuscated links
             String sanitizedMessage = sanitizeMessage(message);
 
             if (containsLink(sanitizedMessage)) {
                 String alertMessage = ColorHandler.color(
-                        this.plugin.getMessageManager().getMessage("ANTI-LINK.ALERT-MESSAGE"));
-                String cancelType = (String) this.plugin.getSettings().getValue("ANTI-LINK.CANCEL-TYPE", "silent");
+                        this.plugin.getMessageManager().getString("ANTI-LINK.ALERT-MESSAGE"));
+                String cancelType = (String) plugin.getSettings().getString("ANTI-LINK.CANCEL-TYPE");
 
                 cancellable.setCancelled(true);
 
                 switch (cancelType) {
                     case "silent":
-                        boolean log = (boolean) plugin.getSettings().getValue("ANTI-LINK.LOG", true);
-                        String warnMessage = ColorHandler.color(this.plugin.getMessageManager().getMessage("ANTI-LINK.WARNING-MESSAGE"));
+                        boolean log = plugin.getSettings().getBoolean("ANTI-LINK.LOG");
+                        String warnMessage = ColorHandler.color(this.plugin.getMessageManager().getString("ANTI-LINK.WARNING-MESSAGE"));
                         Bukkit.getScheduler().runTask(this.plugin, () -> {
                             notifyAdmins(player, message);
                             player.sendMessage(warnMessage);
@@ -75,19 +75,19 @@ public class AntiLinkSystem implements Listener {
                             if (log) {
                                 new AntiADLogger(player, message, plugin);
                             }
-                            if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                                if ((boolean) plugin.getSettings().getValue("ANTI-LINK.WARN-SOUND-ENABLED", true)) {
-                                    SoundUtil.playSound(player, (String) plugin.getSettings().getValue("ANTI-LINK.WARN-SOUND"), 1.0f, 1.0f);
+                            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                                if (plugin.getSettings().getBoolean("ANTI-LINK.WARN-SOUND-ENABLED")) {
+                                    SoundUtil.playSound(player, plugin.getSettings().getString("ANTI-LINK.WARN-SOUND"), 1.0f, 1.0f);
                                 }
-                            } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                                XSounds.playSound(player, (String) plugin.getSettings().getValue("ANTI-LINK.WARN-SOUND"), 1.0f, 1.0f);
+                            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                                XSounds.playSound(player, plugin.getSettings().getString("ANTI-LINK.WARN-SOUND"), 1.0f, 1.0f);
                             }
                         });
                         break;
                     default:
                         Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Invalid CANCEL-TYPE for Anti-Link in Settings. Using 'silent' as default.");
                         cancellable.setCancelled(true);
-                        if ((Boolean) this.plugin.getSettings().getValue("ANTI-LINK.ALERT-ADMINS", true)) {
+                        if (plugin.getSettings().getBoolean("ANTI-LINK.ALERT-ADMINS")) {
                             notifyAdmins(player, message);
                         }
                 }
@@ -130,20 +130,20 @@ public class AntiLinkSystem implements Listener {
 
 
     private void notifyAdmins(Player player, String message) {
-        String alert = this.plugin.getMessageManager().getMessage("ANTI-LINK.ALERT-MESSAGE");
+        String alert = this.plugin.getMessageManager().getString("ANTI-LINK.ALERT-MESSAGE");
         String formattedAlert = alert.replace("<player>", player.getName()).replace("%message%", message);
         formattedAlert = ColorHandler.color(formattedAlert);
-        String permission = this.plugin.getPermissionManager().getPermission("ANTI-LINK-ADMIN-ALERT");
+        String permission = this.plugin.getPermissionManager().getString("ANTI-LINK-ADMIN-ALERT");
 
         for (Player admin : Bukkit.getOnlinePlayers()) {
             if (admin != null && admin.hasPermission(permission) && alertManager.isAlertsDisabled(player)) {
                 admin.sendMessage(formattedAlert);
-                if ((boolean) plugin.getSettings().getValue("ISOUNDS-UTIL", true)) {
-                    if ((boolean) plugin.getSettings().getValue("ANTI-LINK.ALERT-SOUND-ENABLED", true)) {
-                        SoundUtil.playSound(player, (String) plugin.getSettings().getValue("ANTI-LINK.ALERT-SOUND"), 1.0f, 1.0f);
+                if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                    if (plugin.getSettings().getBoolean("ANTI-LINK.ALERT-SOUND-ENABLED")) {
+                        SoundUtil.playSound(player, plugin.getSettings().getString("ANTI-LINK.ALERT-SOUND"), 1.0f, 1.0f);
                     }
-                } else if ((boolean) plugin.getSettings().getValue("XSOUNDS-UTIL", true)) {
-                    XSounds.playSound(player, (String) plugin.getSettings().getValue("ANTI-LINK.ALERT-SOUND"), 1.0f, 1.0f);
+                } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                    XSounds.playSound(player, plugin.getSettings().getString("ANTI-LINK.ALERT-SOUND"), 1.0f, 1.0f);
                 }
             }
         }

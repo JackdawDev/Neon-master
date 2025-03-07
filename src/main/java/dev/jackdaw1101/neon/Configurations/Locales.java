@@ -33,8 +33,12 @@ public class Locales {
     public void createLocalesFile() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "Neon";
+        String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
 
         LocaleConfig = new File(pluginDir, "locale.yml");
 

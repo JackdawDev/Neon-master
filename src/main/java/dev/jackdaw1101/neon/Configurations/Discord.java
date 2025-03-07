@@ -23,8 +23,12 @@ public class Discord {
     private void loadDiscord() {
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "Neon";
+        String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
 
         File discordFile = new File(pluginDir, "discord.yml");
 
@@ -63,6 +67,10 @@ public class Discord {
         File pluginsDir = new File(serverDir, "plugins");
         String pluginName = "NeonLoader";
         File pluginDir = new File(pluginsDir, pluginName);
+
+        if (!pluginDir.exists()) {
+            pluginDir.mkdirs();
+        }
 
         File discordFile = new File(pluginDir, "discord.yml");
 
