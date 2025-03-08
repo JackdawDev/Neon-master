@@ -51,7 +51,7 @@ public class NeonCommand implements CommandExecutor {
 
 
         if (args[0].equalsIgnoreCase("chatclear")) {
-            if (!sender.hasPermission(plugin.getPermissionManager().getString("CHAT_CLEAR.PERMISSION"))) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("CHAT-CLEAR.PERMISSION"))) {
                 sendNoPermissionMessage(sender);
                 return true;
             }
