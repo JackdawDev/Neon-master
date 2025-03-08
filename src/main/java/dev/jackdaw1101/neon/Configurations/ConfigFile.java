@@ -7,8 +7,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class ConfigFile {
 
@@ -54,9 +53,7 @@ public class ConfigFile {
         saveDefaultConfig();
 
         File configFile = new File(file.getParent(), configName);
-
         YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/" + configName)));
-
         YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
 
         for (String key : defaultConfig.getKeys(true)) {
@@ -66,8 +63,8 @@ public class ConfigFile {
         }
 
         existingConfig.save(configFile);
+        loadComments();
     }
-
 
     private void saveDefaultConfig() {}
 
@@ -82,14 +79,34 @@ public class ConfigFile {
 
     public String readFile(InputStream inputStream) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String content = "";
+        StringBuilder content = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
-            content += line + "\n";
+            content.append(line).append("\n");
         }
-
         reader.close();
-        return content.trim();
+        return content.toString().trim();
+    }
+
+    public void loadComments() {
+        try {
+            if (!file.exists()) return;
+            List<String> lines = new ArrayList<>();
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            reader.close();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            for (String l : lines) {
+                writer.write(l + "\n");
+            }
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void replacePlaceholdersInConfig(String... placeholdersAndValues) {
@@ -109,7 +126,6 @@ public class ConfigFile {
 
         save();
     }
-
 
     public void save() {
         try {
@@ -144,7 +160,6 @@ public class ConfigFile {
         return this.config.getStringList(path);
     }
 
-
     public YamlConfiguration getConfig() {
         return config;
     }
@@ -164,6 +179,7 @@ public class ConfigFile {
             }
 
             config.load(file);
+            loadComments();
             Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Successfully reloaded the config file: " + configName);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
@@ -181,10 +197,8 @@ public class ConfigFile {
     }
 
     public void reloadAllConfigs() {
-        config = null; // Unload the config
+        config = null;
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Unloading config file " + configName);
-
-        reloadConfig(); // Reload the config
+        reloadConfig();
     }
-
 }
