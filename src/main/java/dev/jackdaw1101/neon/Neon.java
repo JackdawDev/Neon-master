@@ -39,6 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public final class Neon extends JavaPlugin {
 
@@ -66,7 +67,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadChatLogLogFolder() {
-        File logFolder = new File("plugins/Neon/Logs/Chat");
+        File logFolder = new File("plugins/NeonLoader/Logs/Chat");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -83,7 +84,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadAntiAdLogFolder() {
-        File logFolder = new File("plugins/Neon/Logs/AntiAdvertise");
+        File logFolder = new File("plugins/NeonLoader/Logs/AntiAdvertise");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -101,7 +102,7 @@ public final class Neon extends JavaPlugin {
 
 
     private void loadAntiSwearLogFolder() {
-        File logFolder = new File("plugins/Neon/Logs/AntiSwear");
+        File logFolder = new File("plugins/NeonLoader/Logs/AntiSwear");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -119,7 +120,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadCOmmandLOgger() {
-        File logFolder = new File("plugins/Neon/Logs/Commands");
+        File logFolder = new File("plugins/NeonLoader/Logs/Commands");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -166,10 +167,6 @@ public final class Neon extends JavaPlugin {
         long startTime = System.currentTimeMillis();
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Configurations...");
-        loadAntiAdLogFolder();
-        loadCOmmandLOgger();
-        loadChatLogLogFolder();
-        loadAntiSwearLogFolder();
 
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
@@ -188,7 +185,19 @@ public final class Neon extends JavaPlugin {
         discord = new ConfigFile("discord.yml");
         permissionManager = new ConfigFile("permissions.yml");
         locales= new ConfigFile("locale.yml");
-        messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"));
+        messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"), "{auto_response_prefix}", getMessageManager().getString("AUTO-RESPONSE-PREFIX"));
+
+
+        settings.loadComments();
+        messageManager.loadComments();
+        locales.loadComments();
+        permissionManager.loadComments();
+        discord.loadComments();
+
+        loadAntiAdLogFolder();
+        loadCOmmandLOgger();
+        loadChatLogLogFolder();
+        loadAntiSwearLogFolder();
 
         //this.discord = new Discord(this);
         //this.permissionManager = new Permissions(this);
