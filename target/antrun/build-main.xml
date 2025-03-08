@@ -4,7 +4,7 @@
     <property name="runtime_classpath" refid="maven.runtime.classpath" />
     <taskdef classname="com.yworks.yguard.YGuardTask" classpath="${runtime_classpath}" name="yguard" />
     <yguard>
-      <inoutpair in="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/Neon-1.0.0.jar" out="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/Neon-1.0.0.jar" />
+      <inoutpair in="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/Neon-1.0.jar" out="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/Neon-1.0.jar" />
       <rename logfile="C:\Users\Administrator\Desktop\Jackdaw1101\Neon\target/yguard.log.xml" replaceClassNameStrings="true" scramble="true">
         <property name="overload-enabled" value="true" />
         <property name="naming-scheme" value="best" />

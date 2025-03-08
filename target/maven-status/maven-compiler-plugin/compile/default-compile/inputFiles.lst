@@ -12,7 +12,6 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Discord.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Chat\MuteChatCommandNormal.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\MOTD\WelcomeListener.java
-C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\IGUI\NeonGUI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Chat\Manager\ChatMuteManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Utils\Utils.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Messages.java
@@ -48,8 +47,7 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\Logger\ChatLogger.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSpam\ListenerAntiSpam.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Permissions.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\ConfigFile.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\ChatFormat.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiAdvertise\AntiLinkSystem.java
-C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Loader.java
-C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\License.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Alerts\AlertManager.java
