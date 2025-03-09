@@ -21,15 +21,20 @@ public class ConfigFile {
 
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "NeonLoader";
+        String pluginName = "AstroLoader";
+        String Plugin = "Neon";
+
         File pluginDir = new File(pluginsDir, pluginName);
+        File subPluginDir = new File(pluginDir, Plugin);
 
         if (!pluginDir.exists()) {
             pluginDir.mkdirs();
         }
+        if (!subPluginDir.exists()) {
+            subPluginDir.mkdirs();
+        }
 
-        file = new File(pluginDir, configName);
-
+        file = new File(subPluginDir, configName);
         try {
             init();
         } catch (IOException e) {

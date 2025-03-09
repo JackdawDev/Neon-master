@@ -67,7 +67,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadChatLogLogFolder() {
-        File logFolder = new File("plugins/NeonLoader/Logs/Chat");
+        File logFolder = new File("plugins/AstroLoader/Neon/Logs/Chat");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -84,7 +84,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadAntiAdLogFolder() {
-        File logFolder = new File("plugins/NeonLoader/Logs/AntiAdvertise");
+        File logFolder = new File("plugins/AstroLoader/Neon/Logs/AntiAdvertise");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -102,7 +102,7 @@ public final class Neon extends JavaPlugin {
 
 
     private void loadAntiSwearLogFolder() {
-        File logFolder = new File("plugins/NeonLoader/Logs/AntiSwear");
+        File logFolder = new File("plugins/AstroLoader/Neon/Logs/AntiSwear");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -120,7 +120,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadCOmmandLOgger() {
-        File logFolder = new File("plugins/NeonLoader/Logs/Commands");
+        File logFolder = new File("plugins/AstroLoader/Neon/Logs/Commands");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -170,7 +170,7 @@ public final class Neon extends JavaPlugin {
 
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "NeonLoader";
+        String pluginName = "AstroLoader";
         File pluginDir = new File(pluginsDir, pluginName);
 
         if (!pluginDir.exists()) {
