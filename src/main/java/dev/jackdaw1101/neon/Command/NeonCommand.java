@@ -67,6 +67,36 @@ public class NeonCommand implements CommandExecutor {
             return true;
         }
 
+        if (args[0].equalsIgnoreCase("version") || args[0].equalsIgnoreCase("ver")) {
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("NEON-VERSION"))) {
+                sendNoPermissionMessage(sender);
+                return true;
+            }
+
+            if (sender instanceof Player) {
+                Player player = (Player) sender;
+                player.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
+                player.sendMessage(ColorHandler.color("&fThis Server is Running &eNeon Chat Manager"));
+                player.sendMessage(ColorHandler.color("&fDeveloped by &6Jackdaw1101"));
+                player.sendMessage(ColorHandler.color(" "));
+                player.sendMessage(ColorHandler.color("&fVersion: &7v" + plugin.getDescription().getVersion()));
+                player.sendMessage(ColorHandler.color("&fDiscord: &ejackdawytmr"));
+                player.sendMessage(ColorHandler.color("&fInstagram: &e@Jackdaw.Java"));                player.sendMessage(ColorHandler.color(" "));
+                player.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
+            } else {
+                sender.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
+                sender.sendMessage(ColorHandler.color("&fThis Server is Running &eNeon Chat Manager"));
+                sender.sendMessage(ColorHandler.color("&fDeveloped by &6Jackdaw1101"));
+                sender.sendMessage(ColorHandler.color(" "));
+                sender.sendMessage(ColorHandler.color("&fVersion: &7v" + plugin.getDescription().getVersion()));
+                sender.sendMessage(ColorHandler.color("&fDiscord: &ejackdawytmr"));
+                sender.sendMessage(ColorHandler.color("&fInstagram: &e@Jackdaw.Java"));
+                sender.sendMessage(ColorHandler.color(" "));
+                sender.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
+            }
+            return true;
+        }
+
         if (args[0].equalsIgnoreCase("mutechat")) {
             if (!sender.hasPermission(plugin.getPermissionManager().getString("MUTE-CHAT-USE"))) {
                 sendNoPermissionMessage(sender);

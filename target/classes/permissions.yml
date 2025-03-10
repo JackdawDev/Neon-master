@@ -18,6 +18,9 @@ RELOAD: "neon.reload"
 # Help: The permission to use /neon help and see the help message
 HELP: "neon.help"
 #
+# Permission of /neon ver
+NEON-VERSION: "neon.command.version"
+#
 ###############################################
 #   ChatFormat (PlaceholderAPI required)      #
 ###############################################

@@ -7,6 +7,8 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 
 public class ConfigFile {
@@ -14,6 +16,7 @@ public class ConfigFile {
     private final String configName;
     protected File file;
     protected YamlConfiguration config;
+    private final Map<String, List<String>> commentsMap = new LinkedHashMap<>();
 
     @SneakyThrows
     public ConfigFile(String configName) {
@@ -27,19 +30,15 @@ public class ConfigFile {
         File pluginDir = new File(pluginsDir, pluginName);
         File subPluginDir = new File(pluginDir, Plugin);
 
-        if (!pluginDir.exists()) {
-            pluginDir.mkdirs();
-        }
-        if (!subPluginDir.exists()) {
-            subPluginDir.mkdirs();
-        }
+        if (!pluginDir.exists()) pluginDir.mkdirs();
+        if (!subPluginDir.exists()) subPluginDir.mkdirs();
 
         file = new File(subPluginDir, configName);
         try {
             init();
         } catch (IOException e) {
             e.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "There was an error initializing the config file: " + configName);
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Neon] Error initializing config file: " + configName);
         }
     }
 
@@ -49,93 +48,118 @@ public class ConfigFile {
         }
 
         updateConfig();
-
         config = YamlConfiguration.loadConfiguration(file);
     }
 
     @SneakyThrows
     public void updateConfig() {
         saveDefaultConfig();
+        //loadComments();
+        mergeDefaults();
+    }
 
-        File configFile = new File(file.getParent(), configName);
-        YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/" + configName)));
-        YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
-
-        for (String key : defaultConfig.getKeys(true)) {
-            if (!existingConfig.contains(key)) {
-                existingConfig.set(key, defaultConfig.get(key));
+    private void saveDefaultConfig() {
+        if (!file.exists()) {
+            try (InputStream defaultStream = getClass().getResourceAsStream("/" + configName)) {
+                if (defaultStream != null) {
+                    Files.copy(defaultStream, file.toPath());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
-
-        existingConfig.save(configFile);
-        loadComments();
-    }
-
-    private void saveDefaultConfig() {}
-
-    public void loadDefaults() throws IOException {
-        InputStream is = getClass().getResourceAsStream("/" + configName);
-        if (is != null) {
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
-            writer.write(readFile(is));
-            writer.close();
-        }
-    }
-
-    public String readFile(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            content.append(line).append("\n");
-        }
-        reader.close();
-        return content.toString().trim();
     }
 
     public void loadComments() {
         try {
             if (!file.exists()) return;
+
+            commentsMap.clear();
+            List<String> lines = Files.readAllLines(file.toPath(), StandardCharsets.UTF_8);
+            String currentKey = "";
+            List<String> commentBuffer = new ArrayList<>();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                    commentBuffer.add(line);
+                } else {
+                    int colonIndex = line.indexOf(":");
+                    if (colonIndex > 0) {
+                        currentKey = line.substring(0, colonIndex).trim();
+                    }
+                    if (!commentBuffer.isEmpty()) {
+                        commentsMap.put(currentKey, new ArrayList<>(commentBuffer));
+                        commentBuffer.clear();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mergeDefaults() {
+        try {
+            File configFile = new File(file.getParent(), configName);
+            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/" + configName)));
+            YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+
+            for (String key : defaultConfig.getKeys(true)) {
+                if (!existingConfig.contains(key)) {
+                    existingConfig.set(key, defaultConfig.get(key));
+                }
+            }
+
+            saveWithComments(existingConfig);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveWithComments(YamlConfiguration config) {
+        try {
             List<String> lines = new ArrayList<>();
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
             String line;
+            String currentKey = "";
+            Set<String> addedKeys = new HashSet<>(); // To track already added comments
+
             while ((line = reader.readLine()) != null) {
-                lines.add(line);
+                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                    lines.add(line);
+                } else {
+                    int colonIndex = line.indexOf(":");
+                    if (colonIndex > 0) {
+                        currentKey = line.substring(0, colonIndex).trim();
+                    }
+
+                    // Add comments only if they haven't been added before
+                    if (commentsMap.containsKey(currentKey) && !addedKeys.contains(currentKey)) {
+                        lines.addAll(commentsMap.get(currentKey));
+                        addedKeys.add(currentKey);
+                    }
+
+                    lines.add(line);
+                }
             }
             reader.close();
 
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             for (String l : lines) {
-                writer.write(l + "\n");
+                writer.write(l);
+                writer.newLine();
             }
+            writer.flush();
             writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void replacePlaceholdersInConfig(String... placeholdersAndValues) {
-        if (placeholdersAndValues.length % 2 != 0) {
-            throw new IllegalArgumentException("Invalid number of arguments. Provide placeholders and values in pairs.");
-        }
-
-        for (String key : config.getKeys(true)) {
-            if (config.isString(key)) {
-                String value = config.getString(key);
-                for (int i = 0; i < placeholdersAndValues.length; i += 2) {
-                    value = value.replace(placeholdersAndValues[i], placeholdersAndValues[i + 1]);
-                }
-                config.set(key, value);
-            }
-        }
-
-        save();
-    }
-
     public void save() {
         try {
-            getConfig().save(file);
-            System.out.println("Config file saved!");
+            saveWithComments(config);
+            //Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Config file saved: " + configName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,10 +181,6 @@ public class ConfigFile {
         return this.config.getBoolean(path);
     }
 
-    public Collection<String> getSection(String section) {
-        return this.config.getConfigurationSection(section).getKeys(false);
-    }
-
     public List<String> getStringList(String path) {
         return this.config.getStringList(path);
     }
@@ -169,14 +189,18 @@ public class ConfigFile {
         return config;
     }
 
+    public boolean configExists() {
+        return file.exists();
+    }
+
     public void reloadConfig() {
         try {
-            if (!file.exists()) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Config file " + configName + " does not exist. Creating...");
+            if (!configExists()) {
+                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[Neon] Config file " + configName + " does not exist. Creating...");
                 file.createNewFile();
-                loadDefaults();
+                saveDefaultConfig();
             } else {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Reloading config file " + configName);
+                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[Neon] Reloading config file " + configName);
             }
 
             if (config == null) {
@@ -185,11 +209,29 @@ public class ConfigFile {
 
             config.load(file);
             loadComments();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Successfully reloaded the config file: " + configName);
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Neon] Successfully reloaded the config file: " + configName);
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "There was an error reloading the file " + configName);
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Neon] Error reloading config file: " + configName);
         }
+    }
+
+    public void replacePlaceholdersInConfig(String... placeholdersAndValues) {
+        if (placeholdersAndValues.length % 2 != 0) {
+            throw new IllegalArgumentException("Invalid number of arguments. Provide placeholders and values in pairs.");
+        }
+
+        for (String key : config.getKeys(true)) {
+            if (config.isString(key)) {
+                String value = config.getString(key);
+                for (int i = 0; i < placeholdersAndValues.length; i += 2) {
+                    value = value.replace(placeholdersAndValues[i], placeholdersAndValues[i + 1]);
+                }
+                config.set(key, value);
+            }
+        }
+
+        save();
     }
 
     public ConfigFile get() {
@@ -199,11 +241,5 @@ public class ConfigFile {
     public void set(String path, Object value) {
         this.config.set(path, value);
         save();
-    }
-
-    public void reloadAllConfigs() {
-        config = null;
-        Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Unloading config file " + configName);
-        reloadConfig();
     }
 }

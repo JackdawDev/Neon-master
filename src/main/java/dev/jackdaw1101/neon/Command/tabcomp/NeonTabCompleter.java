@@ -24,7 +24,7 @@ public class NeonTabCompleter implements TabCompleter {
         List<String> matches = new ArrayList<>();
 
         if (args.length == 1) {
-            StringUtil.copyPartialMatches(args[0], Arrays.asList("help", "reload", "chatclear", "mutechat", "togglealerts"), matches);
+            StringUtil.copyPartialMatches(args[0], Arrays.asList("help", "reload", "chatclear", "mutechat", "togglealerts", "ver", "version"), matches);
 
             if (matches.isEmpty() && sender instanceof Player) {
                 neonCommand.sendHelp(sender);

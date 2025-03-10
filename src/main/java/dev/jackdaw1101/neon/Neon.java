@@ -180,13 +180,13 @@ public final class Neon extends JavaPlugin {
         //database = new Database(this);
         //locales = new Locales(this);
         //this.messageManager = new Messages(this);
+
         settings = new ConfigFile("settings.yml");
         messageManager = new ConfigFile("messages.yml");
         discord = new ConfigFile("discord.yml");
         permissionManager = new ConfigFile("permissions.yml");
         locales= new ConfigFile("locale.yml");
         messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"), "{auto_response_prefix}", getMessageManager().getString("AUTO-RESPONSE-PREFIX"));
-
 
         settings.loadComments();
         messageManager.loadComments();
