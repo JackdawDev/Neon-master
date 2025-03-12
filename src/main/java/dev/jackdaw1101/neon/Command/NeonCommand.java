@@ -76,7 +76,7 @@ public class NeonCommand implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 player.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
-                player.sendMessage(ColorHandler.color("&fThis Server is Running &eNeon Chat Manager"));
+                player.sendMessage(ColorHandler.color("&fThis Server is Running &6&lNeon Chat Manager"));
                 player.sendMessage(ColorHandler.color("&fDeveloped by &6Jackdaw1101"));
                 player.sendMessage(ColorHandler.color(" "));
                 player.sendMessage(ColorHandler.color("&fVersion: &7v" + plugin.getDescription().getVersion()));
