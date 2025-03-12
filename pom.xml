@@ -106,6 +106,10 @@
           <id>sonatype</id>
           <url>https://oss.sonatype.org/content/groups/public/</url>
       </repository>
+      <repository>
+          <id>maven-central</id>
+          <url>https://oss.sonatype.org/content/groups/public</url>
+      </repository>
   </repositories>
 
   <dependencies>
@@ -149,6 +153,11 @@
           <artifactId>placeholderapi</artifactId>
           <version>2.11.6</version>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>com.tchristofferson</groupId>
+          <artifactId>ConfigUpdater</artifactId>
+          <version>2.2-SNAPSHOT</version>
       </dependency>
       <dependency>
           <groupId>com.yworks</groupId>

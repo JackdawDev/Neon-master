@@ -1,5 +1,6 @@
 package dev.jackdaw1101.neon;
 
+import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.API.NeonAPI;
 import dev.jackdaw1101.neon.AddonHandler.AddonManager;
 import dev.jackdaw1101.neon.Announcements.AnnouncementManager;
@@ -38,6 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -168,19 +170,6 @@ public final class Neon extends JavaPlugin {
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Configurations...");
 
-        File serverDir = Bukkit.getServer().getWorldContainer();
-        File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "AstroLoader";
-        File pluginDir = new File(pluginsDir, pluginName);
-
-        if (!pluginDir.exists()) {
-            pluginDir.mkdirs();
-        }
-        //settings = new Settings(this);
-        //database = new Database(this);
-        //locales = new Locales(this);
-        //this.messageManager = new Messages(this);
-
         settings = new ConfigFile("settings.yml");
         messageManager = new ConfigFile("messages.yml");
         discord = new ConfigFile("discord.yml");
@@ -188,19 +177,78 @@ public final class Neon extends JavaPlugin {
         locales= new ConfigFile("locale.yml");
         messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"), "{auto_response_prefix}", getMessageManager().getString("AUTO-RESPONSE-PREFIX"));
 
-        settings.loadComments();
-        messageManager.loadComments();
-        locales.loadComments();
-        permissionManager.loadComments();
-        discord.loadComments();
+        File serverDir = Bukkit.getServer().getWorldContainer();
+        File pluginsDir = new File(serverDir, "plugins");
+
+        String pluginName = "AstroLoader";
+        String subPluginName = "TxActionBar";
+
+        File pluginDir = new File(pluginsDir, pluginName);
+        File subPluginDir = new File(pluginDir, subPluginName);
+
+        if (!pluginDir.exists()) pluginDir.mkdirs();
+        if (!subPluginDir.exists()) subPluginDir.mkdirs();
+
+        File Settings = new File(subPluginDir, "settings.yml");
+
+        if (!Settings.exists()) {
+            saveResource("settings.yml", false);
+        }
+
+        try {
+            ConfigUpdater.update(this, "settings.yml", Settings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        reloadConfig();
+
+        File Messages = new File(subPluginDir, "messages.yml");
+
+        if (!Messages.exists()) {
+            saveResource("messages.yml", false);
+        }
+
+        try {
+            ConfigUpdater.update(this, "messages.yml", Messages);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        reloadConfig();
+
+        File Permissions = new File(subPluginDir, "permissions.yml");
+
+        if (!Permissions.exists()) {
+            saveResource("permissions.yml", false);
+        }
+
+        try {
+            ConfigUpdater.update(this, "permissions.yml", Permissions);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        reloadConfig();
+
+        File Discord = new File(subPluginDir, "discord.yml");
+
+        if (!Discord.exists()) {
+            saveResource("discord.yml", false);
+        }
+
+        try {
+            ConfigUpdater.update(this, "discord.yml", Discord);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        reloadConfig();
 
         loadAntiAdLogFolder();
         loadCOmmandLOgger();
         loadChatLogLogFolder();
         loadAntiSwearLogFolder();
-
-        //this.discord = new Discord(this);
-        //this.permissionManager = new Permissions(this);
 
         if (!checkConfigVersion()) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Unable To Load Configurations: Invalid Config Version");
