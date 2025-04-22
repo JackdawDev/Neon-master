@@ -69,7 +69,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadChatLogLogFolder() {
-        File logFolder = new File("plugins/AstroLoader/Neon/Logs/Chat");
+        File logFolder = new File("plugins/Neon/Logs/Chat");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -86,7 +86,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadAntiAdLogFolder() {
-        File logFolder = new File("plugins/AstroLoader/Neon/Logs/AntiAdvertise");
+        File logFolder = new File("plugins/Neon/Logs/AntiAdvertise");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -122,7 +122,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadCOmmandLOgger() {
-        File logFolder = new File("plugins/AstroLoader/Neon/Logs/Commands");
+        File logFolder = new File("plugins/Neon/Logs/Commands");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -147,11 +147,6 @@ public final class Neon extends JavaPlugin {
     private void unload() {
         long stopTime = System.currentTimeMillis();
         this.getNeonAPI().stopAPI();
-        try {
-            Thread.sleep(800);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         long disableTime = System.currentTimeMillis() - stopTime;
         Bukkit.getConsoleSender().sendMessage(CC.BD_RED + "=============================================");
         Bukkit.getConsoleSender().sendMessage(CC.RED + "| \\ | |" + CC.BL_PURPLE + " || " + CC.BL_PURPLE + "Version: " + CC.L_PURPLE + getDescription().getVersion());
@@ -170,75 +165,51 @@ public final class Neon extends JavaPlugin {
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Configurations...");
 
-        settings = new ConfigFile("settings.yml");
-        messageManager = new ConfigFile("messages.yml");
-        discord = new ConfigFile("discord.yml");
-        permissionManager = new ConfigFile("permissions.yml");
-        locales= new ConfigFile("locale.yml");
-        messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"), "{auto_response_prefix}", getMessageManager().getString("AUTO-RESPONSE-PREFIX"));
+        settings = new ConfigFile(this, "settings.yml");
+        messageManager = new ConfigFile(this, "messages.yml");
+        discord = new ConfigFile(this, "discord.yml");
+        permissionManager = new ConfigFile(this, "permissions.yml");
+        locales= new ConfigFile(this, "locale.yml");
+        messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"));
 
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
 
-        String pluginName = "AstroLoader";
-        String subPluginName = "TxActionBar";
-
-        File pluginDir = new File(pluginsDir, pluginName);
-        File subPluginDir = new File(pluginDir, subPluginName);
+        File pluginDir = new File(pluginsDir, "Neon");
 
         if (!pluginDir.exists()) pluginDir.mkdirs();
-        if (!subPluginDir.exists()) subPluginDir.mkdirs();
 
-        File Settings = new File(subPluginDir, "settings.yml");
-
-        if (!Settings.exists()) {
-            saveResource("settings.yml", false);
-        }
+        File settings = new File(getDataFolder(), "settings.yml");
 
         try {
-            ConfigUpdater.update(this, "settings.yml", Settings);
+            ConfigUpdater.update(this, "settings.yml", settings);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         reloadConfig();
-
-        File Messages = new File(subPluginDir, "messages.yml");
-
-        if (!Messages.exists()) {
-            saveResource("messages.yml", false);
-        }
+        File messages = new File(getDataFolder(), "messages.yml");
 
         try {
-            ConfigUpdater.update(this, "messages.yml", Messages);
+            ConfigUpdater.update(this, "messages.yml", messages);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         reloadConfig();
-
-        File Permissions = new File(subPluginDir, "permissions.yml");
-
-        if (!Permissions.exists()) {
-            saveResource("permissions.yml", false);
-        }
+        File permissions = new File(getDataFolder(), "permissions.yml");
 
         try {
-            ConfigUpdater.update(this, "permissions.yml", Permissions);
+            ConfigUpdater.update(this, "permissions.yml", permissions);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         reloadConfig();
-
-        File Discord = new File(subPluginDir, "discord.yml");
-
-        if (!Discord.exists()) {
-            saveResource("discord.yml", false);
-        }
+        File discord = new File(getDataFolder(), "discord.yml");
 
         try {
-            ConfigUpdater.update(this, "discord.yml", Discord);
+            ConfigUpdater.update(this, "discord.yml", discord);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -255,19 +226,9 @@ public final class Neon extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
-        try {
-            Thread.sleep(30);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Configurations!");
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Debug Util...");
-        try {
-            Thread.sleep(5);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Fetching Debug Util " + "(" + debugversion + ")" + "...");
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Fetched Debug Util " + "(" + debugversion + ")" + ".");
 
@@ -389,25 +350,10 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Log Files.");
         }
-        try {
-            Thread.sleep(75);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Events And Features");
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading API...");
-        try {
-            Thread.sleep(700);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Starting API...");
-        try {
-            Thread.sleep(300);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded And Booted The API!");
 
         // load message

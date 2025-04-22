@@ -3,7 +3,7 @@
 # | \ | |      by Jackdaw1101                          #
 # |  \| |/ _ \/ _ \| '_ \      Main Configuration For  #
 # | |\  |  __/ (_) | | | |     Neon!                   #
-# |_| \_|\___|\___/|_| |_|   (1.0.0)                   #
+# |_| \_|\___|\___/|_| |_|   (1.0)                     #
 ########################################################
 #
 # Don't Touch This!
@@ -75,19 +75,6 @@ ISOUNDS-UTIL: false
 #
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
 # It Also Supports Mini Messaging
-#
-####################################################
-#                      ASYNC                       #
-####################################################
-#
-# (!) DO Not Touch Under Any Circumstances!!!
-#
-# Waits Before Doing Some Tasks on Events like Join, Leave and...
-# ENABLED: Enable System (help With Performance and Fixes Bugs But Override all plugins)
-# TICKS: Waits 0.25 second before doing the task
-ASYNC:
-  ENABLED: true
-  TICKS: 5
 #
 ########################################################
 #                  ChatFormat                          #

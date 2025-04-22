@@ -51,58 +51,11 @@ public class NeonReloadCommand implements CommandExecutor {
         //boolean permsReloaded = plugin.getPermissionManager().reloadPermissions();
         //boolean localesReloaded = plugin.getLocales().reloadLocales();
         //configAPI.reloadAllConfigs();
-        plugin.getLocales().reloadConfig();
-        plugin.getSettings().reloadConfig();
-        plugin.getMessageManager().reloadConfig();
-        plugin.getPermissionManager().reloadConfig();
-        plugin.getDiscordManager().reloadConfig();
-
-        File serverDir = Bukkit.getServer().getWorldContainer();
-        File pluginsDir = new File(serverDir, "plugins");
-
-        String pluginName = "AstroLoader";
-        String subPluginName = "TxActionBar";
-
-        File pluginDir = new File(pluginsDir, pluginName);
-        File subPluginDir = new File(pluginDir, subPluginName);
-
-        if (!pluginDir.exists()) pluginDir.mkdirs();
-        if (!subPluginDir.exists()) subPluginDir.mkdirs();
-
-        File Settings = new File(subPluginDir, "settings.yml");
-
-        try {
-            ConfigUpdater.update(plugin, "settings.yml", Settings);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        File Messages = new File(subPluginDir, "messages.yml");
-
-        try {
-            ConfigUpdater.update(plugin, "messages.yml", Messages);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        File Permissions = new File(subPluginDir, "permissions.yml");
-
-
-        try {
-            ConfigUpdater.update(plugin, "permissions.yml", Permissions);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        File Discord = new File(subPluginDir, "discord.yml");
-
-        try {
-            ConfigUpdater.update(plugin, "discord.yml", Discord);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        plugin.getLocales().reload();
+        plugin.getSettings().reload();
+        plugin.getMessageManager().reload();
+        plugin.getPermissionManager().reload();
+        plugin.getDiscordManager().reload();
 
         sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("RELOADED-SUCCESSFULLY")));
         } //else {

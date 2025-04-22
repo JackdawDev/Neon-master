@@ -1,10 +1,12 @@
 package dev.jackdaw1101.neon.Configurations;
 
+import com.tchristofferson.configupdater.ConfigUpdater;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -13,39 +15,30 @@ import java.util.*;
 
 public class ConfigFile {
 
+    private final JavaPlugin plugin;
     private final String configName;
     protected File file;
     protected YamlConfiguration config;
     private final Map<String, List<String>> commentsMap = new LinkedHashMap<>();
 
     @SneakyThrows
-    public ConfigFile(String configName) {
+    public ConfigFile(JavaPlugin plugin, String configName) {
+        this.plugin = plugin;
         this.configName = configName;
 
-        File serverDir = Bukkit.getServer().getWorldContainer();
-        File pluginsDir = new File(serverDir, "plugins");
-        String pluginName = "AstroLoader";
-        String Plugin = "Neon";
+        file = new File(plugin.getDataFolder(), configName);
+        if (!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
 
-        File pluginDir = new File(pluginsDir, pluginName);
-        File subPluginDir = new File(pluginDir, Plugin);
-
-        if (!pluginDir.exists()) pluginDir.mkdirs();
-        if (!subPluginDir.exists()) subPluginDir.mkdirs();
-
-        file = new File(subPluginDir, configName);
         try {
             init();
         } catch (IOException e) {
             e.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Neon] Error initializing config file: " + configName);
+            plugin.getLogger().severe(ChatColor.RED + "[Neon] Error initializing config file: " + configName);
         }
     }
 
     public void init() throws IOException {
-        if (file == null) {
-            throw new IOException("File object is null. Cannot initialize.");
-        }
+        if (file == null) throw new IOException("File object is null. Cannot initialize.");
 
         updateConfig();
         config = YamlConfiguration.loadConfiguration(file);
@@ -54,19 +47,12 @@ public class ConfigFile {
     @SneakyThrows
     public void updateConfig() {
         saveDefaultConfig();
-        //loadComments();
         mergeDefaults();
     }
 
     private void saveDefaultConfig() {
         if (!file.exists()) {
-            try (InputStream defaultStream = getClass().getResourceAsStream("/" + configName)) {
-                if (defaultStream != null) {
-                    Files.copy(defaultStream, file.toPath());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            plugin.saveResource(configName, false);
         }
     }
 
@@ -100,9 +86,9 @@ public class ConfigFile {
 
     private void mergeDefaults() {
         try {
-            File configFile = new File(file.getParent(), configName);
-            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(getClass().getResourceAsStream("/" + configName)));
-            YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(configFile);
+            YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(
+                new InputStreamReader(plugin.getResource(configName), StandardCharsets.UTF_8));
+            YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(file);
 
             for (String key : defaultConfig.getKeys(true)) {
                 if (!existingConfig.contains(key)) {
@@ -122,7 +108,7 @@ public class ConfigFile {
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
             String line;
             String currentKey = "";
-            Set<String> addedKeys = new HashSet<>(); // To track already added comments
+            Set<String> addedKeys = new HashSet<>();
 
             while ((line = reader.readLine()) != null) {
                 if (line.trim().isEmpty() || line.trim().startsWith("#")) {
@@ -133,7 +119,6 @@ public class ConfigFile {
                         currentKey = line.substring(0, colonIndex).trim();
                     }
 
-                    // Add comments only if they haven't been added before
                     if (commentsMap.containsKey(currentKey) && !addedKeys.contains(currentKey)) {
                         lines.addAll(commentsMap.get(currentKey));
                         addedKeys.add(currentKey);
@@ -159,7 +144,6 @@ public class ConfigFile {
     public void save() {
         try {
             saveWithComments(config);
-            //Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "Config file saved: " + configName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -193,26 +177,25 @@ public class ConfigFile {
         return file.exists();
     }
 
-    public void reloadConfig() {
+    public boolean reload() {
         try {
-            if (!configExists()) {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[Neon] Config file " + configName + " does not exist. Creating...");
-                file.createNewFile();
-                saveDefaultConfig();
-            } else {
-                Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "[Neon] Reloading config file " + configName);
+            config = YamlConfiguration.loadConfiguration(file);
+
+            // If you use a default config resource inside your jar, uncomment the following lines
+            InputStream defConfigStream = plugin.getResource(configName);
+            if (defConfigStream != null) {
+                YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
+                config.setDefaults(defConfig);
             }
 
-            if (config == null) {
-                config = new YamlConfiguration();
-            }
+            // Optional: update the config with a utility method if you have one
+            ConfigUpdater.update(plugin, configName, file); // If you use a config updater util
 
-            config.load(file);
-            loadComments();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "[Neon] Successfully reloaded the config file: " + configName);
-        } catch (IOException | InvalidConfigurationException e) {
+            return true;
+        } catch (Exception e) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Neon] Failed to reload config: " + configName);
             e.printStackTrace();
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Neon] Error reloading config file: " + configName);
+            return false;
         }
     }
 

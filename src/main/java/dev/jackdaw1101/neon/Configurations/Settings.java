@@ -1,5 +1,6 @@
 package dev.jackdaw1101.neon.Configurations;
 
+import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
 import lombok.SneakyThrows;
@@ -73,10 +74,10 @@ public class Settings {
         return settingsConfig;
     }
 
-    public boolean reloadSettings() {
+    public boolean reloadSettings() throws IOException {
         settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
 
-        //ConfigUpdater.update(this.plugin, "settings.yml", settingsFile); // Assuming this is a utility method
+        ConfigUpdater.update(this.plugin, "settings.yml", settingsFile); // Assuming this is a utility method
 
         this.plugin.reloadConfig();
 
