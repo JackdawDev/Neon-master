@@ -137,7 +137,11 @@ ANTI-LINK:
 ########################################################
 #
 # Anti Caps Warn to the player
-ANTI-CAPS-WARNING: "{prefix} &cPlease do not use excessive capital letters!"
+# Placeholders:
+# {percentage}
+# {player}
+# {max_percentage}
+ANTI-CAPS-WARNING: "&cPlease avoid excessive caps {player}! Your message was {percentage}% caps (max {max_percentage}%)"
 #
 ########################################################
 #                Chat Mention System                   #

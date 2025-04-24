@@ -73,6 +73,12 @@ ISOUNDS-UTIL: false
 # <rainbow>Message</rainbow>
 # <color-name>Message</color-name>
 #
+# Internal Placeholders (all support HEX)
+# - {prefix} - Prefix of plugin editable in messages.yml (usable in all files)
+# - {main_theme} - Main Theme of plugin editable in messages.yml (usable in all files)
+# - {second_theme} - Second Theme of plugin editable in messages.yml (usable in all files)
+# - {third_theme} - Third Theme of plugin editable in messages.yml (usable in all files)
+#
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
 # It Also Supports Mini Messaging
 #
@@ -203,30 +209,28 @@ JOIN:
   ENABLED: true
   FORMAT: '&e<player> &ahas joined the game!'
   REQUIRE-PERMISSION: false
-  RUN-COMMAND: false
-  SUGGEST-COMMAND: true
+  CLICK-ACTION: "SUGGEST_COMMAND" # Options: RUN_COMMAND, SUGGEST_COMMAND, OPEN_URL
   HOVER:
     TEXT:
       - '&eHealth: &c%player_health%'
       - '&eRank: %luckperms_prefix%'
       - ''
       - '&aJoined!'
-  CLICK-COMMAND: "/message <player> "
+  CLICK-COMMAND: "/message <player> " # Also used as url
 #
 # General settings for the leave message
 LEAVE:
   ENABLED: true
   FORMAT: '&e<player> &chas left the game!'
   REQUIRE-PERMISSION: false
-  RUN-COMMAND: false
-  SUGGEST-COMMAND: true
+  CLICK-ACTION: "SUGGEST_COMMAND" # Options: RUN_COMMAND, SUGGEST_COMMAND, OPEN_URL
   HOVER:
     TEXT:
       - '&eHealth: &c%player_health%'
       - '&eRank: %luckperms_prefix%'
       - ''
       - '&cLeft!'
-  CLICK-COMMAND: "/message <player> "
+  CLICK-COMMAND: "/message <player> " # Also used as url
 #
 # Support for PlaceholderAPI placeholders
 # If true, placeholders (e.g., %player_name%) in join/leave messages will be replaced with real values.
@@ -442,6 +446,10 @@ AUTO-RESPONSE-HOVER:
 # Announcement System configurations (aka Auto Broadcast)
 # All Editable in locale.yml
 #
+# Toggle The Announcements System
+ANNOUNCEMENTS:
+  ENABLED: true
+#
 ########################################################
 #              Anti Advertisement System               #
 ########################################################
@@ -609,6 +617,8 @@ MENTION:
 #
 # Grammar API Settings
 #
+# You can add more words and corrections via the API
+#
 # ENABLED: Set to false to disable the grammar checking feature
 # MIN-MESSAGE-LENGTH: Minimum message length required for grammar correction
 #
@@ -645,16 +655,34 @@ GRAMMAR-API:
 #                Anti Unicode System                   #
 ########################################################
 #
-# Anti-Unicode System Settings (not recommended)
+# Anti-Unicode System Settings
 # Prevent Players From Using non-ASCII characters
 #
 # ENABLED: Toggle The System
 # KICK-ENABLED: Kick Players On Use
+#
+# (!) If You Are Using XSound Utils Use minecraft Normal sound ids
+# but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
+#
+# Check Line 33 For More Info About Sounds
+#
+# (!) Use Xsound Util For Better Experience
+#
+# USE-SOUND: Playe a sound on trigger
+# SOUND: Sound value
+#
+# BYPASSED-UNICODES: These unicodes won't be detected
 ANTI-UNICODE:
   USE-SOUND: true
   SOUND: "VILLAGER_NO"
   ENABLED: true
   KICK-ENABLED: false
+  BYPASSED-UNICODES:
+    - "♥"
+    - "★"
+    - "☀"
+    - "☺"
+    - "✓"
 #
 ########################################################
 #                  Chat Mute System                    #
