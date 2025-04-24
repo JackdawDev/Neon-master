@@ -1,6 +1,15 @@
 package dev.jackdaw1101.neon;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
+import dev.jackdaw1101.neon.API.Features.AntiSwear.AntiSwearAPI;
+import dev.jackdaw1101.neon.API.Features.AntiSwear.AntiSwearAPIImpl;
+import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPIImpl;
+import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleAPI;
+import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleAPIImpl;
+import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleDatabase;
+import dev.jackdaw1101.neon.API.Grammer.GrammarAPI;
+import dev.jackdaw1101.neon.API.Grammer.GrammarAPIImpl;
 import dev.jackdaw1101.neon.API.NeonAPI;
 import dev.jackdaw1101.neon.AddonHandler.AddonManager;
 import dev.jackdaw1101.neon.Announcements.AnnouncementManager;
@@ -24,6 +33,9 @@ import dev.jackdaw1101.neon.Command.Logger.CommandLoggerListener;
 import dev.jackdaw1101.neon.Command.NeonCommand;
 import dev.jackdaw1101.neon.Command.tabcomp.NeonTabCompleter;
 import dev.jackdaw1101.neon.Configurations.*;
+import dev.jackdaw1101.neon.Database.MongoDBChatToggleDatabase;
+import dev.jackdaw1101.neon.Database.MySQLChatToggleDatabase;
+import dev.jackdaw1101.neon.Database.SQLiteChatToggleDatabase;
 import dev.jackdaw1101.neon.GrammerAPI.GrammerAPI;
 import dev.jackdaw1101.neon.Manager.ChatFormat;
 import dev.jackdaw1101.neon.Manager.JoinLeave.JoinLeaveListener;
@@ -33,16 +45,17 @@ import dev.jackdaw1101.neon.Utils.Chat.CC;
 import dev.jackdaw1101.neon.Utils.Core.DebugUtil;
 import dev.jackdaw1101.neon.Utils.File.FileUtils;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
+@Slf4j
 public final class Neon extends JavaPlugin {
 
     private ConfigFile settings;
@@ -57,14 +70,23 @@ public final class Neon extends JavaPlugin {
     private AnnouncementManager announcementManager;
     private ConfigFile locales;
     //private Database database;
+    private ConfigFile database;
     private NeonAPI neonAPI;
     private AddonManager addonManager;
     private ToggleChatCommand toggleChatCommand;
     private ChatListener chatListener;
     private AlertManager alertManager;
+    private static Neon instance;
+    private ChatToggleDatabase chatToggleDatabase;
+    private ChatToggleAPI chatToggleAPI;
+    private GrammarAPI grammarAPI;
+    private NeonJoinLeaveAPI neonJoinLeaveAPI;
+    private AntiSwearAPI antiSwearAPI;
+
 
     @Override
     public void onEnable() {
+        instance = this;
         load();
     }
 
@@ -82,6 +104,23 @@ public final class Neon extends JavaPlugin {
         } else {
             if (debugMode) {
                 Bukkit.getConsoleSender().sendMessage(CC.YELLOW + "[Neon-Debug] ChatLog folder already exists.");
+            }}
+    }
+
+    private void loadDataFolder() {
+        File logFolder = new File("plugins/Neon/data/toggle_chat");
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        if (!logFolder.exists()) {
+            if (logFolder.mkdirs()) {
+                if (debugMode) {
+                    Bukkit.getConsoleSender().sendMessage(CC.GREEN + "[Neon-Debug] Data folder created successfully at " + logFolder.getPath());}
+            } else {
+                if (debugMode) {
+                    Bukkit.getConsoleSender().sendMessage(CC.YELLOW + "[Neon-Debug] Data folder already exists.");
+                }}
+        } else {
+            if (debugMode) {
+                Bukkit.getConsoleSender().sendMessage(CC.YELLOW + "[Neon-Debug] Data folder already exists.");
             }}
     }
 
@@ -147,6 +186,7 @@ public final class Neon extends JavaPlugin {
     private void unload() {
         long stopTime = System.currentTimeMillis();
         this.getNeonAPI().stopAPI();
+        chatToggleDatabase.shutdown();
         long disableTime = System.currentTimeMillis() - stopTime;
         Bukkit.getConsoleSender().sendMessage(CC.BD_RED + "=============================================");
         Bukkit.getConsoleSender().sendMessage(CC.RED + "| \\ | |" + CC.BL_PURPLE + " || " + CC.BL_PURPLE + "Version: " + CC.L_PURPLE + getDescription().getVersion());
@@ -170,7 +210,14 @@ public final class Neon extends JavaPlugin {
         discord = new ConfigFile(this, "discord.yml");
         permissionManager = new ConfigFile(this, "permissions.yml");
         locales= new ConfigFile(this, "locale.yml");
-        messageManager.replacePlaceholdersInConfig("{prefix}", getMessageManager().getString("PREFIX"), "{main_theme}", getMessageManager().getString("MAIN-THEME"), "{second_theme}", getMessageManager().getString("SECOND-THEME"), "{third_theme}", getMessageManager().getString("THIRD-THEME"));
+        messageManager = new ConfigFile(this, "messages.yml");
+        database = new ConfigFile(this, "database.yml");
+        messageManager.replacePlaceholdersInConfig(
+            "{prefix}", messageManager.getString("PREFIX"),
+            "{main_theme}", messageManager.getString("MAIN-THEME"),
+            "{second_theme}", messageManager.getString("SECOND-THEME"),
+            "{third_theme}", messageManager.getString("THIRD-THEME")
+        );
 
         File serverDir = Bukkit.getServer().getWorldContainer();
         File pluginsDir = new File(serverDir, "plugins");
@@ -183,6 +230,15 @@ public final class Neon extends JavaPlugin {
 
         try {
             ConfigUpdater.update(this, "settings.yml", settings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        reloadConfig();
+        File db = new File(getDataFolder(), "database.yml");
+
+        try {
+            ConfigUpdater.update(this, "database.yml", db);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -220,6 +276,7 @@ public final class Neon extends JavaPlugin {
         loadCOmmandLOgger();
         loadChatLogLogFolder();
         loadAntiSwearLogFolder();
+        loadDataFolder();
 
         if (!checkConfigVersion()) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Unable To Load Configurations: Invalid Config Version");
@@ -227,6 +284,18 @@ public final class Neon extends JavaPlugin {
             return;
         }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Configurations!");
+
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading API...");
+        this.antiSwearAPI = new AntiSwearAPIImpl(this, swearManager);
+        Bukkit.getServicesManager().register(AntiSwearAPI.class, antiSwearAPI, this, ServicePriority.Normal);
+        chatToggleAPI = new ChatToggleAPIImpl(this);
+        grammarAPI = new GrammarAPIImpl(this);
+        neonJoinLeaveAPI = new NeonJoinLeaveAPIImpl(this);
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Starting API...");
+        getServer().getServicesManager().register(NeonJoinLeaveAPI.class, neonJoinLeaveAPI, this, ServicePriority.Normal);
+        getServer().getServicesManager().register(GrammarAPI.class, grammarAPI, this, ServicePriority.Normal);
+        getServer().getServicesManager().register(ChatToggleAPI.class, chatToggleAPI, this, ServicePriority.Normal);
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded And Booted The API!");
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Debug Util...");
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Fetching Debug Util " + "(" + debugversion + ")" + "...");
@@ -243,6 +312,32 @@ public final class Neon extends JavaPlugin {
             CommandManager.registerCommand(this, new MuteChatCommand(this));
         }
         toggleChatCommand = new ToggleChatCommand(this);
+        String databaseType = getDatabaseManager().getString("DATABASE.TYPE").toLowerCase();
+
+        switch (databaseType) {
+            case "mysql":
+                chatToggleDatabase = new MySQLChatToggleDatabase(this);
+                break;
+            case "mongodb":
+                chatToggleDatabase = new MongoDBChatToggleDatabase(this);
+                break;
+            case "sqlite":
+                chatToggleDatabase = new SQLiteChatToggleDatabase(this);
+            default:
+                chatToggleDatabase = new SQLiteChatToggleDatabase(this); // Default fallback
+        }
+        if (chatToggleDatabase != null) {
+            chatToggleDatabase.initialize();
+        } else {
+            getLogger().severe("Failed to initialize chat toggle database! Falling back to SQLite.");
+            chatToggleDatabase = new SQLiteChatToggleDatabase(this);
+            chatToggleDatabase.initialize();
+        }
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Registered Databases!");
+
+
+
+        // Initialize API
         getCommand("togglechat").setExecutor(toggleChatCommand);
         this.alertManager = new AlertManager(this);
         try {
@@ -297,15 +392,14 @@ public final class Neon extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Chat Mute.");
         }
         AlertManager alertManager = new AlertManager(this);
-        getServer().getPluginManager().registerEvents(new AntiSwearSystem(this, alertManager), this);
-        if (isdebug) {
+        getServer().getPluginManager().registerEvents(new AntiSwearSystem(this, alertManager, swearManager), this);        if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Swear Listener.");
         }
         getServer().getPluginManager().registerEvents(new GrammerAPI(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Grammar API.");
         }
-        chatListener = new ChatListener(toggleChatCommand);
+        chatListener = new ChatListener(this);
         getServer().getPluginManager().registerEvents(chatListener, this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Toggle Chat API.");
@@ -352,10 +446,6 @@ public final class Neon extends JavaPlugin {
         }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Events And Features");
 
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading API...");
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Starting API...");
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded And Booted The API!");
-
         // load message
         boolean chatFormatEnabled = getSettings().getBoolean("CHAT_FORMAT_ENABLED");
         boolean hover = getSettings().getBoolean("HOVER_ENABLED");
@@ -373,6 +463,7 @@ public final class Neon extends JavaPlugin {
 
         String vaziat = debugmode ? CC.GREEN + "true " + CC.GRAY + "(" + debugversion + CC.GRAY + ")" : CC.RED + "false";
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        String dbtype = getDatabaseManager().getString("DATABASE.TYPE");
 
         long loadTime = System.currentTimeMillis() - startTime;
         Bukkit.getConsoleSender().sendMessage(CC.D_AQUA + "=============================================");
@@ -383,6 +474,7 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.GOLD + " ");
         Bukkit.getConsoleSender().sendMessage(CC.GOLD + "Load Information:");
         Bukkit.getConsoleSender().sendMessage(CC.AQUA + " * " + CC.YELLOW + "Chat Format: " + status);
+        Bukkit.getConsoleSender().sendMessage(CC.AQUA + " * " + CC.YELLOW + "Database: " + CC.PINK + dbtype.toUpperCase());
         if (debugMode) {
             Bukkit.getConsoleSender().sendMessage(CC.DARK_AQUA + "  * " + CC.YELLOW + "Hover: " + fs);
             Bukkit.getConsoleSender().sendMessage(CC.DARK_AQUA + "  * " + CC.YELLOW + "Click Event: " + dd);
@@ -446,6 +538,14 @@ public final class Neon extends JavaPlugin {
         return this.permissionManager;
     }
 
+    public ConfigFile getDatabaseManager() {
+        return this.database;
+    }
+
+    public ChatToggleAPI getChatToggleAPI() {
+        return this.chatToggleAPI;
+    }
+
     public ConfigFile getDiscordManager() {
         return this.discord;
     }
@@ -462,6 +562,12 @@ public final class Neon extends JavaPlugin {
     //    return database;
     //}
 
+    public static Neon getInstance() {
+        if (instance == null) {
+            instance = new Neon();
+        }
+        return instance;
+    }
     public ConfigFile getLocales() {
         return locales;
     }

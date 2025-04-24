@@ -18,46 +18,6 @@
 
   <build>
     <plugins>
-        <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>3.1.0</version>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>run</goal>
-                    </goals>
-                    <id>obfuscate</id>
-                </execution>
-            </executions>
-            <configuration>
-                <target>
-                    <property name="runtime_classpath" refid="maven.runtime.classpath"/>
-                    <!--suppress UnresolvedMavenProperty-->
-                    <taskdef name="yguard" classname="com.yworks.yguard.YGuardTask"
-                             classpath="${runtime_classpath}"/>
-                    <yguard>
-                        <inoutpair in="${project.build.directory}/${project.build.finalName}.jar"
-                                   out="${project.build.directory}/${project.build.finalName}.jar"/>
-                        <rename logfile="${project.build.directory}/yguard.log.xml"
-                                replaceClassNameStrings="true" scramble="true">
-                            <property name="overload-enabled" value="true"/>
-                            <property name="naming-scheme" value="best"/>
-                            <property name="language-conformity" value="illegal"/>
-                            <keep>
-                                <class name="dev.jackdaw1101.neon.Neon"/>
-                                <method class="dev.jackdaw1101.neon.Neon" name="void onEnable()"/>
-                                <method class="dev.jackdaw1101.neon.Neon" name="void onDisable()"/>
-                            </keep>
-                        </rename>
-                        <externalclasses>
-                            <!--suppress UnresolvedMavenProperty-->
-                            <pathelement path="${mvn.classpath}"/>
-                        </externalclasses>
-                    </yguard>
-                </target>
-            </configuration>
-        </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -129,6 +89,12 @@
           <version>1.13-R0.1-SNAPSHOT</version>
           <scope>provided</scope>
       </dependency>
+      <dependency>
+          <groupId>org.mongodb</groupId>
+          <artifactId>mongodb-driver-sync</artifactId>
+          <version>5.3.0</version>
+      </dependency>
+
       <dependency>
           <groupId>com.github.cryptomorin</groupId>
           <artifactId>XSeries</artifactId>

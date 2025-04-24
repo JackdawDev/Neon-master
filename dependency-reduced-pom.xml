@@ -14,41 +14,6 @@
     </resources>
     <plugins>
       <plugin>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>obfuscate</id>
-            <phase>package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <target>
-            <property />
-            <taskdef />
-            <yguard>
-              <inoutpair />
-              <rename>
-                <property />
-                <property />
-                <property />
-                <keep>
-                  <class />
-                  <method />
-                  <method />
-                </keep>
-              </rename>
-              <externalclasses>
-                <pathelement />
-              </externalclasses>
-            </yguard>
-          </target>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
         <configuration>
