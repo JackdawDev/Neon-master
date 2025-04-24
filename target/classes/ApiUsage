@@ -1,0 +1,127 @@
+AutoResponseAPI api = Bukkit.getServicesManager().load(AutoResponseAPI.class);
+if (api != null) {
+    // Add new auto-response
+    api.addResponse("hello", Arrays.asList(
+        "Hi there, %player_name%!",
+        "Welcome to our server!"
+    ));
+
+    // Update global settings
+    api.setGlobalHoverText(Arrays.asList(
+        "&6Auto Response System",
+        "&7Triggered by: %trigger_word%"
+    ));
+    api.setGlobalSound("ENTITY_EXPERIENCE_ORB_PICKUP");
+    api.setGlobalSoundEnabled(true);
+}
+#
+#
+#
+@EventHandler
+public void onAntiSpam(AntiSpamEvent event) {
+    // Whitelist certain messages
+    if (event.getMessage().contains("allowed phrase")) {
+        event.setCancelled(true);
+        return;
+    }
+
+    // Custom handling for staff
+    if (event.getPlayer().hasPermission("staff")) {
+        event.setWarningMessage("Staff notice: " + event.getWarningMessage());
+    }
+
+    // Log detailed information
+    if (event.getSpamType() == AntiSpamEvent.SpamType.SIMILAR_MESSAGE) {
+        getLogger().info(String.format(
+            "Similar message detected from %s (%.2f%% similar): %s",
+            event.getPlayer().getName(),
+            event.getSimilarityPercentage(),
+            event.getMessage()
+        ));
+    }
+}
+#
+#
+#
+// Listening to the event
+@EventHandler
+public void onAntiCaps(AntiCapsEvent event) {
+    // Whitelist certain messages
+    if (event.getMessage().contains("IMPORTANT")) {
+        event.setCancelled(true);
+        return;
+    }
+
+    // Custom handling for VIPs
+    if (event.getPlayer().hasPermission("vip")) {
+        event.setWarningMessage("Please avoid excessive caps: " + event.getCapsPercentage() + "%");
+        event.setShouldCancel(false); // Just warn, don't cancel
+    }
+
+    // Log detailed information
+    getLogger().info(String.format(
+        "Caps violation from %s (%.2f%% caps, %dU/%dL chars, min %d, req %d%%) in %s: %s",
+        event.getPlayer().getName(),
+        event.getCapsPercentage(),
+        event.getUpperChars(),
+        event.getLowerChars(),
+        event.getMinLength(),
+        event.getRequiredPercentage(),
+        event.isCommand() ? "command" : "chat",
+        event.getMessage()
+    ));
+}
+#
+#
+#
+// In your main plugin class
+private AntiSwearAPI antiSwearAPI;
+
+@Override
+public void onEnable() {
+    // Load configs
+    saveDefaultConfig();
+    FileConfiguration messages = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "messages.yml"));
+
+    // Initialize components
+    SwearFilter filter = new DefaultSwearFilter(getConfig());
+    SwearHandler handler = new DefaultSwearHandler(getConfig(), messages);
+
+    // Create API instance
+    antiSwearAPI = new AntiSwearAPI(this, filter, handler);
+
+    // Register commands
+    getCommand("antiswear").setExecutor(new AntiSwearCommand(this, antiSwearAPI));
+}
+
+public AntiSwearAPI getAntiSwearAPI() {
+    return antiSwearAPI;
+}
+#
+#
+#
+@EventHandler
+public void onSwearDetected(SwearDetectionEvent event) {
+    // Customize the action
+    if (event.getPlayer().getName().equalsIgnoreCase("VIPPlayer")) {
+        event.setAction(SwearDetectionEvent.ActionType.WARN);
+    }
+
+    // Modify the message
+    String modified = event.getModifiedMessage().replace("heck", "h**k");
+    event.setModifiedMessage(modified);
+
+    // Add custom detection
+    if (event.getModifiedMessage().contains("custombadword")) {
+        event.getDetectedWords().add("custombadword");
+    }
+}
+#
+#
+#
+// Add words to blacklist
+antiSwearAPI.getFilter().addToBlacklist("newword");
+antiSwearAPI.getFilter().addToWhitelist("acceptable");
+
+// Remove words
+antiSwearAPI.getFilter().removeFromBlacklist("oldword");
