@@ -114,3 +114,195 @@ AUTO-RESPONSE-PREFIX: "&7[&a&lAUTO RESPONSE&7]"
 # Format of the auto response system
 FORMAT: "{prefix} {auto_response_prefix}&8: &e%answer%"
 ```
+
+# API
+🔌 Getting Started
+java
+
+```java
+// Access any Neon API
+  Plugin neon = Bukkit.getPluginManager().getPlugin("Neon");
+  AutoResponseAPI api = Bukkit.getServicesManager().load(AutoResponseAPI.class);
+  AntiSwearAPI api = Bukkit.getServicesManager().load(AntiSwearAPI.class);
+```
+
+## 🤖 AutoResponseAPI
+Manage automatic chat responses
+
+```java
+public interface AutoResponseAPI {
+// Add/remove responses
+void addResponse(String triggerWord, List<String> responses);
+void removeResponse(String triggerWord);
+
+    // Configure global settings
+    void setGlobalHoverText(List<String> hoverText);
+    void setGlobalSound(String sound);
+    
+    // Get current responses
+    Map<String, List<String>> getAllResponses();
+    List<String> getResponsesForWord(String triggerWord);
+    
+    // Force trigger response
+    void triggerResponse(Player player, String triggerWord);
+}
+```
+
+💡 Example Usage
+```java
+// Add new response
+autoResponseAPI.addResponse("hello", Arrays.asList(
+"Hi there, %player_name%!",
+"Welcome to our server!"
+));
+```
+
+# 🔥 AntiSwearAPI
+
+**Advanced profanity filtering system**
+
+```java
+public interface AntiSwearAPI {
+   
+    void addToBlacklist(String word);
+    
+    void removeFromBlacklist(String word);
+    
+    void addTemporaryWhitelistWord(String word);
+    
+    List<String> getBlacklist();
+    
+    void clearTemporaryBlacklist();
+
+    int getSwearStrikes(Player player);
+    
+    void resetSwearStrikes(Player player);
+    
+    void setSwearStrikes(Player player, int strikes);
+
+    boolean isSwearWord(String word);
+    
+    boolean containsSwear(String message);
+    
+    String censorMessage(String message);
+  
+    String sanitizeMessage(String message);
+}
+```
+💡 Example Usage
+```java
+// Basic detection
+if (antiSwearAPI.containsSwear(player.getMessage())) {
+player.sendMessage("§cNo profanity allowed!");
+String clean = antiSwearAPI.censorMessage(player.getMessage());
+player.chat(clean); // Re-send censored version
+}
+
+// Strike management
+int strikes = antiSwearAPI.getSwearStrikes(player);
+if (strikes > 3) {
+player.kickPlayer("Too many swear violations");
+}
+
+// Dynamic word management
+antiSwearAPI.addToBlacklist("newword");
+antiSwearAPI.addTemporaryWhitelistWord("allowedword");
+```
+
+# ✨ NeonJoinLeaveAPI
+
+Advanced join/leave message customization system
+
+```java
+public interface NeonJoinLeaveAPI {
+    void sendCustomJoinMessage(Player player, String message, 
+                             List<String> hoverText, 
+                             String clickCommand, 
+                             ClickAction clickAction);
+                             
+    void sendCustomLeaveMessage(Player player, String message,
+                              List<String> hoverText,
+                              String clickCommand,
+                              ClickAction clickAction);
+
+    void setJoinMessageFormat(String format);
+    void setLeaveMessageFormat(String format);
+
+    void setJoinHoverText(List<String> hoverText);
+    void setLeaveHoverText(List<String> hoverText);
+
+    void setJoinClickCommand(String command, ClickAction action);
+    void setLeaveClickCommand(String command, ClickAction action);
+
+    void setJoinHoverEnabled(boolean enabled);
+    void setLeaveHoverEnabled(boolean enabled);
+
+    void setJoinClickEnabled(boolean enabled);
+    void setLeaveClickEnabled(boolean enabled);
+
+    void setJoinRequirePermission(boolean require);
+    void setLeaveRequirePermission(boolean require);
+
+    void setJoinPermission(String permission);
+    void setLeavePermission(String permission);
+
+    void reloadConfig();
+
+    enum ClickAction {
+        RUN_COMMAND,
+        SUGGEST_COMMAND,
+        OPEN_URL
+    }
+}
+```
+
+💡 Example Usage
+```java
+// Custom join message with hover and click action
+api.sendCustomJoinMessage(player,
+"§e{player} §bhas joined with §a{rank}",
+Arrays.asList("Click for profile!", "Playtime: 5h"),
+"profile {player}",
+ClickAction.RUN_COMMAND);
+
+// Configure default formats
+api.setJoinMessageFormat("§aWelcome {player} to the server!");
+api.setLeaveMessageFormat("§c{player} has left");
+
+// Enable advanced features
+api.setJoinHoverEnabled(true);
+api.setJoinClickEnabled(true);
+api.setJoinClickCommand("msg {player}", ClickAction.SUGGEST_COMMAND);
+```
+
+# 🔇 ChatToggleAPI
+
+Player chat toggle management system
+
+```java
+public interface ChatToggleAPI {
+    
+    void toggleChat(Player player);
+    
+    void setChatToggled(Player player, boolean toggled);
+    
+    boolean isChatToggled(Player player);
+    
+    boolean isChatToggled(UUID uuid);
+    
+    Set<UUID> getAllToggledPlayers();
+      
+    void saveAll();
+}
+```
+
+💡 Example Usage
+```java
+// Basic usage
+chatToggleAPI.toggleChat(player);
+
+// Check state
+if (chatToggleAPI.isChatToggled(player)) {
+// Chat is disabled
+}
+```
