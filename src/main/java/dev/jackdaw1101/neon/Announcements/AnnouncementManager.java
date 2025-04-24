@@ -21,7 +21,10 @@ public class AnnouncementManager {
 
     public AnnouncementManager(Neon plugin) {
         this.plugin = plugin;
+        boolean isAnnouncementEnabled = (Boolean) this.plugin.getSettings().getBoolean("ANNOUNCEMENTS.ENABLED");
+        if (!isAnnouncementEnabled) return;
         startDynamicScheduler();
+
     }
 
     private void startDynamicScheduler() {
