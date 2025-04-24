@@ -1,19 +1,23 @@
 package dev.jackdaw1101.neon.GrammerAPI;
 
+import dev.jackdaw1101.neon.API.Grammer.Event.GrammarCheckEvent;
+import dev.jackdaw1101.neon.API.Grammer.GrammarAPIImpl;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.StringUtil.IStringUtils;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+
 import java.util.Arrays;
 
 public class GrammerAPI implements Listener {
     private final Neon plugin;
+    private final GrammarAPIImpl api;
 
     public GrammerAPI(Neon plugin) {
         this.plugin = plugin;
+        this.api = new GrammarAPIImpl(plugin);
     }
 
     @EventHandler
@@ -21,48 +25,39 @@ public class GrammerAPI implements Listener {
         if (event.isCancelled()) return;
 
         Player player = event.getPlayer();
-        String message = event.getMessage();
+        String originalMessage = event.getMessage();
 
-        if (message.length() < (int) plugin.getSettings().getInt("GRAMMAR-API.MIN-MESSAGE-LENGTH") ||
-                !(boolean) plugin.getSettings().getBoolean("GRAMMAR-API.ENABLED")) return;
+        if (originalMessage.length() < api.getMinMessageLength() ||
+            !plugin.getSettings().getBoolean("GRAMMAR-API.ENABLED")) return;
 
         if (player.hasPermission(plugin.getPermissionManager().getString("BYPASS-GRAMMAR"))) return;
 
-        // Capitalize first letter
-        try {
-            message = message.replaceFirst(message.charAt(0) + "", IStringUtils.capitalize(message.charAt(0) + ""));
-        } catch (Exception ignored) {}
+        // Create corrected message
+        String correctedMessage = api.processMessage(originalMessage);
 
-        // Ensure punctuation at end
-        char lastChar = message.charAt(message.length() - 1);
-        if (!Arrays.asList('!', '.', ',', '?').contains(lastChar)) {
-            message += ".";
+        // Call custom event
+        GrammarCheckEvent grammarEvent = new GrammarCheckEvent(
+            player,
+            originalMessage,
+            correctedMessage,
+            api.isAutoCorrectEnabled(),
+            api.isPunctuationCheckEnabled(),
+            api.isCapitalizationEnabled()
+        );
+
+        plugin.getServer().getPluginManager().callEvent(grammarEvent);
+
+        if (grammarEvent.isCancelled()) return;
+
+        // Update the message if it was modified in the event
+        if (!grammarEvent.getCorrectedMessage().equals(correctedMessage)) {
+            correctedMessage = grammarEvent.getCorrectedMessage();
         }
 
-        // Auto-correct feature
-        if ((boolean) plugin.getSettings().getBoolean("GRAMMAR-API.AUTO-CORRECT.ENABLED")) {
-            String[] messageSplit = message.split(" ");
-            StringBuilder sb = new StringBuilder();
+        event.setMessage(correctedMessage);
+    }
 
-            for (String word : messageSplit) {
-                switch (word.toLowerCase()) {
-                    case "i": sb.append("I"); break;
-                    case "im": case "i'm": sb.append("I'm"); break;
-                    case "ill": case "i'll": sb.append("I'll"); break;
-                    case "cant": sb.append("can't"); break;
-                    case "youre": sb.append("you're"); break;
-                    case "dont": sb.append("don't"); break;
-                    case "theyre": sb.append("they're"); break;
-                    case "couldnt": sb.append("couldn't"); break;
-                    case "whos": sb.append("who's"); break;
-                    case "alot": sb.append("a lot"); break;
-                    case "nor": case "yet": case "or": case "and": sb.append(word + ","); break;
-                    default: sb.append(word);
-                }
-                sb.append(" ");
-            }
-            event.setMessage(sb.toString().trim());
-        }
+    public GrammarAPIImpl getAPI() {
+        return api;
     }
 }
-

@@ -1,5 +1,6 @@
 package dev.jackdaw1101.neon.Manager.MOTD;
 
+import dev.jackdaw1101.neon.API.Features.Player.WelcomeEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
@@ -14,6 +15,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.PluginManager;
 
 import java.util.List;
 
@@ -31,10 +33,32 @@ public class WelcomeListener implements Listener {
             return;
         }
 
-            if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
-                clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
-            }
-            sendMessage(player);
+        if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
+            clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
+        }
+
+        // Create the list of messages
+        List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-MESSAGE");
+        if (messages == null) return;
+
+        // Trigger the custom WelcomeEvent before sending the message
+        WelcomeEvent welcomeEvent = new WelcomeEvent(player, messages);
+
+        // Optionally modify the event settings
+        // (This is where other plugins or listeners can modify the event's data)
+        PluginManager pluginManager = plugin.getServer().getPluginManager();
+        pluginManager.callEvent(welcomeEvent);
+
+        // If the event is canceled, do not send any messages
+        if (welcomeEvent.isCancelled()) {
+            return;
+        }
+
+        // Get the final messages after potential modifications
+        List<String> finalMessages = welcomeEvent.getMessageLines();
+        String soundToPlay = welcomeEvent.getSound();
+
+        sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
     }
 
     private void clearChat(Player player, int lines) {
@@ -43,23 +67,16 @@ public class WelcomeListener implements Listener {
         }
     }
 
-    private void sendMessage(Player player) {
-        List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-MESSAGE");
-        if (messages == null) return;
-
+    private void sendMessage(Player player, List<String> messages, String sound, WelcomeEvent event) {
         boolean hoverEnabled = (boolean) plugin.getSettings().getBoolean("HOVER-TEXT.ENABLED");
-        List<String> hoverMessages = (List<String>) plugin.getSettings().getStringList("HOVER-TEXT.CONTENT");
         TextComponent hoverComponent = null;
 
-        if (hoverEnabled && hoverMessages != null && !hoverMessages.isEmpty()) {
-            // Replace player name placeholder and apply color codes
-            String hoverText = ColorHandler.color(String.join("\n", hoverMessages));
-            // Parse color codes and placeholders
+        if (hoverEnabled && event.getHoverMessages() != null && !event.getHoverMessages().isEmpty()) {
+            String hoverText = ColorHandler.color(String.join("\n", event.getHoverMessages()));
             hoverText = PlaceholderAPI.setPlaceholders(player, hoverText);
             hoverComponent = new TextComponent(hoverText);
         }
 
-        // Click Events
         boolean openUrlEnabled = (boolean) plugin.getSettings().getBoolean("OPEN-URL.ENABLED");
         String openUrl = (String) plugin.getSettings().getString("OPEN-URL.URL");
 
@@ -73,29 +90,30 @@ public class WelcomeListener implements Listener {
             line = ColorHandler.color(PlaceholderAPI.setPlaceholders(player, line));
             TextComponent messageComponent = new TextComponent(line);
 
-            // Apply Hover Event only if enabled
             if (hoverEnabled && hoverComponent != null) {
-                // Convert hoverComponent to BaseComponent[] and set hover event
                 messageComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{hoverComponent}));
             }
 
-            // Apply Click Event
-            if (openUrlEnabled && !openUrl.isEmpty()) {
+            if (event.isOpenUrlEnabled() && !openUrl.isEmpty()) {
                 messageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, openUrl));
-            } else if (clickCommandEnabled && !clickCommand.isEmpty()) {
+            } else if (event.isClickCommandEnabled() && !clickCommand.isEmpty()) {
                 messageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
-            } else if (suggestCommandEnabled && !suggestCommand.isEmpty()) {
+            } else if (event.isSuggestCommandEnabled() && !suggestCommand.isEmpty()) {
                 messageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, suggestCommand));
             }
 
             player.spigot().sendMessage((BaseComponent) messageComponent);
-            if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED")) {
-                    SoundUtil.playSound(player, (String) plugin.getSettings().getString("PLAY-SOUND.SOUND"), 1.0f, 1.0f);
-                }
-            } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                XSounds.playSound(player, (String) plugin.getSettings().getString("PLAY-SOUND.SOUND"), 1.0f, 1.0f);
         }
+
+        // Play sound
+        if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+            if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
+                SoundUtil.playSound(player, sound, 1.0f, 1.0f);
+            }
+        } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+            if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
+                XSounds.playSound(player, sound, 1.0f, 1.0f);
+            }
         }
     }
 }

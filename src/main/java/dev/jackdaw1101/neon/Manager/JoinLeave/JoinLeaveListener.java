@@ -1,5 +1,9 @@
 package dev.jackdaw1101.neon.Manager.JoinLeave;
 
+import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerJoinEvent;
+import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerLeaveEvent;
+import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPIImpl;
+import dev.jackdaw1101.neon.API.Grammer.GrammarAPIImpl;
 import dev.jackdaw1101.neon.Configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Configurations.Settings;
@@ -9,13 +13,13 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,110 +29,173 @@ public class JoinLeaveListener implements Listener {
 
     private final Neon plugin;
     private final ConfigFile settings;
+    private final NeonJoinLeaveAPIImpl api;
+
 
     public JoinLeaveListener(Neon plugin) {
         this.plugin = plugin;
         this.settings = plugin.getSettings();
+        this.api = new NeonJoinLeaveAPIImpl(plugin);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setJoinMessage("");
-        if (!(boolean) settings.getBoolean("JOIN.ENABLED")) return;
+        if (!settings.getBoolean("JOIN.ENABLED")) return;
 
-        boolean delayEnabled = (boolean) settings.getBoolean("ASYNC.ENABLED");
-        int delayTicks = (int) settings.getInt("ASYNC.DELAY-TICKS");
+        boolean delayEnabled = settings.getBoolean("ASYNC.ENABLED");
+        int delayTicks = settings.getInt("ASYNC.DELAY-TICKS");
 
         processJoinEvent(event);
     }
 
     private void processJoinEvent(PlayerJoinEvent event) {
-        String message = (String) settings.getString("JOIN.FORMAT");
-        if (message != null) {
-            message = message.replace("<player>", event.getPlayer().getName());
-            message = apply(ColorHandler.color(message), event.getPlayer());
+        String message = settings.getString("JOIN.FORMAT");
+        if (message == null) return;
 
-            boolean requirePermission = (boolean) settings.getBoolean("JOIN.REQUIRE-PERMISSION");
-            if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getString("JOIN-MESSAGE-PERMISSION"))) {
-                return;
-            }
+        message = message.replace("<player>", event.getPlayer().getName());
+        message = apply(ColorHandler.color(message), event.getPlayer());
 
-            sendJoinLeaveMessage(event.getPlayer(), ColorHandler.color(message), true);
+        boolean requirePermission = settings.getBoolean("JOIN.REQUIRE-PERMISSION");
+        if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getString("JOIN-MESSAGE-PERMISSION"))) {
+            return;
         }
+
+        boolean isHoverEnabled = settings.getBoolean("HOVER-SUPPORT");
+        boolean isClickEnabled = settings.getBoolean("CLICK-SUPPORT");
+        String clickCommand = settings.getString("JOIN.CLICK-COMMAND");
+        String clickActionString = settings.getString("JOIN.CLICK-ACTION");
+        NeonPlayerJoinEvent.ClickAction clickAction;
+
+        if (clickActionString != null) {
+            try {
+                clickAction = NeonPlayerJoinEvent.ClickAction.valueOf(clickActionString);
+            } catch (IllegalArgumentException e) {
+                clickAction = NeonPlayerJoinEvent.ClickAction.RUN_COMMAND; // Set a default
+            }
+        } else {
+            clickAction = NeonPlayerJoinEvent.ClickAction.RUN_COMMAND; // Set a default
+        }
+
+        List<String> hoverText = settings.getStringList("JOIN.HOVER.TEXT");
+
+        if (clickCommand != null) {
+            clickCommand = clickCommand.replace("<player>", event.getPlayer().getName());
+        }
+
+        NeonPlayerJoinEvent neonEvent = new NeonPlayerJoinEvent(
+            event.getPlayer(),
+            message,
+            isHoverEnabled,
+            isClickEnabled,
+            clickCommand,
+            clickAction,
+            hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), true)) : hoverText
+        );
+
+        Bukkit.getPluginManager().callEvent(neonEvent);
+
+        if (neonEvent.isCancelled()) return;
+
+        sendJoinLeaveMessage(
+            event.getPlayer(),
+            neonEvent.getJoinMessage(),
+            neonEvent.isHoverEnabled(),
+            neonEvent.isClickEnabled(),
+            neonEvent.getClickCommand(),
+            neonEvent.getClickAction(),
+            neonEvent.getHoverText()
+        );
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage("");
-        if (!(boolean) settings.getBoolean("LEAVE.ENABLED")) return;
+        if (!settings.getBoolean("LEAVE.ENABLED")) return;
 
-        boolean delayEnabled = (boolean) settings.getBoolean("ASYNC.ENABLED");
-        int delayTicks = (int) settings.getInt("ASYNC.DELAY-TICKS");
+        boolean delayEnabled = settings.getBoolean("ASYNC.ENABLED");
+        int delayTicks = settings.getInt("ASYNC.DELAY-TICKS");
         processLeaveEvent(event);
     }
 
     private void processLeaveEvent(PlayerQuitEvent event) {
-        String message = (String) settings.getString("LEAVE.FORMAT");
-        if (message != null) {
-            message = message.replace("<player>", event.getPlayer().getName());
-            message = apply(ColorHandler.color(message), event.getPlayer());
+        String message = settings.getString("LEAVE.FORMAT");
+        if (message == null) return;
 
-            boolean requirePermission = (boolean) settings.getBoolean("LEAVE.REQUIRE-PERMISSION");
-            if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getString("LEAVE-MESSAGE-PERMISSION"))) {
-                return;
-            }
+        message = message.replace("<player>", event.getPlayer().getName());
+        message = apply(ColorHandler.color(message), event.getPlayer());
 
-            sendJoinLeaveMessage(event.getPlayer(), ColorHandler.color(message), false);
+        boolean requirePermission = settings.getBoolean("LEAVE.REQUIRE-PERMISSION");
+        if (requirePermission && !event.getPlayer().hasPermission(plugin.getPermissionManager().getString("LEAVE-MESSAGE-PERMISSION"))) {
+            return;
         }
+
+        boolean isHoverEnabled = settings.getBoolean("HOVER-SUPPORT");
+        boolean isClickEnabled = settings.getBoolean("CLICK-SUPPORT");
+        String clickCommand = settings.getString("LEAVE.CLICK-COMMAND");
+        List<String> hoverText = settings.getStringList("LEAVE.HOVER.TEXT");
+
+        if (clickCommand != null) {
+            clickCommand = clickCommand.replace("<player>", event.getPlayer().getName());
+        }
+
+        NeonPlayerLeaveEvent.ClickAction clickAction = NeonPlayerLeaveEvent.ClickAction.valueOf(
+            settings.getString("LEAVE.CLICK-ACTION")
+        );
+
+        NeonPlayerLeaveEvent neonEvent = new NeonPlayerLeaveEvent(
+            event.getPlayer(),
+            message,
+            isHoverEnabled,
+            isClickEnabled,
+            clickCommand,
+            clickAction,
+            hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), false)) : hoverText
+        );
     }
 
-    public String apply(String text, Player target) {
+        public String apply(String text, Player target) {
         return PlaceholderAPI.setPlaceholders(target, text);
     }
 
-    private void sendJoinLeaveMessage(Player player, String message, boolean isJoin) {
-        boolean isHoverEnabled = (boolean) settings.getBoolean("HOVER-SUPPORT");
-        boolean isClickEnabled = (boolean) settings.getBoolean("CLICK-SUPPORT");
-        boolean isRunCommand = (boolean) settings.getBoolean("JOIN.RUN-COMMAND");
-        boolean isSuggestCommand = (boolean) settings.getBoolean("LEAVE.SUGGEST-COMMAND");
-
-        String commandKey = isJoin ? "JOIN.CLICK-COMMAND" : "LEAVE.CLICK-COMMAND";
-        String command = (String) settings.getString(commandKey);
-        if (command != null) {
-            command = command.replace("<player>", player.getName());
-        }
-
-        List<String> hoverTextList = getHoverText(player, isJoin);
-        if (hoverTextList == null || hoverTextList.isEmpty()) {
-            hoverTextList = Arrays.asList(getDefaultHoverText(player, isJoin));
-        }
-
-        hoverTextList = replacePlaceholdersInHoverText(hoverTextList, player);
-        hoverTextList = applyColorToHoverText(hoverTextList);
+    private void sendJoinLeaveMessage(Player player, String message, boolean isHoverEnabled,
+                                      boolean isClickEnabled, String command,
+                                      NeonPlayerJoinEvent.ClickAction clickAction, List<String> hoverText) {
 
         TextComponent messageComponent = new TextComponent(message);
 
-        if (isHoverEnabled) {
-            String joinedHoverText = String.join("\n", hoverTextList);
-            messageComponent.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new BaseComponent[]{new TextComponent(joinedHoverText)}));
+        if (isHoverEnabled && hoverText != null && !hoverText.isEmpty()) {
+            List<String> updatedHoverText = replacePlaceholdersInHoverText(hoverText, player);
+            updatedHoverText = applyColorToHoverText(updatedHoverText);
+
+            String joinedHoverText = String.join("\n", updatedHoverText);
+            messageComponent.setHoverEvent(new HoverEvent(
+                HoverEvent.Action.SHOW_TEXT,
+                new BaseComponent[]{new TextComponent(joinedHoverText)}
+            ));
         }
 
         if (isClickEnabled && command != null) {
-            if (isSuggestCommand) {
-                messageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
-            } else if (isRunCommand) {
-                messageComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
+            ClickEvent.Action action;
+            switch (clickAction.name()) {
+                case "RUN_COMMAND":
+                    action = ClickEvent.Action.RUN_COMMAND;
+                    break;
+                case "SUGGEST_COMMAND":
+                    action = ClickEvent.Action.SUGGEST_COMMAND;
+                    break;
+                case "OPEN_URL":
+                    action = ClickEvent.Action.OPEN_URL;
+                    break;
+                default:
+                    action = ClickEvent.Action.RUN_COMMAND;
             }
+            messageComponent.setClickEvent(new ClickEvent(action, command));
         }
 
         for (Player viewer : plugin.getServer().getOnlinePlayers()) {
             viewer.spigot().sendMessage(messageComponent);
         }
-    }
-
-    private List<String> getHoverText(Player player, boolean isJoin) {
-        String path = isJoin ? "JOIN.HOVER.TEXT" : "LEAVE.HOVER.TEXT";
-        return (List<String>) settings.getStringList(path);
     }
 
     private String[] getDefaultHoverText(Player player, boolean isJoin) {

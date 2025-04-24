@@ -1,12 +1,13 @@
 package dev.jackdaw1101.neon.AntiSpam;
 
+import dev.jackdaw1101.neon.API.Features.AntiSpam.AntiSpamEvent;
 import dev.jackdaw1101.neon.AntiSwear.AntiSwearSystem;
+import dev.jackdaw1101.neon.AntiSwear.SwearManager;
 import dev.jackdaw1101.neon.Command.Alerts.AlertManager;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,13 +18,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class ListenerAntiSpam implements Listener {
-
     private final Neon plugin;
     private final AntiSwearSystem antiSwearSystem;
 
     public ListenerAntiSpam(Neon plugin) {
         this.plugin = plugin;
-        this.antiSwearSystem = new AntiSwearSystem(plugin, new AlertManager(plugin));
+        this.antiSwearSystem = new AntiSwearSystem(plugin, new AlertManager(plugin), new SwearManager(plugin));
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -34,131 +34,290 @@ public class ListenerAntiSpam implements Listener {
         String message = event.getMessage();
         UUID uuid = player.getUniqueId();
 
-        // Chat Anti-Spam
-        boolean blockRepetitive = plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.BLOCK-REPETITIVE-MESSAGE");
-        boolean expireEnabled = plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.EXPIRE-ENABLED");
-        long expireTimeMs = plugin.getSettings().getInt("ANTI-SPAM.CHAT.EXPIRE") * 1000L;
-        int similarityThreshold = plugin.getSettings().getInt("ANTI-SPAM.CHAT.SIMILARITY-PERCENTAGE");
-        boolean isSimilarityBlockageEnabled = plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.BLOCK-SIMILAR-MESSAGES");  // Default to true if not set
+        // Similar message detection
+        if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.BLOCK-SIMILAR-MESSAGES") &&
+            !player.hasPermission(plugin.getPermissionManager().getString("SIMILARITY-BYPASS"))) {
 
-        if (isSimilarityBlockageEnabled && isSimilarMessage(uuid, message, similarityThreshold, (int) expireTimeMs) && !player.hasPermission(plugin.getPermissionManager().getString("SIMILARITY-BYPASS"))) {
-            player.sendMessage(ColorHandler.color(
-                    plugin.getMessageManager().getString("ANTI-SPAM.CHAT.SIMILARITY-MESSAGE-WARN")));
-            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.SIMILARITY-SOUND-ENABLED")) {
-                    SoundUtil.playSound(player, plugin.getSettings().getString("ANTI-SPAM.CHAT.SIMILARITY-SOUND"), 1.0f, 1.0f);
-                }
-            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                XSounds.playSound(player, plugin.getSettings().getString("ANTI-SPAM.CHAT.SIMILARITY-SOUND"), 1.0f, 1.0f);
+            int similarityThreshold = plugin.getSettings().getInt("ANTI-SPAM.CHAT.SIMILARITY-PERCENTAGE");
+            int expireTimeMs = plugin.getSettings().getInt("ANTI-SPAM.CHAT.EXPIRE") * 1000;
+
+            SimilarityResult result = checkMessageSimilarity(uuid, message, similarityThreshold, expireTimeMs);
+            if (result.isSimilar()) {
+                AntiSpamEvent spamEvent = createSpamEvent(
+                    player, message, result.getPreviousMessage(),
+                    result.getSimilarity(), AntiSpamEvent.SpamType.SIMILAR_MESSAGE,
+                    "ANTI-SPAM.CHAT.SIMILARITY-MESSAGE-WARN",
+                    "ANTI-SPAM.CHAT.SIMILARITY-SOUND",
+                    "ANTI-SPAM.CHAT.SIMILARITY-SOUND-ENABLED"
+                );
+
+                handleSpamEvent(event, spamEvent);
+                if (event.isCancelled()) return;
             }
-            event.setCancelled(true);
-            return;
         }
 
-        // Repetitive Message Blockage
-        if (blockRepetitive && !player.hasPermission(plugin.getPermissionManager().getString("ANTI-SPAM-BYPASS"))) {
-            if (plugin.getAntiSpamManager().isDuplicateMessage(uuid, message)) {
-                if (expireEnabled && plugin.getAntiSpamManager().isExpiredMessage(uuid, message, (int) expireTimeMs)) {
-                    plugin.getAntiSpamManager().forgetLastMessage(uuid); // Forget old message after expiration
-                    plugin.getAntiSpamManager().storeLastMessage(uuid, message);
-                } else {
-                    player.sendMessage(ColorHandler.color(
-                            plugin.getMessageManager().getString("ANTI-SPAM.CHAT.REPETITIVE-MESSAGE-WARN")));
-                    if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                        if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.REPETITIVE-SOUND-ENABLED")) {
-                            SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.CHAT.REPETITIVE-SOUND"), 1.0f, 1.0f);
-                        }
-                    } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                        XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.CHAT.REPETITIVE-SOUND"), 1.0f, 1.0f);
-                    }
-                    event.setCancelled(true);
-                    return;
-                }
-            } else {
-                plugin.getAntiSpamManager().storeLastMessage(uuid, message);
-            }
+        // Repetitive message detection
+        if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.BLOCK-REPETITIVE-MESSAGE") &&
+            !player.hasPermission(plugin.getPermissionManager().getString("ANTI-SPAM-BYPASS"))) {
 
-            isChatDelay(event);
+            boolean isDuplicate = checkRepetitiveMessage(uuid, message,
+                plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.EXPIRE-ENABLED"),
+                plugin.getSettings().getInt("ANTI-SPAM.CHAT.EXPIRE") * 1000);
+
+            if (isDuplicate) {
+                AntiSpamEvent spamEvent = createSpamEvent(
+                    player, message, plugin.getAntiSpamManager().getLastMessage(uuid),
+                    100.0, AntiSpamEvent.SpamType.REPETITIVE_MESSAGE,
+                    "ANTI-SPAM.CHAT.REPETITIVE-MESSAGE-WARN",
+                    "ANTI-SPAM.CHAT.REPETITIVE-SOUND",
+                    "ANTI-SPAM.CHAT.REPETITIVE-SOUND-ENABLED"
+                );
+
+                handleSpamEvent(event, spamEvent);
+                if (event.isCancelled()) return;
+            }
         }
 
-        // Anti-Repetitive Character Detection
+        // Repetitive characters detection
         int maxRepetitions = plugin.getSettings().getInt("ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS");
-        if (maxRepetitions > 0 && hasExcessiveRepetitiveCharacters(message, maxRepetitions) && !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-REPETITIVE-CHARACTER-CHAT"))) {
-            player.sendMessage(ColorHandler.color(
-                    plugin.getMessageManager().getString("ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTER-WARN")));
-            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED")) {
-                    SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS-SOUND"), 1.0f, 1.0f);
-                }
-            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS-SOUND"), 1.0f, 1.0f);
-            }
-            event.setCancelled(true);
-            return;
+        if (maxRepetitions > 0 &&
+            hasExcessiveRepetitiveCharacters(message, maxRepetitions) &&
+            !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-REPETITIVE-CHARACTER-CHAT"))) {
+
+            AntiSpamEvent spamEvent = createSpamEvent(
+                player, message, null, 0.0,
+                AntiSpamEvent.SpamType.REPETITIVE_CHARACTERS,
+                "ANTI-SPAM.CHAT.REPETITIVE-CHARACTER-WARN",
+                "ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS-SOUND",
+                "ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED"
+            );
+
+            handleSpamEvent(event, spamEvent);
+            if (event.isCancelled()) return;
         }
+
+        // Chat delay check
+        checkChatDelay(event, player, message, uuid);
     }
 
-    public boolean isChatDelay(AsyncPlayerChatEvent event) {
+    @EventHandler
+    public void commandSpamProtection(PlayerCommandPreprocessEvent event) {
+        if (event.isCancelled()) return;
+
         Player player = event.getPlayer();
-        String message = event.getMessage();
+        String command = event.getMessage();
         UUID uuid = player.getUniqueId();
 
-        boolean isAntiSwearEnabled = plugin.getSettings().getBoolean("ANTI-SWEAR.ENABLED");
+        // Command repetitive check
+        if (plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.BLOCK-REPETITIVE-COMMANDS") &&
+            !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-DUP-COMMAND"))) {
 
+            List<String> whitelist = plugin.getSettings().getStringList("ANTI-SPAM.COMMANDS.WHITELIST");
+            if (!isCommandWhitelisted(command, whitelist)) {
+                boolean isDuplicate = checkRepetitiveCommand(uuid, command,
+                    plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.EXPIRE-ENABLED"),
+                    plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.EXPIRE") * 1000);
+
+                if (isDuplicate) {
+                    AntiSpamEvent spamEvent = createSpamEvent(
+                        player, command, String.valueOf(plugin.getAntiSpamManager().getCommandCooldownTimeMs(uuid)),
+                        100.0, AntiSpamEvent.SpamType.COMMAND_REPETITIVE,
+                        "ANTI-SPAM.COMMANDS.REPETITIVE-COMMAND-WARN",
+                        "ANTI-SPAM.COMMANDS.SPAM-SOUND",
+                        "ANTI-SPAM.COMMANDS.SPAM-SOUND-ENABLED"
+                    );
+
+                    handleSpamEvent(event, spamEvent);
+                    if (event.isCancelled()) return;
+                }
+            }
+        }
+
+        // Command repetitive characters
+        int maxRepetitions = plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS");
+        if (maxRepetitions > 0 &&
+            hasExcessiveRepetitiveCharacters(command, maxRepetitions) &&
+            !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-REPETITIVE-CHARACTER-COMMAND"))) {
+
+            AntiSpamEvent spamEvent = createSpamEvent(
+                player, command, null, 0.0,
+                AntiSpamEvent.SpamType.COMMAND_REPETITIVE_CHARACTERS,
+                "ANTI-SPAM.COMMANDS.REPETITIVE-CHARACTER-WARN",
+                "ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS-SOUND",
+                "ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED"
+            );
+
+            handleSpamEvent(event, spamEvent);
+            if (event.isCancelled()) return;
+        }
+
+        // Command delay check
+        checkCommandDelay(event, player, uuid);
+    }
+
+    private SimilarityResult checkMessageSimilarity(UUID uuid, String newMessage, int similarityThreshold, int expireTimeMs) {
+        String lastMessage = plugin.getAntiSpamManager().getLastMessage(uuid);
+        long lastMessageTime = plugin.getAntiSpamManager().getLastMessageTime(uuid);
+
+        if (System.currentTimeMillis() - lastMessageTime > expireTimeMs) {
+            plugin.getAntiSpamManager().forgetLastMessage(uuid);
+            return new SimilarityResult(false, 0.0, null);
+        }
+
+        if (lastMessage == null) {
+            return new SimilarityResult(false, 0.0, null);
+        }
+
+        double similarity = calculateMessageSimilarity(lastMessage, newMessage);
+        return new SimilarityResult(
+            similarity >= (similarityThreshold / 100.0),
+            similarity * 100,
+            lastMessage
+        );
+    }
+
+    private boolean checkRepetitiveMessage(UUID uuid, String message, boolean expireEnabled, int expireTimeMs) {
+        if (plugin.getAntiSpamManager().isDuplicateMessage(uuid, message)) {
+            if (expireEnabled && plugin.getAntiSpamManager().isExpiredMessage(uuid, message, expireTimeMs)) {
+                plugin.getAntiSpamManager().forgetLastMessage(uuid);
+                plugin.getAntiSpamManager().storeLastMessage(uuid, message);
+                return false;
+            }
+            return true;
+        }
+        plugin.getAntiSpamManager().storeLastMessage(uuid, message);
+        return false;
+    }
+
+    private boolean checkRepetitiveCommand(UUID uuid, String command, boolean expireEnabled, int expireTimeMs) {
+        if (plugin.getAntiSpamManager().isDuplicateCommand(uuid, command)) {
+            if (expireEnabled && plugin.getAntiSpamManager().isExpiredCommand(uuid, command, expireTimeMs)) {
+                plugin.getAntiSpamManager().forgetLastCommand(uuid);
+                plugin.getAntiSpamManager().storeLastCommand(uuid, command);
+                return false;
+            }
+            return true;
+        }
+        plugin.getAntiSpamManager().storeLastCommand(uuid, command);
+        return false;
+    }
+
+    private void checkChatDelay(AsyncPlayerChatEvent event, Player player, String message, UUID uuid) {
         long chatDelayMs = plugin.getSettings().getInt("ANTI-SPAM.CHAT.CHAT-DELAY");
         if (chatDelayMs > 0 && !player.hasPermission(plugin.getPermissionManager().getString("CHAT-DELAY-BYPASS"))) {
-            if (isAntiSwearEnabled && this.antiSwearSystem.checkForSwear(player, message)) {
+            if (plugin.getSettings().getBoolean("ANTI-SWEAR.ENABLED") &&
+                this.antiSwearSystem.checkForSwear(player, message)) {
+                return;
+            }
 
-                String censoredMessage = message;
-
-                // If message is censored, cancel the event
-                if (!censoredMessage.equals(message)) {
-                    return isAntiSwearEnabled;
-                }
-            } else if
-            (plugin.getAntiSpamManager().isOnCooldown(uuid)) {
+            if (plugin.getAntiSpamManager().isOnCooldown(uuid)) {
                 long remainingTime = plugin.getAntiSpamManager().getChatCooldownTimeMs(uuid);
-                player.sendMessage(ColorHandler.color(
-                        plugin.getMessageManager().getString("ANTI-SPAM.CHAT.CHAT-COOLDOWN-WARN")
-                                .replace("{Time}", String.format("%.2f", remainingTime / 1000.0))));
-                if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                    if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.CHAT-DELAY-SOUND-ENABLED")) {
-                        SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.CHAT.CHAT-DELAY-SOUND"), 1.0f, 1.0f);
-                    }
-                } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                    XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.CHAT.CHAT-DELAY-SOUND"), 1.0f, 1.0f);
-                }
-                event.setCancelled(true);
+
+                AntiSpamEvent spamEvent = createSpamEvent(
+                    player, message, null, 0.0,
+                    AntiSpamEvent.SpamType.CHAT_DELAY,
+                    "ANTI-SPAM.CHAT.CHAT-COOLDOWN-WARN",
+                    "ANTI-SPAM.CHAT.CHAT-DELAY-SOUND",
+                    "ANTI-SPAM.CHAT.CHAT-DELAY-SOUND-ENABLED"
+                );
+                spamEvent.setWarningMessage(spamEvent.getWarningMessage()
+                    .replace("{Time}", String.format("%.2f", remainingTime / 1000.0)));
+
+                handleSpamEvent(event, spamEvent);
             } else {
                 plugin.getAntiSpamManager().startCooldown(uuid, (int) chatDelayMs);
             }
         }
-        return isAntiSwearEnabled;
     }
 
-    public boolean isSimilarMessage(UUID uuid, String newMessage, int similarityThreshold, int expireTimeMs) {
-        // Get the last message and its timestamp
-        String lastMessage = plugin.getAntiSpamManager().getLastMessage(uuid);
-        long lastMessageTime = plugin.getAntiSpamManager().getLastMessageTime(uuid);
+    private void checkCommandDelay(PlayerCommandPreprocessEvent event, Player player, UUID uuid) {
+        long commandDelayMs = plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.COMMAND-DELAY");
+        if (commandDelayMs > 0 && !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-COMMAND-DELAY"))) {
+            if (plugin.getAntiSpamManager().isOnCommandCooldown(uuid)) {
+                long remainingTime = plugin.getAntiSpamManager().getCommandCooldownTimeMs(uuid);
 
-        // If the message is expired, forget the previous one
-        if (System.currentTimeMillis() - lastMessageTime > expireTimeMs) {
-            plugin.getAntiSpamManager().forgetLastMessage(uuid);
-            return false;
+                AntiSpamEvent spamEvent = createSpamEvent(
+                    player, event.getMessage(), null, 0.0,
+                    AntiSpamEvent.SpamType.COMMAND_DELAY,
+                    "ANTI-SPAM.COMMANDS.COMMAND-COOLDOWN-WARN",
+                    "ANTI-SPAM.COMMANDS.COMMAND-DELAY-SOUND",
+                    "ANTI-SPAM.COMMANDS.COMMAND-DELAY-SOUND-ENABLED"
+                );
+                spamEvent.setWarningMessage(spamEvent.getWarningMessage()
+                    .replace("{Time}", String.format("%.2f", remainingTime / 1000.0)));
+
+                handleSpamEvent(event, spamEvent);
+            } else {
+                plugin.getAntiSpamManager().startCommandCooldown(uuid, (int) commandDelayMs);
+            }
         }
-
-        // If no previous message exists, return false
-        if (lastMessage == null) {
-            return false;
-        }
-
-        // Calculate the similarity between the new message and the last message
-        double similarity = calculateMessageSimilarity(lastMessage, newMessage);
-
-        // If the similarity exceeds the threshold, return true
-        return similarity >= (similarityThreshold / 100.0);
     }
 
+    private AntiSpamEvent createSpamEvent(Player player, String message, String previousMessage,
+                                          double similarity, AntiSpamEvent.SpamType type,
+                                          String warnMessagePath, String soundPath,
+                                          String soundEnabledPath) {
+        return new AntiSpamEvent(
+            player,
+            message,
+            previousMessage,
+            similarity,
+            type,
+            true,
+            ColorHandler.color(plugin.getMessageManager().getString(warnMessagePath)),
+            plugin.getSettings().getString(soundPath),
+            plugin.getSettings().getBoolean(soundEnabledPath),
+            false,
+            null
+        );
+    }
+
+    private void handleSpamEvent(org.bukkit.event.Cancellable event, AntiSpamEvent spamEvent) {
+        plugin.getServer().getPluginManager().callEvent(spamEvent);
+
+        if (spamEvent.isCancelled()) {
+            return;
+        }
+
+        if (spamEvent.shouldCancel()) {
+            event.setCancelled(true);
+            spamEvent.getPlayer().sendMessage(spamEvent.getWarningMessage());
+
+            if (spamEvent.shouldPlaySound() && spamEvent.getSound() != null) {
+                if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                    SoundUtil.playSound(spamEvent.getPlayer(), spamEvent.getSound(), 1.0f, 1.0f);
+                } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                    XSounds.playSound(spamEvent.getPlayer(), spamEvent.getSound(), 1.0f, 1.0f);
+                }
+            }
+        }
+    }
+
+    private static class SimilarityResult {
+        private final boolean similar;
+        private final double similarity;
+        private final String previousMessage;
+
+        public SimilarityResult(boolean similar, double similarity, String previousMessage) {
+            this.similar = similar;
+            this.similarity = similarity;
+            this.previousMessage = previousMessage;
+        }
+
+        public boolean isSimilar() {
+            return similar;
+        }
+
+        public double getSimilarity() {
+            return similarity;
+        }
+
+        public String getPreviousMessage() {
+            return previousMessage;
+        }
+    }
+
+    // Existing utility methods (unchanged)
     private double calculateMessageSimilarity(String lastMessage, String newMessage) {
         String[] lastWords = lastMessage.split("\\s+");
         String[] newWords = newMessage.split("\\s+");
@@ -173,95 +332,9 @@ public class ListenerAntiSpam implements Listener {
             }
         }
 
-        // Return the percentage of common words between the two messages
         return (double) commonWords / Math.max(lastWords.length, newWords.length);
     }
 
-
-
-    @EventHandler
-    public void commandSpamProtection(PlayerCommandPreprocessEvent event) {
-        if (event.isCancelled()) return;
-        
-        Player player = event.getPlayer();
-        String command = event.getMessage();
-        UUID uuid = player.getUniqueId();
-
-        // Command Anti-Spam
-        boolean blockRepetitive = plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.BLOCK-REPETITIVE-COMMANDS");
-        boolean expireEnabled = plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.EXPIRE-ENABLED");
-        long expireTimeMs = plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.EXPIRE") * 1000L;
-
-        List<String> whitelist = plugin.getSettings().getStringList("ANTI-SPAM.COMMANDS.WHITELIST");
-        if (blockRepetitive && !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-DUP-COMMAND")) &&
-                !isCommandWhitelisted(command, whitelist)) {
-            if (plugin.getAntiSpamManager().isDuplicateCommand(uuid, command)) {
-                if (expireEnabled && plugin.getAntiSpamManager().isExpiredCommand(uuid, command, (int) expireTimeMs)) {
-                    plugin.getAntiSpamManager().forgetLastCommand(uuid); // Forget old command after expiration
-                    plugin.getAntiSpamManager().storeLastCommand(uuid, command);
-                } else {
-                    player.sendMessage(ColorHandler.color(
-                            plugin.getMessageManager().getString("ANTI-SPAM.COMMANDS.REPETITIVE-COMMAND-WARN")));
-                    if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                        if (plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.SPAM-SOUND-ENABLED")) {
-                            SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.COMMANDS.SPAM-SOUND"), 1.0f, 1.0f);
-                        }
-                    } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                        XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.COMMANDS.SPAM-SOUND"), 1.0f, 1.0f);
-                    }
-                    event.setCancelled(true);
-                    return;
-                }
-            } else {
-                plugin.getAntiSpamManager().storeLastCommand(uuid, command);
-            }
-        }
-
-        // Anti-Repetitive Character Detection
-        int maxRepetitions = (int) plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS");
-        if (maxRepetitions > 0 && hasExcessiveRepetitiveCharacters(command, maxRepetitions) && !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-REPETITIVE-CHARACTER-COMMAND"))) {
-            player.sendMessage(ColorHandler.color(
-                    plugin.getMessageManager().getString("ANTI-SPAM.COMMANDS.REPETITIVE-CHARACTER-WARN")));
-            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                if (plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED")) {
-                    SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS-SOUND"), 1.0f, 1.0f);
-                }
-            } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS-SOUND"), 1.0f, 1.0f);
-            }
-            event.setCancelled(true);
-            return;
-        }
-
-        // Command Cooldown
-        long commandDelayMs = plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.COMMAND-DELAY");
-        if (commandDelayMs > 0 && !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-COMMAND-DELAY"))) {
-            if (plugin.getAntiSpamManager().isOnCommandCooldown(uuid)) {
-                long remainingTime = plugin.getAntiSpamManager().getCommandCooldownTimeMs(uuid);
-                player.sendMessage(ColorHandler.color(
-                        plugin.getMessageManager().getString("ANTI-SPAM.COMMANDS.COMMAND-COOLDOWN-WARN")
-                                .replace("{Time}", String.format("%.2f", remainingTime / 1000.0))));
-                if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                    if (plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.COMMAND-DELAY-SOUND-ENABLED")) {
-                        SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.COMMANDS.CHAT-DELAY-SOUND"), 1.0f, 1.0f);
-                    }
-                } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                    XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-SPAM.COMMANDS.COMMAND-DELAY-SOUND"), 1.0f, 1.0f);
-                }
-                event.setCancelled(true);
-            } else {
-                plugin.getAntiSpamManager().startCommandCooldown(uuid, (int) commandDelayMs);
-            }
-        }
-    }
-
-    /**
-     * Checks if a string contains any character repeated more than the allowed limit consecutively.
-     *
-     * @param message The message to check.
-     * @param maxRepetitions The maximum allowed repetitions of a character.
-     * @return true if the message contains repetitive characters exceeding the limit.
-     */
     private boolean hasExcessiveRepetitiveCharacters(String message, int maxRepetitions) {
         char lastChar = '\0';
         int count = 0;
@@ -277,7 +350,6 @@ public class ListenerAntiSpam implements Listener {
                 lastChar = c;
             }
         }
-
         return false;
     }
 

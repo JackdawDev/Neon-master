@@ -1,20 +1,25 @@
 package dev.jackdaw1101.neon.AntiUniCode;
 
+import dev.jackdaw1101.neon.API.Features.AntiUnicode.AntiUnicodeEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
-import org.bukkit.ChatColor;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
+import java.util.List;
+
 public class ListenerAntiUnicode implements Listener {
     private final Neon plugin;
+    private List<String> allowedUnicodes;
 
     public ListenerAntiUnicode(Neon plugin) {
         this.plugin = plugin;
+        this.allowedUnicodes = plugin.getSettings().getStringList("ANTI-UNICODE.BYPASSED-UNICODES");
     }
 
     @EventHandler
@@ -25,32 +30,60 @@ public class ListenerAntiUnicode implements Listener {
         String message = event.getMessage();
 
         if (!plugin.getSettings().getBoolean("ANTI-UNICODE.ENABLED")) return;
-        if (player.hasPermission((String) plugin.getPermissionManager().getString("ANTI-UNICODE-BYPASS"))) return;
+        if (player.hasPermission(plugin.getPermissionManager().getString("ANTI-UNICODE-BYPASS"))) return;
 
-        if (containsUnicode(message)) {
+        String detectedUnicode = findUnicodeCharacters(message);
+        if (detectedUnicode != null) {
+            AntiUnicodeEvent unicodeEvent = new AntiUnicodeEvent(
+                player,
+                message,
+                detectedUnicode,
+                plugin.getSettings().getBoolean("ANTI-UNICODE.KICK-ENABLED"),
+                ColorHandler.color(plugin.getMessageManager().getString("ANTI-UNICODE.BLOCK-MESSAGE")),
+                ColorHandler.color(plugin.getMessageManager().getString("ANTI-UNICODE.KICK-MESSAGE")),
+                plugin.getSettings().getString("ANTI-UNICODE.SOUND"),
+                plugin.getSettings().getBoolean("ANTI-UNICODE.USE-SOUND")
+            );
+
+            plugin.getServer().getPluginManager().callEvent(unicodeEvent);
+
+            if (unicodeEvent.isCancelled()) {
+                return;
+            }
+
             event.setCancelled(true);
-
-            String blockMessage = ColorHandler.color(plugin.getMessageManager().getString("ANTI-UNICODE.BLOCK-MESSAGE"));
-            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                if (plugin.getSettings().getBoolean("ANTI-UNICODE.USE-SOUND")) {
-                    SoundUtil.playSound(player, (String) plugin.getSettings().getString("ANTI-UNICODE.SOUND"), 1.0f, 1.0f);
-                }
-            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                XSounds.playSound(player, (String) plugin.getSettings().getString("ANTI-UNICODE.SOUND"), 1.0f, 1.0f);
-            }
-            player.sendMessage(blockMessage);
-
-            if (plugin.getSettings().getBoolean("ANTI-UNICODE.KICK-ENABLED")) {
-                String kickMessage = ColorHandler.color(plugin.getMessageManager().getString("ANTI-UNICODE.KICK-MESSAGE"));
-                player.kickPlayer(kickMessage);
-            }
+            Bukkit.getScheduler().runTask(plugin, () -> handleUnicodeViolation(player, unicodeEvent));
         }
     }
 
-    private boolean containsUnicode(String message) {
+    private String findUnicodeCharacters(String message) {
+        StringBuilder unicodeChars = new StringBuilder();
         for (char c : message.toCharArray()) {
-            if (c > 127) return true; // Detects non-ASCII characters
+            if (c > 127 && !isAllowedUnicode(c)) { // Check if character is non-ASCII and not allowed
+                unicodeChars.append(c);
+            }
         }
-        return false;
+        return unicodeChars.length() > 0 ? unicodeChars.toString() : null;
+    }
+
+    private boolean isAllowedUnicode(char c) {
+        String charStr = String.valueOf(c);
+        return allowedUnicodes.contains(charStr);
+    }
+
+    private void handleUnicodeViolation(Player player, AntiUnicodeEvent event) {
+        player.sendMessage(event.getBlockMessage());
+
+        if (event.shouldPlaySound() && event.getSound() != null) {
+            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                SoundUtil.playSound(player, event.getSound(), 1.0f, 1.0f);
+            } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                XSounds.playSound(player, event.getSound(), 1.0f, 1.0f);
+            }
+        }
+
+        if (event.shouldKick()) {
+            player.kickPlayer(event.getKickMessage());
+        }
     }
 }

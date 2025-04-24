@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,6 +19,8 @@ public class ConfigFile {
     private final JavaPlugin plugin;
     private final String configName;
     protected File file;
+    private File LocaleConfig;
+    private FileConfiguration LocaleFile;
     protected YamlConfiguration config;
     private final Map<String, List<String>> commentsMap = new LinkedHashMap<>();
 
@@ -35,6 +38,60 @@ public class ConfigFile {
             e.printStackTrace();
             plugin.getLogger().severe(ChatColor.RED + "[Neon] Error initializing config file: " + configName);
         }
+    }
+
+    public boolean reloadLocales() {
+        try {
+            LocaleConfig = new File(plugin.getDataFolder(), "locale.yml");
+            LocaleFile = YamlConfiguration.loadConfiguration(LocaleConfig);
+
+            if (!LocaleConfig.exists()) {
+                plugin.saveResource("locale.yml", false);
+            }
+
+            File defaultConfigFile = new File(plugin.getDataFolder(), "locale.yml");
+            if (defaultConfigFile.exists()) {
+                YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(defaultConfigFile);
+                LocaleFile.setDefaults(defaultConfig);
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public String getString(String path, Object... placeholders) {
+        String message = this.config.getString(path);
+        if (message == null) return null;
+
+        if (placeholders.length > 0) {
+            for (int i = 0; i < placeholders.length; i += 2) {
+                if (i + 1 >= placeholders.length) break;
+                String placeholder = String.valueOf(placeholders[i]);
+                String value = String.valueOf(placeholders[i + 1]);
+                message = message.replace(placeholder, value);
+            }
+        }
+
+        // Apply theme placeholders
+        String prefix = this.config.getString("PREFIX");
+        if (prefix != null) message = message.replace("{prefix}", prefix);
+
+        String mainTheme = this.config.getString("MAIN-THEME");
+        if (mainTheme != null) message = message.replace("{main_theme}", mainTheme);
+
+        String secondTheme = this.config.getString("SECOND-THEME");
+        if (secondTheme != null) message = message.replace("{second_theme}", secondTheme);
+
+        String thirdTheme = this.config.getString("THIRD-THEME");
+        if (thirdTheme != null) message = message.replace("{third_theme}", thirdTheme);
+
+        String autoResponsePrefix = this.config.getString("AUTO-RESPONSE-PREFIX");
+        if (autoResponsePrefix != null) message = message.replace("{auto_response_prefix}", autoResponsePrefix);
+
+        return message;
     }
 
     public void init() throws IOException {
@@ -149,9 +206,9 @@ public class ConfigFile {
         }
     }
 
-    public String getString(String path) {
-        return this.config.getString(path);
-    }
+   // public String getString(String path) {
+    //    return this.config.getString(path);
+    //}
 
     public int getInt(String path) {
         return this.config.getInt(path);
@@ -201,21 +258,27 @@ public class ConfigFile {
 
     public void replacePlaceholdersInConfig(String... placeholdersAndValues) {
         if (placeholdersAndValues.length % 2 != 0) {
-            throw new IllegalArgumentException("Invalid number of arguments. Provide placeholders and values in pairs.");
+            throw new IllegalArgumentException("Provide placeholders and values in pairs.");
         }
 
         for (String key : config.getKeys(true)) {
             if (config.isString(key)) {
                 String value = config.getString(key);
+                if (value == null) continue;
+
                 for (int i = 0; i < placeholdersAndValues.length; i += 2) {
-                    value = value.replace(placeholdersAndValues[i], placeholdersAndValues[i + 1]);
+                    String placeholder = placeholdersAndValues[i];
+                    String replacement = placeholdersAndValues[i + 1];
+                    value = value.replace(placeholder, replacement != null ? replacement : "");
                 }
+
                 config.set(key, value);
             }
         }
 
         save();
     }
+
 
     public ConfigFile get() {
         return this;

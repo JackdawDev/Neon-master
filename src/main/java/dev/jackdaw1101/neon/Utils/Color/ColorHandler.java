@@ -1,7 +1,9 @@
 package dev.jackdaw1101.neon.Utils.Color;
 
+import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Chat.CC;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +13,14 @@ import java.util.regex.Pattern;
 public class ColorHandler {
 
     private static final boolean USE_BUKKIT_CHAT_COLOR = isLegacyVersion();
+    public static final String PREFIX = Neon.getInstance().getMessageManager().getString("PREFIX");
+    public static final String MAINTHEME = Neon.getInstance().getMessageManager().getString("MAIN-THEME");
+    public static final String SECONDTHEME = Neon.getInstance().getMessageManager().getString("SECOND-THEME");
+    public static final String THIRDTHEME = Neon.getInstance().getMessageManager().getString("THIRD-THEME");
 
     static {
         if (USE_BUKKIT_CHAT_COLOR) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Using legacy color formatting as you are running a -1.15 Server");
+            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Using legacy color formatting as you are running a 1.15 or below Server");
         } else {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Using hex color formatting as you are running a 1.16+ Server");
         }
@@ -45,6 +51,7 @@ public class ColorHandler {
         text = replaceMiniMessageGradient(text);
         text = replaceRainbowColors(text);
         text = replaceNamedColors(text);
+        text = applyPlaceholders(text);
         return text;
     }
 
@@ -243,4 +250,13 @@ public class ColorHandler {
                 + colorChar + hex.charAt(2) + colorChar + hex.charAt(3)
                 + colorChar + hex.charAt(4) + colorChar + hex.charAt(5);
     }
+
+    private static String applyPlaceholders(String text) {
+        return text
+            .replace("{prefix}", PREFIX)
+            .replace("{main_theme}", MAINTHEME)
+            .replace("{second_theme}", SECONDTHEME)
+            .replace("{third_theme}", THIRDTHEME);
+    }
+
 }

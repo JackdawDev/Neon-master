@@ -1,5 +1,7 @@
 package dev.jackdaw1101.neon.Manager.MentionManager;
 
+
+import dev.jackdaw1101.neon.API.Features.MentionEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
@@ -10,12 +12,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.EventPriority;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class ListenerMentions implements Listener {
+
     private final Neon plugin;
     private final Map<UUID, Long> mentionCooldowns = new HashMap<>();
 
@@ -23,7 +27,7 @@ public class ListenerMentions implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
@@ -59,11 +63,16 @@ public class ListenerMentions implements Listener {
         if (everyoneEnabled && sender.hasPermission(plugin.getPermissionManager().getString("MENTION-EVERYONE"))) {
             if ((!mentionSymbol.isEmpty() && message.contains(mentionSymbol + everyoneWord)) || (mentionSymbol.isEmpty() && message.contains(everyoneWord))) {
                 for (Player target : Bukkit.getOnlinePlayers()) {
+                    // Notify player
                     notifyPlayer(target, sender);
                 }
                 String formattedMention = ColorHandler.color(mentionColor) + (mentionSymbol.isEmpty() ? "" : mentionSymbol) + everyoneWord + afterMentionColor;
                 formattedMention = applyPlaceholders(sender, formattedMention);
                 newMessage = newMessage.replace((mentionSymbol.isEmpty() ? "" : mentionSymbol) + everyoneWord, formattedMention);
+
+                // Fire the MentionEvent
+                MentionEvent mentionEvent = new MentionEvent(sender, null, newMessage, false, mentionSymbol, true, false);
+                Bukkit.getPluginManager().callEvent(mentionEvent);
 
                 event.setMessage(newMessage);
                 mentionedAnyone = true;
@@ -86,6 +95,10 @@ public class ListenerMentions implements Listener {
                 String formattedMention = ColorHandler.color(mentionColor) + mentioned.getName() + afterMentionColor;
                 formattedMention = applyPlaceholders(sender, formattedMention);
                 newMessage = newMessage.replace(mentionTag, formattedMention).replace(mentioned.getName(), formattedMention);
+
+                // Fire the MentionEvent for each mentioned player
+                MentionEvent mentionEvent = new MentionEvent(sender, mentioned, newMessage, mentionedBySymbol, mentionSymbol, false, false);
+                Bukkit.getPluginManager().callEvent(mentionEvent);
             }
         }
 
@@ -98,7 +111,7 @@ public class ListenerMentions implements Listener {
     private void notifyPlayer(Player target, Player sender) {
         // Send chat message notification
         String notifyMessage = plugin.getMessageManager().getString("MENTION-NOTIFY")
-                .replace("%sender%", sender.getName());
+            .replace("%sender%", sender.getName());
         notifyMessage = applyPlaceholders(sender, notifyMessage);
         target.sendMessage(ColorHandler.color(notifyMessage));
 
@@ -119,9 +132,9 @@ public class ListenerMentions implements Listener {
             subtitle = applyPlaceholders(sender, subtitle.replace("%sender%", sender.getName()));
 
             target.sendTitle(
-                    ColorHandler.color(title),
-                    ColorHandler.color(subtitle),
-                    10, 40, 10
+                ColorHandler.color(title),
+                ColorHandler.color(subtitle),
+                10, 40, 10
             );
         }
     }
