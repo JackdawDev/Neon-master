@@ -51,7 +51,7 @@ public class NeonReloadCommand implements CommandExecutor {
         //boolean permsReloaded = plugin.getPermissionManager().reloadPermissions();
         //boolean localesReloaded = plugin.getLocales().reloadLocales();
         //configAPI.reloadAllConfigs();
-        plugin.getLocales().reload();
+        plugin.getLocales().reloadLocales();
         plugin.getSettings().reload();
         plugin.getMessageManager().reload();
         plugin.getPermissionManager().reload();
