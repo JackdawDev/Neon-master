@@ -121,11 +121,5 @@
           <artifactId>ConfigUpdater</artifactId>
           <version>2.2-SNAPSHOT</version>
       </dependency>
-      <dependency>
-          <groupId>com.yworks</groupId>
-          <artifactId>yguard</artifactId>
-          <version>4.0.0</version>
-          <scope>compile</scope>
-      </dependency>
   </dependencies>
 </project>
