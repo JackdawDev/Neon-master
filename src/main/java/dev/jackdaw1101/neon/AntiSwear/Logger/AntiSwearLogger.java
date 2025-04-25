@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.AntiSwear.Logger;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
+import dev.jackdaw1101.neon.API.Utils.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

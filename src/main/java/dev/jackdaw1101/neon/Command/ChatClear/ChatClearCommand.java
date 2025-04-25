@@ -1,11 +1,10 @@
 package dev.jackdaw1101.neon.Command.ChatClear;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

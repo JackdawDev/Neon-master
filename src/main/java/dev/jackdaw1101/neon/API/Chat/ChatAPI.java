@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.API.Chat;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;

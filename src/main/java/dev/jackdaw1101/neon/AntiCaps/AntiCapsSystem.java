@@ -2,8 +2,8 @@ package dev.jackdaw1101.neon.AntiCaps;
 
 import dev.jackdaw1101.neon.API.Features.AntiCaps.AntiCapsEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.CC;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
 import org.bukkit.Bukkit;

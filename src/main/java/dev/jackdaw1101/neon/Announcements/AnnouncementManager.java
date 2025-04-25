@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.Announcements;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
 import net.md_5.bungee.api.chat.*;

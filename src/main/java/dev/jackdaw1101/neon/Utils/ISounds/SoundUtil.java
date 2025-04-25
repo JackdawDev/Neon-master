@@ -1,6 +1,5 @@
 package dev.jackdaw1101.neon.Utils.ISounds;
 
-import dev.jackdaw1101.neon.Utils.Chat.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;

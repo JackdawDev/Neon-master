@@ -2,15 +2,13 @@ package dev.jackdaw1101.neon.Configurations;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
-import lombok.SneakyThrows;
+import dev.jackdaw1101.neon.API.Utils.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 public class Settings {
 

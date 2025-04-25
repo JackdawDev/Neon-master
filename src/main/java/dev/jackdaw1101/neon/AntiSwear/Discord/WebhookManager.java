@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.AntiSwear.Discord;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
+import dev.jackdaw1101.neon.API.Utils.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 

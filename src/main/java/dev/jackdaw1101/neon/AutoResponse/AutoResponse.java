@@ -4,7 +4,7 @@ import dev.jackdaw1101.neon.API.Features.AutoResponse.AutoResponseAPI;
 import dev.jackdaw1101.neon.API.Features.AutoResponse.AutoResponseAPIImpl;
 import dev.jackdaw1101.neon.API.Features.AutoResponse.Event.AutoResponseEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
 import me.clip.placeholderapi.PlaceholderAPI;

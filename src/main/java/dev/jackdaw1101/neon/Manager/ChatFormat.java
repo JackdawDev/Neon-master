@@ -7,7 +7,7 @@ import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.Chat.ChatAPI;
 import dev.jackdaw1101.neon.AntiSwear.AntiSwearSystem;
 import dev.jackdaw1101.neon.Command.Alerts.AlertManager;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

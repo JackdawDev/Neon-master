@@ -2,12 +2,11 @@ package dev.jackdaw1101.neon.Command.ToggleChat;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleAPIImpl;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.CC;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -2,7 +2,7 @@ package dev.jackdaw1101.neon.Utils.Core;
 
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
+import dev.jackdaw1101.neon.API.Utils.CC;
 import org.bukkit.Bukkit;
 
 public class DebugUtil {

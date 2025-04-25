@@ -1,10 +1,8 @@
 package dev.jackdaw1101.neon.API.Features.JoinLeave;
 
-import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerJoinEvent;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerLeaveEvent;
 import dev.jackdaw1101.neon.Configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
