@@ -754,12 +754,6 @@ event.setHoverText(Arrays.asList(
 ));
 event.setSound("entity.experience_orb.pickup");
 }
-
-    // Disable hover for mobile users
-    if (isMobileUser(event.getPlayer())) {
-        event.setUseHover(false);
-    }
-}
 ```
 
 ## 🎉 NeonPlayerJoinEvent
