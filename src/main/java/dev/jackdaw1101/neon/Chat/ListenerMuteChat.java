@@ -1,12 +1,10 @@
 package dev.jackdaw1101.neon.Chat;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Chat.Manager.ChatMuteManager;
+import dev.jackdaw1101.neon.API.Features.ChatMute.ChatMuteManager;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

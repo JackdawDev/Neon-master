@@ -2,7 +2,7 @@ package dev.jackdaw1101.neon.Command.Chat;
 
 import dev.jackdaw1101.neon.Command.API.NeonCommand;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.Chat.Manager.ChatMuteManager;
+import dev.jackdaw1101.neon.API.Features.ChatMute.ChatMuteManager;
 import dev.jackdaw1101.neon.Utils.Color.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
 import dev.jackdaw1101.neon.Utils.ISounds.XSounds;
