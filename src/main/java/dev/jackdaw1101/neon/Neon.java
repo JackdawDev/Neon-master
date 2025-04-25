@@ -22,7 +22,7 @@ import dev.jackdaw1101.neon.AntiSwear.SwearManager;
 import dev.jackdaw1101.neon.AntiUniCode.ListenerAntiUnicode;
 import dev.jackdaw1101.neon.AutoResponse.AutoResponse;
 import dev.jackdaw1101.neon.Chat.ListenerMuteChat;
-import dev.jackdaw1101.neon.Chat.Manager.ChatMuteManager;
+import dev.jackdaw1101.neon.API.Features.ChatMute.ChatMuteManager;
 import dev.jackdaw1101.neon.Command.API.CommandManager;
 import dev.jackdaw1101.neon.Command.Alerts.AlertManager;
 import dev.jackdaw1101.neon.Command.Chat.MuteChatCommand;
@@ -71,7 +71,6 @@ public final class Neon extends JavaPlugin {
     private ConfigFile locales;
     //private Database database;
     private ConfigFile database;
-    private NeonAPI neonAPI;
     private AddonManager addonManager;
     private ToggleChatCommand toggleChatCommand;
     private ChatListener chatListener;
@@ -82,6 +81,7 @@ public final class Neon extends JavaPlugin {
     private GrammarAPI grammarAPI;
     private NeonJoinLeaveAPI neonJoinLeaveAPI;
     private AntiSwearAPI antiSwearAPI;
+    private NeonAPI api;
 
 
     @Override
@@ -108,7 +108,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadDataFolder() {
-        File logFolder = new File("plugins/Neon/data/toggle_chat");
+        File logFolder = new File("plugins/Neon/data");
         boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
@@ -122,6 +122,17 @@ public final class Neon extends JavaPlugin {
             if (debugMode) {
                 Bukkit.getConsoleSender().sendMessage(CC.YELLOW + "[Neon-Debug] Data folder already exists.");
             }}
+    }
+
+    private void createFolders() {
+        if (!getDataFolder().exists()) {
+            getDataFolder().mkdir();
+        }
+
+        File addonsFolder = new File(getDataFolder(), "Addons");
+        if (!addonsFolder.exists()) {
+            addonsFolder.mkdir();
+        }
     }
 
     private void loadAntiAdLogFolder() {
@@ -185,7 +196,6 @@ public final class Neon extends JavaPlugin {
 
     private void unload() {
         long stopTime = System.currentTimeMillis();
-        this.getNeonAPI().stopAPI();
         chatToggleDatabase.shutdown();
         long disableTime = System.currentTimeMillis() - stopTime;
         Bukkit.getConsoleSender().sendMessage(CC.BD_RED + "=============================================");
@@ -194,7 +204,10 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.RED + "| |\\  |" + CC.BL_PURPLE + " || ");
         Bukkit.getConsoleSender().sendMessage(CC.RED + "|_| \\_|" + CC.BL_PURPLE + " || " + CC.BL_PURPLE + "Disabled in: " + CC.L_PURPLE + disableTime + "ms");
         Bukkit.getConsoleSender().sendMessage(CC.BD_RED + "=============================================");
-        //NeonLoader.Terminate();
+        addonManager.getAllAddons().keySet().forEach(addonManager::unregisterAddon);
+        if (api != null) {
+            api.shutdown();
+        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Loader] Terminated!");
     }
 
@@ -277,6 +290,7 @@ public final class Neon extends JavaPlugin {
         loadChatLogLogFolder();
         loadAntiSwearLogFolder();
         loadDataFolder();
+        createFolders();
 
         if (!checkConfigVersion()) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Unable To Load Configurations: Invalid Config Version");
@@ -286,6 +300,8 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Configurations!");
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading API...");
+        this.addonManager = new AddonManager(getLogger());
+        this.api = new NeonAPI(this, addonManager);
         this.antiSwearAPI = new AntiSwearAPIImpl(this, swearManager);
         Bukkit.getServicesManager().register(AntiSwearAPI.class, antiSwearAPI, this, ServicePriority.Normal);
         chatToggleAPI = new ChatToggleAPIImpl(this);
@@ -519,7 +535,7 @@ public final class Neon extends JavaPlugin {
 
     // GLOBAL API
     public NeonAPI getNeonAPI() {
-        return neonAPI;
+        return api;
     }
     // LOCAL API
     public AntiSpamManager getAntiSpamManager() {
