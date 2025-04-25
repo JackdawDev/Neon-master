@@ -34,7 +34,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
             boolean failover = plugin.getDatabaseManager().getBoolean("FAIL-OVER-RED-ONLY");
             int maxReconnect = plugin.getDatabaseManager().getInt("MAX-RECONNECTS");
 
-            String url = "jdbc:mysql:
+            String url = "jdbc:mysql://" + host + ":" + port + "/" + database +
                 "?useSSL=" + useSSL +
                 "&autoReconnect=" + autoReconnect +
                 "&failOverReadOnly=" + failover +

@@ -1432,3 +1432,8 @@ SQLITE-CHATTOGGLE:
 ```
 
 **(!) Databases cannot be reload via /neon reload and they require a restart**
+
+
+# Links
+- [Discord](https://discord.com/invite/HXVdWGdQ6B)
+- [SpigotMC](https://www.spigotmc.org/resources/neon.124425/)
