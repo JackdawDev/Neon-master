@@ -28,7 +28,7 @@ public class AntiLinkSystem implements Listener {
 
     public AntiLinkSystem(Neon plugin, AlertManager alertManager) {
         this.plugin = plugin;
-        this.urlPattern = Pattern.compile("^(http:
+        this.urlPattern = Pattern.compile("^(http://www\\.|https://www\\.|http://|https://)?[a-z0-9]+([\\-.][a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$");
         this.whitelistedLinks = plugin.getSettings().getStringList("ANTI-LINK.WHITELIST");
         this.alertManager = alertManager;
     }
