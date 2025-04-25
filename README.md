@@ -43,7 +43,7 @@ the **Auto Announce System**! This system automatically broadcasts announcements
 
 ## ⚙️ Configuration Guide
 
-You can configure announcements inside your `settings.yml` file using the following structure:
+You can configure announcements inside your `locale.yml` file using the following structure:
 
 ```yaml
 <announcement-name>:
@@ -143,11 +143,11 @@ Add this dependency to your pom.xml:
 
 ```xml
 <dependency>
-<groupId>dev.Jackdaw1101</groupId>
-<artifactId>neon</artifactId>
-<version>1.0</version>
-<scope>system</scope>
-<systemPath>${project.basedir}/libs/Neon-1.0.jar</systemPath>
+   <groupId>dev.Jackdaw1101</groupId>
+   <artifactId>neon</artifactId>
+   <version>1.0</version>
+   <scope>system</scope>
+   <systemPath>${project.basedir}/libs/Neon-1.0.jar</systemPath>
 </dependency>
 ```
 ### 🟢 Gradle (build.gradle)
@@ -155,8 +155,8 @@ Add this to your dependencies block:
 
 ```groovy
 dependencies {
-implementation files("${project.projectDir}/libs/Neon-1.0.jar")
-}
+   implementation files("${project.projectDir}/libs/Neon-1.0.jar")
+   }
 ```
 
 ### 🚀 Using the Neon API
@@ -173,11 +173,52 @@ if (neonPlugin == null || !neonPlugin.isEnabled()) {
 
 ```java
 // Available APIs
-AutoResponseAPI api = Bukkit.getServicesManager().load(AutoResponseAPI.class);
-AntiSwearAPI api = Bukkit.getServicesManager().load(AntiSwearAPI.class);
-NeonJoinLeaveAPI api = Bukkit.getServicesManager().load(NeonJoinLeaveAPI.class);
-ChatToggleAPI api = Bukkit.getServicesManager().load(ChatToggleAPI.class);
-GrammarAPI api = Bukkit.getServicesManager().load(GrammarAPI.class);
+  AutoResponseAPI api = Bukkit.getServicesManager().load(AutoResponseAPI.class);
+  AntiSwearAPI api = Bukkit.getServicesManager().load(AntiSwearAPI.class);
+  NeonJoinLeaveAPI api = Bukkit.getServicesManager().load(NeonJoinLeaveAPI.class);
+  ChatToggleAPI api = Bukkit.getServicesManager().load(ChatToggleAPI.class);
+  GrammarAPI api = Bukkit.getServicesManager().load(GrammarAPI.class);
+  NeonAPI api = Bukkit.getServicesManager().load(NeonAPI.class);
+  AddonManager addonManager = Bukkit.getServicesManager().load(AddonManager.class);
+```
+
+## 🚀 NeonAPI
+Global Neon API for addons and Configuration Stuff
+
+```java
+public class NeonAPI {
+    private final AddonManager addonManager;
+    private final Neon plugin;
+    
+    public boolean registerAddon(String addonName, String version, Class<?> mainClass)
+      
+    public List<String> getRegisteredAddons();
+      
+    public boolean isAddonRegistered(String addonName);
+      
+    public YamlConfiguration createAddonConfig(String addonName, String fileName);
+
+    public YamlConfiguration getAddonConfig(String addonName, String fileName);
+    
+    public boolean saveAddonConfig(YamlConfiguration config, String addonName, String fileName);
+    
+    public boolean createAddonSubfolder(String addonName, String folderName);
+
+    public File getAddonSubfolder(String addonName, String folderName);
+    
+    public String getAddonVersion(String addonName);
+
+    public Class<?> getAddonMainClass(String addonName);
+
+    public String getNeonPrefix();
+}
+```
+💡 Example Usage
+```java
+@Override
+public void onEnable() {
+  System.out.println(api.getNeonPrefix() + "Addon Enabled!");
+}
 ```
 
 ## 🤖 AutoResponseAPI
@@ -681,8 +722,6 @@ public @NotNull HandlerList getHandlers();
 
 ```java
 import com.cryptomorin.xseries.XSound; // For Sounds You need XSound (ISound is not implemented for api Yet)
-import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
-
 @EventHandler
 public void onUnicodeDetect(AntiUnicodeEvent event) {
 // Block all Unicode except allowed emojis
@@ -753,6 +792,12 @@ event.setHoverText(Arrays.asList(
 "§eOnline players: " + Bukkit.getOnlinePlayers().size()
 ));
 event.setSound("entity.experience_orb.pickup");
+}
+
+    // Disable hover for mobile users
+    if (isMobileUser(event.getPlayer())) {
+        event.setUseHover(false);
+    }
 }
 ```
 
@@ -1180,6 +1225,55 @@ addonManager.unregisterAddon("MyAddon");
 ```yaml
 * <#0000FF>Message</#FFFFFF>
 * &#0000FF
-* <rainbow> Message </rainbow>
+* <rainbow>Message</rainbow>
 * <color-name>Message</color-name>
 ```
+
+## 🟢 ColorHandler
+Use Neon Hex Color and Color Utils in your addons / plugins that use Neon API
+and CC for a better in code color system
+
+### Usage
+
+```java
+player.sendMessage(CC.AQUA + "Test");
+ColorHandler.color("&#0000FFText &bWith <rainbow>Hex Support</rainbow>");
+```
+# Databases
+## Supported Databases
+- MongoDB
+- MySQL
+- SQLite
+
+### These database infos are used globally in neon for adding network support and data and stats
+### saving of some features
+```yaml
+# Options: sqlite, mysql, mongodb
+DATABASE:
+  TYPE: "sqlite"
+#
+# Mongo DB Settings
+MONGODB:
+  DATABASE: "Neon"
+  URL: "mongodb://localhost:27017"
+#
+# MySQL Settings
+MYSQL:
+  HOST: "localhost"
+  PORT: 3306
+  DATABASE: "database"
+  USERNAME: "root"
+  PASSWORD: "veryHardPassWord1"
+  #
+  # Do not modify these if you don't know what your doing
+  USE-SSL: false
+  AUTO-RECONNECT: true
+  FAIL-OVER-RED-ONLY: true
+  MAX-RECONNECTS: 10
+#
+# SQLite database (.db is added in the code)
+SQLITE-CHATTOGGLE:
+  NAME: "chat_toggle"
+```
+
+**(!) Databases cannot be reload via /neon reload and they require a restart**
