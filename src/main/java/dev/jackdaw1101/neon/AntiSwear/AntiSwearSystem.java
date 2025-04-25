@@ -1,5 +1,7 @@
 package dev.jackdaw1101.neon.AntiSwear;
 
+import dev.jackdaw1101.neon.API.Features.AntiSwear.Event.SwearDetectEvent;
+import dev.jackdaw1101.neon.API.Features.AntiSwear.Event.SwearPunishEvent;
 import dev.jackdaw1101.neon.AntiSwear.Discord.WebhookManager;
 import dev.jackdaw1101.neon.AntiSwear.Logger.AntiSwearLogger;
 import dev.jackdaw1101.neon.Command.Alerts.AlertManager;
@@ -195,18 +197,43 @@ public class AntiSwearSystem implements Listener {
             }
 
             if (sanitizedMessage.contains(swear)) {
-                handleSwearViolation(player, message, swear, censorSymbol, cancellable);
+                // Create censored message (Java 8 compatible)
+                String censored = sanitizedMessage.replaceAll("(?i)" + Pattern.quote(swear),
+                    new String(new char[swear.length()]).replace("\0", censorSymbol));
+
+                // Create and call detection event
+                SwearDetectEvent detectEvent = new SwearDetectEvent(
+                    player,
+                    message,
+                    swear,
+                    censored
+                );
+                Bukkit.getPluginManager().callEvent(detectEvent);
+
+                if (!detectEvent.isCancelled()) {
+                    handleSwearViolation(
+                        player,
+                        detectEvent.getMessage(),
+                        detectEvent.getDetectedWord(),
+                        censorSymbol,
+                        cancellable,
+                        detectEvent.shouldNotifyAdmins(),
+                        detectEvent.shouldLogToConsole()
+                    );
+                }
                 return;
             }
         }
     }
 
-    private void handleSwearViolation(Player player, String originalMessage, String swearWord, String censorSymbol, Cancellable cancellable) {
+    private void handleSwearViolation(Player player, String originalMessage, String swearWord,
+                                      String censorSymbol, Cancellable cancellable, boolean notifyAdmins, boolean logToConsole) {
+
         cancellable.setCancelled(true);
 
         String cancelType = plugin.getSettings().getString("ANTI-SWEAR.CANCEL-TYPE").toLowerCase();
-        boolean alertAdmins = plugin.getSettings().getBoolean("ANTI-SWEAR.ALERT-ADMINS");
-        boolean log = plugin.getSettings().getBoolean("ANTI-SWEAR.LOG");
+        boolean alertAdmins = notifyAdmins && plugin.getSettings().getBoolean("ANTI-SWEAR.ALERT-ADMINS");
+        boolean log = logToConsole && plugin.getSettings().getBoolean("ANTI-SWEAR.LOG");
 
         switch (cancelType) {
             case "censor":
@@ -249,9 +276,17 @@ public class AntiSwearSystem implements Listener {
 
         if (strikes >= punishLimit && punishEnabled) {
             String command = plugin.getSettings().getString("PUNISH.COMMAND");
+
+            // Create and call the event
+            SwearPunishEvent event = new SwearPunishEvent(player, "", strikes, command);
+            Bukkit.getPluginManager().callEvent(event);
+
+            // Use the potentially modified command from the event
+            String finalCommand = event.getPunishCommand();
+
             Bukkit.getScheduler().runTask(plugin, () ->
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName())));
-                swearManager.resetStrikes(player);
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand.replace("%player%", player.getName())));
+            swearManager.resetStrikes(player);
         }
     }
 
