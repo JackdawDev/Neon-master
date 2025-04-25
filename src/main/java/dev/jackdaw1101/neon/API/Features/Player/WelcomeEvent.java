@@ -27,7 +27,7 @@ public class WelcomeEvent extends Event {
         this.player = player;
         this.messageLines = messageLines;
         this.isCancelled = false;
-        this.sound = "";  // Default sound
+        this.sound = "";
         this.hoverMessages = null;
         this.hoverComponents = null;
         this.clickCommand = "";
