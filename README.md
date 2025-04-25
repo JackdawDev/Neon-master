@@ -1226,6 +1226,7 @@ public class MyAddon extends JavaPlugin {
     config.addDefault("messages.welcome", "Hello {player}!", "Welcome message");
   }
 }
+```
 
 # Hex Colors & internal Placeholders
 ## Global Placeholders
