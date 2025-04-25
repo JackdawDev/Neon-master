@@ -1174,6 +1174,7 @@ return;
 
 # Create Addons
 **To Create Folders in plugins/Neon/Addons/<whatever>/<whatever>.yml**
+Default Config API For Addons and Folders.
 ```java
 // In addon's main class
 NeonAPI api = Neon.getAPI();
@@ -1199,14 +1200,32 @@ addonManager.registerAddon("MyAddon", "1.0.0", MyAddonMain.class);
 
 // Get addon information
 AddonManager.AddonInfo info = addonManager.getAddonInfo("MyAddon");
-System.out.println("Addon uptime: " + info.getFormattedUptime());
+System.out.println(info.getFormattedUptime());
 
-// Get all registered addons
-List<String> addonNames = addonManager.getRegisteredAddonNames();
-
-// Unregister an addon
+// Unregister an addon (on disable)
 addonManager.unregisterAddon("MyAddon");
 ```
+# Neon Advanced Addon Configuration Manager
+
+The `AddonConfigManager` provides a robust configuration system for Neon addons, featuring automatic file creation, version updating, comment preservation, and placeholder replacement.
+## Basic Setup
+
+Initialize the config manager in your addon's main class:
+
+```java
+public class MyAddon extends JavaPlugin {
+  private AddonConfigManager config;
+
+  @Override
+  public void onEnable() {
+    // Initialize config manager
+    config = new AddonConfigManager(this, "config.yml");
+
+    // Add default values (optional but recommended)
+    config.addDefault("settings.enabled", true, "Whether the addon is enabled");
+    config.addDefault("messages.welcome", "Hello {player}!", "Welcome message");
+  }
+}
 
 # Hex Colors & internal Placeholders
 ## Global Placeholders

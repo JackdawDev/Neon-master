@@ -6,12 +6,13 @@ dev\jackdaw1101\neon\API\Grammer\GrammarAPIImpl.class
 dev\jackdaw1101\neon\AntiAdvertise\Logger\AntiADLogger.class
 dev\jackdaw1101\neon\Configurations\ConfigFile.class
 dev\jackdaw1101\neon\Command\API\CommandManager.class
-dev\jackdaw1101\neon\Utils\Chat\CC.class
+dev\jackdaw1101\neon\API\Utils\CC.class
 dev\jackdaw1101\neon\API\Features\JoinLeave\Events\NeonPlayerJoinEvent.class
 dev\jackdaw1101\neon\AntiSwear\Logger\AntiSwearLogger.class
 dev\jackdaw1101\neon\Chat\ListenerMuteChat.class
 dev\jackdaw1101\neon\API\Grammer\GrammarAPI.class
 dev\jackdaw1101\neon\AntiAdvertise\AntiLinkSystem.class
+dev\jackdaw1101\neon\API\Configuration\AddonConfigManager.class
 dev\jackdaw1101\neon\Command\API\NeonCommand.class
 dev\jackdaw1101\neon\API\Features\JoinLeave\Events\NeonPlayerLeaveEvent.class
 dev\jackdaw1101\neon\API\Features\JoinLeave\NeonJoinLeaveAPI$ClickAction.class
@@ -36,7 +37,6 @@ dev\jackdaw1101\neon\Database\MySQLChatToggleDatabase.class
 dev\jackdaw1101\neon\Utils\Utils.class
 dev\jackdaw1101\neon\AntiAdvertise\Discord\WebhookManager.class
 dev\jackdaw1101\neon\API\Features\AntiSwear\AntiSwearAPI.class
-dev\jackdaw1101\neon\Utils\Color\ColorHandler.class
 dev\jackdaw1101\neon\AntiAdvertise\Discord\WebhookManager$1.class
 dev\jackdaw1101\neon\Database\MongoDBChatToggleDatabase.class
 dev\jackdaw1101\neon\GrammerAPI\GrammerAPI.class
@@ -88,6 +88,7 @@ dev\jackdaw1101\neon\Manager\JoinLeave\JoinLeaveListener.class
 dev\jackdaw1101\neon\Utils\ISounds\SoundUtil.class
 dev\jackdaw1101\neon\Command\ChatClear\ClearChatCommand.class
 dev\jackdaw1101\neon\Configurations\Discord.class
+dev\jackdaw1101\neon\API\Utils\ColorHandler.class
 dev\jackdaw1101\neon\API\Features\AntiSwear\Event\AntiSwearEvent.class
 dev\jackdaw1101\neon\Announcements\AnnouncementManager$1.class
 dev\jackdaw1101\neon\AddonHandler\AddonManager$AddonInfo.class
