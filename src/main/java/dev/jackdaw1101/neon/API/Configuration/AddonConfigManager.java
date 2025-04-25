@@ -18,54 +18,133 @@ public class AddonConfigManager {
     private File configFile;
     private YamlConfiguration config;
     private final Map<String, List<String>> commentsMap = new LinkedHashMap<>();
+    private List<String> header = new ArrayList<>();
+    private final boolean useSubfolder;
+    private final String customSubfolder;
 
-    public AddonConfigManager(JavaPlugin addon, String configName) {
+    // Main constructor with full control
+    public AddonConfigManager(JavaPlugin addon, String configName, boolean useSubfolder, String customSubfolder) {
         this.addon = addon;
         this.configName = configName.endsWith(".yml") ? configName : configName + ".yml";
+        this.useSubfolder = useSubfolder;
+        this.customSubfolder = useSubfolder ?
+            (customSubfolder != null ? customSubfolder : "configs") :
+            null;
         initialize();
     }
 
     private void initialize() {
-        // Create addon folder structure: Neon/Addons/<AddonName>/configs/
-        File addonFolder = new File(addon.getDataFolder().getParentFile(),
-            "Neon/Addons/" + addon.getName() + "/configs");
-        if (!addonFolder.exists()) {
-            addonFolder.mkdirs();
+        File configFolder;
+        if (customSubfolder != null) {
+            configFolder = new File(addon.getDataFolder().getParentFile(),
+                "Neon/Addons/" + addon.getName() + "/" + customSubfolder);
+        } else {
+            configFolder = new File(addon.getDataFolder().getParentFile(),
+                "Neon/Addons/" + addon.getName());
         }
 
-        this.configFile = new File(addonFolder, configName);
+        if (!configFolder.exists()) {
+            configFolder.mkdirs();
+        }
+
+        this.configFile = new File(configFolder, configName);
         load();
+    }
+
+    public void setHeader(String... headerLines) {
+        this.header.clear();
+        for (String line : headerLines) {
+            this.header.add("# " + line);
+        }
+        saveWithComments();
     }
 
     public void load() {
         try {
-            // Create default config if doesn't exist
             if (!configFile.exists()) {
                 if (addon.getResource(configName) != null) {
                     addon.saveResource(configName, false);
-                    // Move from plugin folder to addon folder
-                    File tempFile = new File(addon.getDataFolder(), configName);
-                    if (tempFile.exists()) {
-                        Files.move(tempFile.toPath(), configFile.toPath());
+                    if (useSubfolder) {
+                        File tempFile = new File(addon.getDataFolder(), configName);
+                        if (tempFile.exists()) {
+                            Files.move(tempFile.toPath(), configFile.toPath());
+                        }
                     }
                 } else {
                     configFile.createNewFile();
+                    if (!header.isEmpty()) {
+                        saveWithComments();
+                    }
                 }
             }
 
-            // Load config
             this.config = YamlConfiguration.loadConfiguration(configFile);
-
-            // Load comments
-            loadComments();
-
-            // Merge with defaults
+            //loadComments();
             mergeDefaults();
-
-            // Update config version if needed
-            updateConfig();
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Failed to load config for " + addon.getName() + ": " + configName);
+            e.printStackTrace();
+        }
+    }
+
+    private void saveWithComments() {
+        try {
+            List<String> lines = new ArrayList<>();
+
+            // Add header if it exists
+            if (!header.isEmpty() && (!configFile.exists() || configFile.length() == 0)) {
+                lines.addAll(header);
+                lines.add(""); // Empty line after header
+            }
+
+            BufferedReader reader = null;
+            if (configFile.exists()) {
+                reader = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
+
+                String line;
+                String currentKey = "";
+                Set<String> addedKeys = new HashSet<>();
+
+                while ((line = reader.readLine()) != null) {
+                    if (line.trim().isEmpty() || line.trim().startsWith("#")) {
+                        lines.add(line);
+                    } else {
+                        int colonIndex = line.indexOf(":");
+                        if (colonIndex > 0) {
+                            currentKey = line.substring(0, colonIndex).trim();
+                        }
+
+                        if (commentsMap.containsKey(currentKey) && !addedKeys.contains(currentKey)) {
+                            lines.addAll(commentsMap.get(currentKey));
+                            addedKeys.add(currentKey);
+                        }
+
+                        lines.add(line);
+                    }
+                }
+            }
+
+            if (reader != null) {
+                reader.close();
+            }
+
+            File tempFile = new File(configFile.getParentFile(), configFile.getName() + ".tmp");
+            BufferedWriter writer = new BufferedWriter(
+                new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+
+            for (String l : lines) {
+                writer.write(l);
+                writer.newLine();
+            }
+            writer.flush();
+            writer.close();
+
+            Files.move(tempFile.toPath(), configFile.toPath(),
+                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
+            config = YamlConfiguration.loadConfiguration(configFile);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -81,9 +160,6 @@ public class AddonConfigManager {
                     new InputStreamReader(defConfigStream, StandardCharsets.UTF_8));
                 config.setDefaults(defConfig);
             }
-
-            // Update config structure
-            ConfigUpdater.update(addon, configName, configFile, Collections.emptyList());
 
             // Reload comments
             loadComments();
@@ -137,7 +213,7 @@ public class AddonConfigManager {
                     config.set(key, defaultConfig.get(key));
                 }
             }
-            saveWithComments();
+            //saveWithComments();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -145,62 +221,18 @@ public class AddonConfigManager {
 
     public void updateConfig() {
         try {
-            ConfigUpdater.update(addon, configName, configFile, Collections.emptyList());
+            // Get the list of keys to ignore during update (preserve custom values)
+            List<String> ignoreKeys = new ArrayList<>();
+
+            // Add all existing keys to ignore list to preserve them
+            if (configFile.exists()) {
+                YamlConfiguration currentConfig = YamlConfiguration.loadConfiguration(configFile);
+                ignoreKeys.addAll(currentConfig.getKeys(true));
+            }
+
             reload();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveWithComments() {
-        try {
-            List<String> lines = new ArrayList<>();
-            BufferedReader reader = new BufferedReader(
-                new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
-
-            String line;
-            String currentKey = "";
-            Set<String> addedKeys = new HashSet<>();
-
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().isEmpty() || line.trim().startsWith("#")) {
-                    lines.add(line);
-                } else {
-                    int colonIndex = line.indexOf(":");
-                    if (colonIndex > 0) {
-                        currentKey = line.substring(0, colonIndex).trim();
-                    }
-
-                    if (commentsMap.containsKey(currentKey) && !addedKeys.contains(currentKey)) {
-                        lines.addAll(commentsMap.get(currentKey));
-                        addedKeys.add(currentKey);
-                    }
-
-                    lines.add(line);
-                }
-            }
-            reader.close();
-
-            // Write to temporary file first
-            File tempFile = new File(configFile.getParentFile(), configFile.getName() + ".tmp");
-            BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
-
-            for (String l : lines) {
-                writer.write(l);
-                writer.newLine();
-            }
-            writer.flush();
-            writer.close();
-
-            // Replace original file
-            Files.move(tempFile.toPath(), configFile.toPath(),
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-
-            // Reload the config
-            config = YamlConfiguration.loadConfiguration(configFile);
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

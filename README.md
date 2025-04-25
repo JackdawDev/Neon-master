@@ -1360,6 +1360,9 @@ public class MyAddon extends JavaPlugin {
 }
 ```
 
+## More Usage Examples
+- [NeonAddon](https://github.com/JackdawDev/NeonAddon) - an Example of how to use the Neon API and Addon System
+
 # Hex Colors & internal Placeholders
 ## Global Placeholders
 - {prefix} - in all files but only in Strings
