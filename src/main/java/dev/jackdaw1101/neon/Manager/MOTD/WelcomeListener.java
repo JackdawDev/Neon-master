@@ -37,24 +37,24 @@ public class WelcomeListener implements Listener {
             clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
         }
 
-        // Create the list of messages
+
         List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-MESSAGE");
         if (messages == null) return;
 
-        // Trigger the custom WelcomeEvent before sending the message
+
         WelcomeEvent welcomeEvent = new WelcomeEvent(player, messages);
 
-        // Optionally modify the event settings
-        // (This is where other plugins or listeners can modify the event's data)
+
+
         PluginManager pluginManager = plugin.getServer().getPluginManager();
         pluginManager.callEvent(welcomeEvent);
 
-        // If the event is canceled, do not send any messages
+
         if (welcomeEvent.isCancelled()) {
             return;
         }
 
-        // Get the final messages after potential modifications
+
         List<String> finalMessages = welcomeEvent.getMessageLines();
         String soundToPlay = welcomeEvent.getSound();
 
@@ -105,7 +105,7 @@ public class WelcomeListener implements Listener {
             player.spigot().sendMessage((BaseComponent) messageComponent);
         }
 
-        // Play sound
+
         if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
             if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
                 SoundUtil.playSound(player, sound, 1.0f, 1.0f);

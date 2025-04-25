@@ -21,7 +21,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
     @Override
     public void initialize() {
         try {
-            // Load MySQL JDBC driver
+
             Class.forName("com.mysql.jdbc.Driver");
 
             String host = plugin.getDatabaseManager().getString("MYSQL.HOST");
@@ -34,7 +34,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
             boolean failover = plugin.getDatabaseManager().getBoolean("FAIL-OVER-RED-ONLY");
             int maxReconnect = plugin.getDatabaseManager().getInt("MAX-RECONNECTS");
 
-            String url = "jdbc:mysql://" + host + ":" + port + "/" + database +
+            String url = "jdbc:mysql:
                 "?useSSL=" + useSSL +
                 "&autoReconnect=" + autoReconnect +
                 "&failOverReadOnly=" + failover +
@@ -42,15 +42,15 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
 
             connection = DriverManager.getConnection(url, username, password);
 
-            // First verify the table exists or create it
+
             if (!tableExists()) {
                 createTable();
             } else {
-                // Verify the table has the correct structure
+
                 verifyTableStructure();
             }
 
-            // Test the connection
+
             if (connection.isValid(5)) {
                 isInitialized = true;
                 plugin.getLogger().info("MySQL connection established successfully!");
@@ -61,7 +61,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
             plugin.getLogger().severe("MySQL JDBC driver not found: " + e.getMessage());
         } catch (SQLException e) {
             plugin.getLogger().severe("MySQL connection failed: " + e.getMessage());
-            shutdown(); // Clean up if initialization fails
+            shutdown();
         }
     }
 
@@ -74,7 +74,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
     private void verifyTableStructure() throws SQLException {
         try (ResultSet columns = connection.getMetaData().getColumns(null, null, "chat_toggle", "toggled")) {
             if (!columns.next()) {
-                // Column doesn't exist, alter table
+
                 try (Statement stmt = connection.createStatement()) {
                     stmt.executeUpdate("ALTER TABLE chat_toggle ADD COLUMN toggled BOOLEAN NOT NULL DEFAULT FALSE");
                 }
@@ -84,13 +84,13 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
 
     private void createTable() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
-            // First create the table without indexes
+
             stmt.executeUpdate("CREATE TABLE IF NOT EXISTS chat_toggle (" +
                 "uuid VARCHAR(36) PRIMARY KEY, " +
                 "toggled BOOLEAN NOT NULL DEFAULT FALSE, " +
                 "last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)");
 
-            // Then add indexes separately
+
             try {
                 stmt.executeUpdate("CREATE INDEX idx_toggled ON chat_toggle (toggled)");
             } catch (SQLException e) {
@@ -105,7 +105,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
             return isInitialized &&
                 connection != null &&
                 !connection.isClosed() &&
-                connection.isValid(2); // 2 second timeout
+                connection.isValid(2);
         } catch (SQLException e) {
             plugin.getLogger().warning("Error checking MySQL initialization status: " + e.getMessage());
             return false;
@@ -129,15 +129,15 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
 
     @Override
     public void save() {
-        // MySQL doesn't need explicit save for individual operations
-        // But we can verify the connection is healthy
+
+
         if (!isInitialized()) {
             plugin.getLogger().warning("Attempted to save when MySQL is not initialized");
             return;
         }
 
         try {
-            // Commit any pending transactions if auto-commit is off
+
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }

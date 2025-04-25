@@ -32,7 +32,7 @@ public class Permissions {
         File permissionFile = new File(pluginDir, "permissions.yml");
 
         if (!permissionFile.exists()) {
-            this.plugin.saveResource("permissions.yml", false); // Save the default file if it doesn't exist
+            this.plugin.saveResource("permissions.yml", false);
         }
 
         FileConfiguration permissionConfig = YamlConfiguration.loadConfiguration(permissionFile);
@@ -45,7 +45,7 @@ public class Permissions {
     }
 
     public String getPermission(String key) {
-        return this.permission.getOrDefault(key, key); // Get the permission or use the key as fallback
+        return this.permission.getOrDefault(key, key);
     }
 
     public boolean reloadPermissions() {
@@ -56,7 +56,7 @@ public class Permissions {
 
         File permissionFile = new File(pluginDir, "permissions.yml");
 
-        // ConfigUpdater.update(this.plugin, "permissions.yml", permissionFile);
+
         this.plugin.reloadConfig();
 
         this.loadPermissions();

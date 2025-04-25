@@ -24,11 +24,11 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
 
     @Override
     public void sendCustomJoinMessage(Player player, String message, List<String> hoverText, String clickCommand, ClickAction clickAction) {
-        // Process the message first
+
         String processedMessage = ColorHandler.color(message.replace("<player>", player.getName()));
         processedMessage = PlaceholderAPI.setPlaceholders(player, processedMessage);
 
-        // Process hover text if exists
+
         List<String> processedHoverText = null;
         if (hoverText != null && !hoverText.isEmpty()) {
             processedHoverText = new ArrayList<>();
@@ -38,17 +38,17 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
             }
         }
 
-        // Process click command if exists
+
         String processedClickCommand = null;
         if (clickCommand != null && !clickCommand.isEmpty()) {
             processedClickCommand = clickCommand.replace("<player>", player.getName());
             processedClickCommand = PlaceholderAPI.setPlaceholders(player, processedClickCommand);
         }
 
-        // Create and send the message component directly
+
         TextComponent messageComponent = new TextComponent(processedMessage);
 
-        // Add hover event if enabled
+
         if (processedHoverText != null) {
             String joinedHoverText = String.join("\n", processedHoverText);
             messageComponent.setHoverEvent(new HoverEvent(
@@ -57,7 +57,7 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
             ));
         }
 
-        // Add click event if enabled
+
         if (processedClickCommand != null && clickAction != null) {
             ClickEvent.Action action;
             switch (clickAction) {
@@ -76,7 +76,7 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
             messageComponent.setClickEvent(new ClickEvent(action, processedClickCommand));
         }
 
-        // Send to all online players
+
         for (Player onlinePlayer : plugin.getServer().getOnlinePlayers()) {
             onlinePlayer.spigot().sendMessage(messageComponent);
         }
@@ -84,7 +84,7 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
 
     @Override
     public void sendCustomLeaveMessage(Player player, String message, List<String> hoverText, String clickCommand, ClickAction clickAction) {
-        // Same implementation as sendCustomJoinMessage but for leave messages
+
         String processedMessage = ColorHandler.color(message.replace("<player>", player.getName()));
         processedMessage = PlaceholderAPI.setPlaceholders(player, processedMessage);
 

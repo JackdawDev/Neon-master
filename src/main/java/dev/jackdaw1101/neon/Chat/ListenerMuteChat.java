@@ -19,7 +19,7 @@ public class ListenerMuteChat implements Listener {
 
     public ListenerMuteChat(Neon plugin) {
         this.plugin = plugin;
-        this.chatMuteManager = plugin.getChatMuteManager(); // Get instance from main class
+        this.chatMuteManager = plugin.getChatMuteManager();
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -42,7 +42,7 @@ public class ListenerMuteChat implements Listener {
         event.setCancelled(true);
     }
 
-    //BLOCKED-COMMAND-SOUND
+
     @EventHandler(ignoreCancelled = true)
     public void onCommand(PlayerCommandPreprocessEvent event) {
         Player player = event.getPlayer();

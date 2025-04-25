@@ -30,12 +30,12 @@ public class ToggleChatCommand implements CommandExecutor {
         this.plugin = plugin;
         this.api = new ChatToggleAPIImpl(plugin);
 
-        // Load messages
+
         this.toggleOnMessage = ColorHandler.color(plugin.getMessageManager().getString("CHAT-ON"));
         this.toggleOffMessage = ColorHandler.color(plugin.getMessageManager().getString("CHAT-OFF"));
         this.noPermissionMessage = ColorHandler.color(plugin.getMessageManager().getString("NO-PERMISSION"));
 
-        // Load settings
+
         this.permissionRequired = plugin.getSettings().getBoolean("CHAT-TOGGLE.REQUIRE-PERMISSION");
         this.requiredPermission = plugin.getPermissionManager().getString("CHAT-TOGGLE-USE");
         this.useSound = plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND");
@@ -51,27 +51,27 @@ public class ToggleChatCommand implements CommandExecutor {
 
         Player player = (Player) sender;
 
-        // Check permission
+
         if (permissionRequired && !player.hasPermission(requiredPermission)) {
             player.sendMessage(noPermissionMessage);
             playNoPermissionSound(player);
             return true;
         }
 
-        // Get current state before toggling
+
         boolean wasToggled = api.isChatToggled(player);
 
-        // Toggle and handle the result asynchronously
+
         CompletableFuture.runAsync(() -> {
             try {
-                // Perform the toggle operation
+
                 api.toggleChat(player);
 
-                // Get the new state after toggling
+
                 boolean isNowToggled = api.isChatToggled(player);
                 boolean isdebug = plugin.getSettings().getBoolean("DEBUG-MODE");
 
-                // Schedule the message to be sent on the main thread
+
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     if (isNowToggled) {
                         player.sendMessage(toggleOnMessage);

@@ -75,7 +75,7 @@ public class ConfigFile {
             }
         }
 
-        // Apply theme placeholders
+
         String prefix = this.config.getString("PREFIX");
         if (prefix != null) message = message.replace("{prefix}", prefix);
 
@@ -206,9 +206,9 @@ public class ConfigFile {
         }
     }
 
-   // public String getString(String path) {
-    //    return this.config.getString(path);
-    //}
+
+
+
 
     public int getInt(String path) {
         return this.config.getInt(path);
@@ -238,15 +238,15 @@ public class ConfigFile {
         try {
             config = YamlConfiguration.loadConfiguration(file);
 
-            // If you use a default config resource inside your jar, uncomment the following lines
+
             InputStream defConfigStream = plugin.getResource(configName);
             if (defConfigStream != null) {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
                 config.setDefaults(defConfig);
             }
 
-            // Optional: update the config with a utility method if you have one
-            ConfigUpdater.update(plugin, configName, file); // If you use a config updater util
+
+            ConfigUpdater.update(plugin, configName, file);
 
             return true;
         } catch (Exception e) {

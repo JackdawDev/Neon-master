@@ -18,7 +18,7 @@ public class ChatMessageEvent extends Event {
         this.message = message;
         this.hoverText = hoverText;
         this.clickCommand = clickCommand;
-        this.isCancelled = false; // Initially not cancelled
+        this.isCancelled = false;
     }
 
     public Player getSender() {

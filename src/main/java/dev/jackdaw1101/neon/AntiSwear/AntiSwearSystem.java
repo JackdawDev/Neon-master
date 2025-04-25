@@ -38,7 +38,7 @@ public class AntiSwearSystem implements Listener {
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
-    // API Methods
+
     public void addToBlacklist(String word) {
         List<String> blacklist = getBlacklist();
         if (!blacklist.contains(word.toLowerCase())) {
@@ -112,24 +112,24 @@ public class AntiSwearSystem implements Listener {
      * @return true if the message contains a swear word and player doesn't have bypass permission, false otherwise
      */
     public boolean checkForSwear(Player player, String message) {
-        // Check bypass permission first
+
         if (player.hasPermission(plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
             return false;
         }
 
-        // Sanitize and prepare the message for checking
+
         String sanitizedMessage = sanitizeMessage(message.toLowerCase());
         List<String> blacklist = getCombinedBlacklist();
         List<String> whitelist = getCombinedWhitelist();
 
-        // Check against all blacklisted words
+
         for (String swear : blacklist) {
-            // Skip if the word is whitelisted
+
             if (whitelist.stream().anyMatch(sanitizedMessage::contains)) {
                 continue;
             }
 
-            // Check if the sanitized message contains the swear word
+
             if (sanitizedMessage.contains(swear)) {
                 return true;
             }
@@ -161,7 +161,7 @@ public class AntiSwearSystem implements Listener {
         }
     }
 
-    // Event Handlers
+
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled() || !plugin.getSettings().getBoolean("ANTI-SWEAR.ENABLED")) {
@@ -180,7 +180,7 @@ public class AntiSwearSystem implements Listener {
         handleSwearCheck(event.getPlayer(), event.getMessage(), event);
     }
 
-    // Core Functionality
+
     private void handleSwearCheck(Player player, String message, Cancellable cancellable) {
         if (player.hasPermission(plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
             return;
@@ -197,11 +197,11 @@ public class AntiSwearSystem implements Listener {
             }
 
             if (sanitizedMessage.contains(swear)) {
-                // Create censored message (Java 8 compatible)
+
                 String censored = sanitizedMessage.replaceAll("(?i)" + Pattern.quote(swear),
                     new String(new char[swear.length()]).replace("\0", censorSymbol));
 
-                // Create and call detection event
+
                 SwearDetectEvent detectEvent = new SwearDetectEvent(
                     player,
                     message,
@@ -277,11 +277,11 @@ public class AntiSwearSystem implements Listener {
         if (strikes >= punishLimit && punishEnabled) {
             String command = plugin.getSettings().getString("PUNISH.COMMAND");
 
-            // Create and call the event
+
             SwearPunishEvent event = new SwearPunishEvent(player, "", strikes, command);
             Bukkit.getPluginManager().callEvent(event);
 
-            // Use the potentially modified command from the event
+
             String finalCommand = event.getPunishCommand();
 
             Bukkit.getScheduler().runTask(plugin, () ->
@@ -290,7 +290,7 @@ public class AntiSwearSystem implements Listener {
         }
     }
 
-    // Utility Methods
+
     private String sanitizeMessage(String message) {
         boolean threeReturnE = plugin.getSettings().getBoolean("ANTI-SWEAR.SENSITIVE-CHECK-THREE-RETURN-E");
 

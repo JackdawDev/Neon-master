@@ -42,7 +42,7 @@ public class ChatFormat implements Listener {
         if (isChatFormatEnabled) {
             event.setCancelled(true);
 
-            // Check and censor swear words if enabled
+
             if (isAntiSwearEnabled && this.antiSwearSystem.checkForSwear(sender, message)) {
                 event.setCancelled(true);
                 return;
@@ -52,43 +52,43 @@ public class ChatFormat implements Listener {
                 new ChatLogger(sender, message, plugin);
             }
 
-            // Process message for color codes and placeholders
+
             message = this.chatAPI.processMessageColorCodes(sender, message);
 
-            // Prepare chat format
+
             String format = chatAPI.getChatFormat(sender);
 
             String clickCommand = ColorHandler.color(this.plugin.getSettings().getString("CLICK-COMMAND").toString());
 
-            // Process hover text
+
             String hoverText = this.chatAPI.processHoverLines(sender, message);
 
-            // Replace placeholders in format
+
             format = format.replace("{MESSAGE}", message);
             clickCommand = clickCommand.replace("<player>", sender.getName());
 
-            // Create the custom ChatMessageEvent
+
             ChatMessageEvent chatMessageEvent = new ChatMessageEvent(sender, message, hoverText, clickCommand);
 
-            // Call the event
+
             plugin.getServer().getPluginManager().callEvent(chatMessageEvent);
 
-            // If the event is cancelled, do not send the message
+
             if (chatMessageEvent.isCancelled()) {
                 event.setCancelled(true);
                 return;
             }
 
-            // Get the final message and hover text after potential modifications
+
             String finalMessage = chatMessageEvent.getMessage();
             String finalHoverText = chatMessageEvent.getHoverText();
 
-            // Send formatted message to all online players
+
             for (Player viewer : event.getRecipients()) {
                 this.chatAPI.sendFormattedMessage(viewer, format, finalHoverText, chatMessageEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled, isRunCommandEnabled);
             }
 
-            // If CHAT-IN-CONSOLE is enabled, send the message to the console
+
             if (isChatInConsoleEnabled) {
                 this.chatAPI.sendMessageToConsole(format);
             }

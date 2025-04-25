@@ -47,7 +47,7 @@ public class ListenerMentions implements Listener {
         String afterMentionColor = (String) plugin.getSettings().getString("MENTION.AFTER-COLOR");
         boolean cooldownTimeEnabled = (boolean) plugin.getSettings().getBoolean("MENTION.COOLDOWN-ENABLED");
 
-        // Handle Cooldown
+
         if (cooldownTimeEnabled && !sender.hasPermission(plugin.getPermissionManager().getString("MENTION-COOLDOWN-BYPASS")) && mentionCooldowns.containsKey(sender.getUniqueId())) {
             long lastMentionTime = mentionCooldowns.get(sender.getUniqueId());
             if (System.currentTimeMillis() - lastMentionTime < cooldownTime) {
@@ -59,18 +59,18 @@ public class ListenerMentions implements Listener {
         boolean mentionedAnyone = false;
         String newMessage = message;
 
-        // Check for "@everyone" or just "everyone" if mention symbol is empty
+
         if (everyoneEnabled && sender.hasPermission(plugin.getPermissionManager().getString("MENTION-EVERYONE"))) {
             if ((!mentionSymbol.isEmpty() && message.contains(mentionSymbol + everyoneWord)) || (mentionSymbol.isEmpty() && message.contains(everyoneWord))) {
                 for (Player target : Bukkit.getOnlinePlayers()) {
-                    // Notify player
+
                     notifyPlayer(target, sender);
                 }
                 String formattedMention = ColorHandler.color(mentionColor) + (mentionSymbol.isEmpty() ? "" : mentionSymbol) + everyoneWord + afterMentionColor;
                 formattedMention = applyPlaceholders(sender, formattedMention);
                 newMessage = newMessage.replace((mentionSymbol.isEmpty() ? "" : mentionSymbol) + everyoneWord, formattedMention);
 
-                // Fire the MentionEvent
+
                 MentionEvent mentionEvent = new MentionEvent(sender, null, newMessage, false, mentionSymbol, true, false);
                 Bukkit.getPluginManager().callEvent(mentionEvent);
 
@@ -79,7 +79,7 @@ public class ListenerMentions implements Listener {
             }
         }
 
-        // Match mentions for "@player" or just "player" if mention symbol is empty
+
         for (Player mentioned : Bukkit.getOnlinePlayers()) {
             if (mentioned.equals(sender)) continue;
 
@@ -91,12 +91,12 @@ public class ListenerMentions implements Listener {
                 notifyPlayer(mentioned, sender);
                 mentionedAnyone = true;
 
-                // Replace mention in message with color formatting and apply placeholders
+
                 String formattedMention = ColorHandler.color(mentionColor) + mentioned.getName() + afterMentionColor;
                 formattedMention = applyPlaceholders(sender, formattedMention);
                 newMessage = newMessage.replace(mentionTag, formattedMention).replace(mentioned.getName(), formattedMention);
 
-                // Fire the MentionEvent for each mentioned player
+
                 MentionEvent mentionEvent = new MentionEvent(sender, mentioned, newMessage, mentionedBySymbol, mentionSymbol, false, false);
                 Bukkit.getPluginManager().callEvent(mentionEvent);
             }
@@ -104,12 +104,12 @@ public class ListenerMentions implements Listener {
 
         if (mentionedAnyone) {
             event.setMessage(ColorHandler.color(newMessage));
-            mentionCooldowns.put(sender.getUniqueId(), System.currentTimeMillis()); // Update cooldown
+            mentionCooldowns.put(sender.getUniqueId(), System.currentTimeMillis());
         }
     }
 
     private void notifyPlayer(Player target, Player sender) {
-        // Send chat message notification
+
         String notifyMessage = plugin.getMessageManager().getString("MENTION-NOTIFY")
             .replace("%sender%", sender.getName());
         notifyMessage = applyPlaceholders(sender, notifyMessage);
@@ -123,7 +123,7 @@ public class ListenerMentions implements Listener {
             XSounds.playSound(target, (String) plugin.getSettings().getString("MENTION.SOUND"), 1.0f, 1.0f);
         }
 
-        // Send title if enabled
+
         if ((boolean) plugin.getSettings().getBoolean("MENTION.TITLE.ENABLED")) {
             String title = (String) plugin.getSettings().getString("MENTION.TITLE.HEADER");
             String subtitle = (String) plugin.getSettings().getString("MENTION.TITLE.FOOTER");

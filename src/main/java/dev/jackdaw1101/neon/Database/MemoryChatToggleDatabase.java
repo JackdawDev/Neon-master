@@ -52,6 +52,6 @@ public class MemoryChatToggleDatabase implements ChatToggleDatabase {
 
     @Override
     public void save() {
-        // No persistence in memory database
+
     }
 }

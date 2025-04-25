@@ -59,7 +59,7 @@ public class ListenerAntiUnicode implements Listener {
     private String findUnicodeCharacters(String message) {
         StringBuilder unicodeChars = new StringBuilder();
         for (char c : message.toCharArray()) {
-            if (c > 127 && !isAllowedUnicode(c)) { // Check if character is non-ASCII and not allowed
+            if (c > 127 && !isAllowedUnicode(c)) {
                 unicodeChars.append(c);
             }
         }

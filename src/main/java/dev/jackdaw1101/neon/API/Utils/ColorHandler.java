@@ -25,7 +25,7 @@ public class ColorHandler {
     }
 
     private static boolean isLegacyVersion() {
-        String version = Bukkit.getBukkitVersion().split("-")[0]; // Extracts only the version part
+        String version = Bukkit.getBukkitVersion().split("-")[0];
         String[] split = version.split("\\.");
         int major = Integer.parseInt(split[0]);
         int minor = Integer.parseInt(split[1]);
@@ -126,12 +126,12 @@ public class ColorHandler {
             String text = matcher.group(2);
             String endHex = matcher.group(3);
 
-            // Apply gradient effect if colors are different
+
             if (!startHex.equalsIgnoreCase(endHex)) {
                 String gradientText = applyGradient(startHex, endHex, text);
                 matcher.appendReplacement(buffer, gradientText);
             } else {
-                // If colors are the same, just color the text with startHex
+
                 String solidColorText = hexToChatColor(startHex) + text;
                 matcher.appendReplacement(buffer, solidColorText);
             }
@@ -153,7 +153,7 @@ public class ColorHandler {
         StringBuilder gradientText = new StringBuilder();
 
         for (int i = 0; i < length; i++) {
-            double ratio = (double) i / (length - 1); // Gradual transition
+            double ratio = (double) i / (length - 1);
             int r = (int) (startRGB[0] + ratio * (endRGB[0] - startRGB[0]));
             int g = (int) (startRGB[1] + ratio * (endRGB[1] - startRGB[1]));
             int b = (int) (startRGB[2] + ratio * (endRGB[2] - startRGB[2]));
@@ -173,7 +173,7 @@ public class ColorHandler {
         while (matcher.find()) {
             String text = matcher.group(1);
 
-            // Generate rainbow-colored text
+
             String rainbowText = applyRainbow(text);
             matcher.appendReplacement(buffer, rainbowText);
         }
@@ -189,21 +189,21 @@ public class ColorHandler {
         int length = text.length();
         if (length == 0) return "";
 
-        // Define a set of colors for the rainbow
+
         String[] rainbowColors = {
-                "FF0000", // Red
-                "FF7F00", // Orange
-                "FFFF00", // Yellow
-                "00FF00", // Green
-                "0000FF", // Blue
-                "4B0082", // Indigo
-                "9400D3"  // Violet
+                "FF0000",
+                "FF7F00",
+                "FFFF00",
+                "00FF00",
+                "0000FF",
+                "4B0082",
+                "9400D3"
         };
 
         StringBuilder rainbowText = new StringBuilder();
 
         for (int i = 0; i < length; i++) {
-            String hexColor = rainbowColors[i % rainbowColors.length]; // Cycle through colors
+            String hexColor = rainbowColors[i % rainbowColors.length];
             rainbowText.append(hexToChatColor(hexColor)).append(text.charAt(i));
         }
 
@@ -221,7 +221,7 @@ public class ColorHandler {
             String endHex = matcher.group(2);
             String text = matcher.group(3);
 
-            // Generate gradient text
+
             String gradientText = applyGradient(startHex, endHex, text);
             matcher.appendReplacement(buffer, gradientText);
         }
@@ -242,7 +242,7 @@ public class ColorHandler {
     }
 
     private static String hexToChatColor(String hex) {
-        char colorChar = '§'; // Minecraft uses § for colors
+        char colorChar = '§';
         return colorChar + "x"
                 + colorChar + hex.charAt(0) + colorChar + hex.charAt(1)
                 + colorChar + hex.charAt(2) + colorChar + hex.charAt(3)

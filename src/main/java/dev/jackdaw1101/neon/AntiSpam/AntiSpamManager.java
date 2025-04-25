@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-//SPAM API
+
 public class AntiSpamManager {
 
     private final Map<UUID, String> lastMessages = new HashMap<>();

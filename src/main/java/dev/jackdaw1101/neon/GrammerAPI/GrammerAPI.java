@@ -32,10 +32,10 @@ public class GrammerAPI implements Listener {
 
         if (player.hasPermission(plugin.getPermissionManager().getString("BYPASS-GRAMMAR"))) return;
 
-        // Create corrected message
+
         String correctedMessage = api.processMessage(originalMessage);
 
-        // Call custom event
+
         GrammarCheckEvent grammarEvent = new GrammarCheckEvent(
             player,
             originalMessage,
@@ -49,7 +49,7 @@ public class GrammerAPI implements Listener {
 
         if (grammarEvent.isCancelled()) return;
 
-        // Update the message if it was modified in the event
+
         if (!grammarEvent.getCorrectedMessage().equals(correctedMessage)) {
             correctedMessage = grammarEvent.getCorrectedMessage();
         }

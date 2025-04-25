@@ -39,12 +39,12 @@ public class NeonReloadCommand implements CommandExecutor {
     }
 
     public void executeReload(CommandSender sender) {
-        //boolean messagesReloaded = plugin.getMessageManager().reloadMessages();
-        //boolean settingsReloaded = plugin.getSettings().reloadSettings();
-        //boolean discordReloaded = plugin.getMessageManager().reloadMessages();
-        //boolean permsReloaded = plugin.getPermissionManager().reloadPermissions();
-        //boolean localesReloaded = plugin.getLocales().reloadLocales();
-        //configAPI.reloadAllConfigs();
+
+
+
+
+
+
         plugin.getLocales().reloadLocales();
         plugin.getSettings().reload();
         plugin.getMessageManager().reload();
@@ -52,7 +52,7 @@ public class NeonReloadCommand implements CommandExecutor {
         plugin.getDiscordManager().reload();
 
         sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("RELOADED-SUCCESSFULLY")));
-        } //else {
-        //    sender.sendMessage(ChatColor.translateAlternateColorCodes('&', plugin.getMessageManager().getMessage("RELOAD-FAILED")));
-        //}
+        }
+
+
     }

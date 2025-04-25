@@ -50,22 +50,22 @@ public class AntiCapsSystem implements Listener {
         );
 
         if (result.isCapsViolation()) {
-            // Get the message with proper fallback handling
+
             String warningMessage = plugin.getMessageManager().getString("ANTI-CAPS-WARNING");
 
-            // Ensure we have a valid message
+
             if (warningMessage == null || warningMessage.isEmpty()) {
                 warningMessage = "&cPlease avoid using excessive capital letters! (Your message was {percentage}% caps, max is {max_percentage}%)";
                 plugin.getLogger().warning("ANTI-CAPS-WARNING message not found in config, using default");
             }
 
-            // Apply placeholders
+
             warningMessage = warningMessage
                 .replace("{player}", player.getName())
                 .replace("{percentage}", String.format("%.1f", result.getCapsPercentage()))
                 .replace("{max_percentage}", String.valueOf(result.getRequiredPercentage()));
 
-            // Apply color formatting
+
             warningMessage = ColorHandler.color(warningMessage);
             boolean isdebug = plugin.getSettings().getBoolean("DEBUG-MODE");
             if (isdebug) {

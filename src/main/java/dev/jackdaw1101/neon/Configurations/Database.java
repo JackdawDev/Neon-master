@@ -32,7 +32,7 @@ public class Database {
         dbFile = new File(plugin.getDataFolder(), "database.yml");
 
         if (!dbFile.exists()) {
-            plugin.saveResource("database.yml", false); // This saves the default settings.yml from resources
+            plugin.saveResource("database.yml", false);
         }
 
         dbSettings = YamlConfiguration.loadConfiguration(dbFile);
@@ -69,7 +69,7 @@ public class Database {
     public void addValue(String path, Object value, String comment) {
         dbSettings.set(path, value);
 
-        // Add the comment
+
         if (comment != null && !comment.isEmpty()) {
         }
 

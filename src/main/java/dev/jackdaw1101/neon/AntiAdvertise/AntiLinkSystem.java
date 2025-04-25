@@ -28,7 +28,7 @@ public class AntiLinkSystem implements Listener {
 
     public AntiLinkSystem(Neon plugin, AlertManager alertManager) {
         this.plugin = plugin;
-        this.urlPattern = Pattern.compile("^(http://www\\.|https://www\\.|http://|https://)?[a-z0-9]+([\\-.][a-z0-9]+)*\\.[a-z]{2,5}(:[0-9]{1,5})?(/.*)?$");
+        this.urlPattern = Pattern.compile("^(http:
         this.whitelistedLinks = plugin.getSettings().getStringList("ANTI-LINK.WHITELIST");
         this.alertManager = alertManager;
     }
@@ -63,7 +63,7 @@ public class AntiLinkSystem implements Listener {
                     plugin.getSettings().getString("ANTI-LINK.CANCEL-TYPE"),
                     plugin.getSettings().getBoolean("ANTI-LINK.ALERT-ADMINS"),
                     plugin.getSettings().getBoolean("ANTI-LINK.LOG"),
-                    true, // Default to sending webhook
+                    true,
                     plugin.getSettings().getString("ANTI-LINK.WARN-SOUND"),
                     plugin.getSettings().getString("ANTI-LINK.ALERT-SOUND"),
                     ColorHandler.color(plugin.getMessageManager().getString("ANTI-LINK.WARNING-MESSAGE")),
@@ -146,12 +146,12 @@ public class AntiLinkSystem implements Listener {
     }
 
     private boolean containsLink(String message) {
-        // Split message by spaces to check each word individually
+
         String[] words = message.split("\\s+");
 
-        // Check if any of the words match the URL pattern
+
         for (String word : words) {
-            // If the word matches the URL pattern and isn't whitelisted, it's a link
+
             if (!isWhitelisted(word) && urlPattern.matcher(word).matches()) {
                 return true;
             }
@@ -169,7 +169,7 @@ public class AntiLinkSystem implements Listener {
     }
 
     private String sanitizeMessage(String message) {
-        // Remove all non-alphanumeric characters except dots (.)
+
         return message.replaceAll("[^a-zA-Z0-9.]", "")
                 .replace("(dot)", ".")
                 .replace("[dot]", ".")

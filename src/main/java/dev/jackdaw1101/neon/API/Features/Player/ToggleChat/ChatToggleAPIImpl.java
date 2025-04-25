@@ -27,10 +27,10 @@ public class ChatToggleAPIImpl implements ChatToggleAPI {
         this.database = createDatabase();
         database.initialize();
 
-        // Verify initialization
+
         if (!database.isInitialized()) {
             plugin.getLogger().severe("Failed to initialize database! Using memory fallback");
-            this.database = new MemoryChatToggleDatabase(plugin); // Fallback implementation
+            this.database = new MemoryChatToggleDatabase(plugin);
         }
     }
 
@@ -120,7 +120,7 @@ public class ChatToggleAPIImpl implements ChatToggleAPI {
             return database.getAllToggledPlayers();
         } catch (Exception e) {
             plugin.getLogger().severe("Error getting all toggled players: " + e.getMessage());
-            return new HashSet<>(); // Return empty set on error
+            return new HashSet<>();
         }
     }
 

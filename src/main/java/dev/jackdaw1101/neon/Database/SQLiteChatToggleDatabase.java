@@ -22,7 +22,7 @@ public class SQLiteChatToggleDatabase implements ChatToggleDatabase {
     @Override
     public void initialize() {
         try {
-            // Ensure SQLite driver is loaded
+
             Class.forName("org.sqlite.JDBC");
 
             File dataFolder = new File(plugin.getDataFolder(), "data");
@@ -36,7 +36,7 @@ public class SQLiteChatToggleDatabase implements ChatToggleDatabase {
             String url = "jdbc:sqlite:" + dbFile.getAbsolutePath();
             connection = DriverManager.getConnection(url);
 
-            // Set connection properties
+
             connection.setAutoCommit(true);
 
             createTable();
@@ -154,7 +154,7 @@ public class SQLiteChatToggleDatabase implements ChatToggleDatabase {
     @Override
     public boolean isInitialized() {
         try {
-            // For SQLite, we'll use a simple query to test the connection
+
             if (isInitialized && connection != null && !connection.isClosed()) {
                 try (Statement stmt = connection.createStatement()) {
                     stmt.executeQuery("SELECT 1");
@@ -176,12 +176,12 @@ public class SQLiteChatToggleDatabase implements ChatToggleDatabase {
         }
 
         try {
-            // Commit any pending transactions
+
             if (!connection.getAutoCommit()) {
                 connection.commit();
             }
 
-            // For SQLite, we can optimize the database
+
             try (Statement stmt = connection.createStatement()) {
                 stmt.execute("PRAGMA wal_checkpoint(FULL)");
                 stmt.execute("PRAGMA optimize");

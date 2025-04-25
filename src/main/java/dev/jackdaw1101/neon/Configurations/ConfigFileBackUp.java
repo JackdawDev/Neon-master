@@ -65,7 +65,7 @@ public class ConfigFileBackUp {
             }
         }
 
-        // Save the updated configuration back to file
+
         existingConfig.save(configFile);
     }
 
@@ -179,9 +179,9 @@ public class ConfigFileBackUp {
     }
 
     public void reloadAllConfigs() {
-        config = null; // Unload the config
+        config = null;
         Bukkit.getConsoleSender().sendMessage(ChatColor.YELLOW + "Unloading config file " + configName);
 
-        reloadConfig(); // Reload the config
+        reloadConfig();
     }
 }

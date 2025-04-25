@@ -22,7 +22,7 @@ public class AddonConfigManager {
     private final boolean useSubfolder;
     private final String customSubfolder;
 
-    // Main constructor with full control
+
     public AddonConfigManager(JavaPlugin addon, String configName, boolean useSubfolder, String customSubfolder) {
         this.addon = addon;
         this.configName = configName.endsWith(".yml") ? configName : configName + ".yml";
@@ -79,7 +79,7 @@ public class AddonConfigManager {
             }
 
             this.config = YamlConfiguration.loadConfiguration(configFile);
-            //loadComments();
+
             mergeDefaults();
         } catch (Exception e) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Failed to load config for " + addon.getName() + ": " + configName);
@@ -91,10 +91,10 @@ public class AddonConfigManager {
         try {
             List<String> lines = new ArrayList<>();
 
-            // Add header if it exists
+
             if (!header.isEmpty() && (!configFile.exists() || configFile.length() == 0)) {
                 lines.addAll(header);
-                lines.add(""); // Empty line after header
+                lines.add("");
             }
 
             BufferedReader reader = null;
@@ -153,7 +153,7 @@ public class AddonConfigManager {
         try {
             config = YamlConfiguration.loadConfiguration(configFile);
 
-            // Merge with defaults from jar
+
             InputStream defConfigStream = addon.getResource(configName);
             if (defConfigStream != null) {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(
@@ -161,7 +161,7 @@ public class AddonConfigManager {
                 config.setDefaults(defConfig);
             }
 
-            // Reload comments
+
             loadComments();
 
             return true;
@@ -213,7 +213,7 @@ public class AddonConfigManager {
                     config.set(key, defaultConfig.get(key));
                 }
             }
-            //saveWithComments();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -221,10 +221,10 @@ public class AddonConfigManager {
 
     public void updateConfig() {
         try {
-            // Get the list of keys to ignore during update (preserve custom values)
+
             List<String> ignoreKeys = new ArrayList<>();
 
-            // Add all existing keys to ignore list to preserve them
+
             if (configFile.exists()) {
                 YamlConfiguration currentConfig = YamlConfiguration.loadConfiguration(configFile);
                 ignoreKeys.addAll(currentConfig.getKeys(true));

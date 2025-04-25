@@ -13,11 +13,11 @@ public class SoundUtil {
     private static final Map<String, Sound> SOUND_MAP = new HashMap<>();
 
     static {
-        // Get the server version
+
         String packageName = Bukkit.getServer().getClass().getPackage().getName();
         VERSION = packageName.substring(packageName.lastIndexOf('.') + 1);
 
-        // Populate the sound map for different versions
+
         try {
             if (getMajorVersion() >= 13) {
                 SOUND_MAP.put("LEVEL_UP", Sound.valueOf("ENTITY_PLAYER_LEVELUP"));

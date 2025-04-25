@@ -69,7 +69,7 @@ public final class Neon extends JavaPlugin {
     private SwearManager swearManager;
     private AnnouncementManager announcementManager;
     private ConfigFile locales;
-    //private Database database;
+
     private ConfigFile database;
     private AddonManager addonManager;
     private ToggleChatCommand toggleChatCommand;
@@ -92,7 +92,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadChatLogLogFolder() {
         File logFolder = new File("plugins/Neon/Logs/Chat");
-        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -109,7 +109,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadDataFolder() {
         File logFolder = new File("plugins/Neon/data");
-        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -137,7 +137,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadAntiAdLogFolder() {
         File logFolder = new File("plugins/Neon/Logs/AntiAdvertise");
-        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -155,7 +155,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadAntiSwearLogFolder() {
         File logFolder = new File("plugins/AstroLoader/Neon/Logs/AntiSwear");
-        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -173,7 +173,7 @@ public final class Neon extends JavaPlugin {
 
     private void loadCOmmandLOgger() {
         File logFolder = new File("plugins/Neon/Logs/Commands");
-        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");
         if (!logFolder.exists()) {
             if (logFolder.mkdirs()) {
                 if (debugMode) {
@@ -342,7 +342,7 @@ public final class Neon extends JavaPlugin {
             case "sqlite":
                 chatToggleDatabase = new SQLiteChatToggleDatabase(this);
             default:
-                chatToggleDatabase = new SQLiteChatToggleDatabase(this); // Default fallback
+                chatToggleDatabase = new SQLiteChatToggleDatabase(this);
         }
         if (chatToggleDatabase != null) {
             chatToggleDatabase.initialize();
@@ -355,7 +355,7 @@ public final class Neon extends JavaPlugin {
 
 
 
-        // Initialize API
+
         getCommand("togglechat").setExecutor(toggleChatCommand);
         this.alertManager = new AlertManager(this);
         try {
@@ -365,7 +365,7 @@ public final class Neon extends JavaPlugin {
         }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Commands");
 
-        //* Features (event) registeries
+
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Features...");
         boolean isdebug = getSettings().getBoolean("DEBUG-MODE");
         boolean ISound = getSettings().getBoolean("ISOUNDS-UTIL");
@@ -434,7 +434,7 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Mentions System.");
         }
-        // Neon Sound API
+
         Bukkit.getConsoleSender().sendMessage(CC.GRAY +"[SoundUtil] Loaded ISound for version " + SoundUtil.getVersion());
 
         getServer().getPluginManager().registerEvents(new CommandLoggerListener(this), this);
@@ -464,7 +464,7 @@ public final class Neon extends JavaPlugin {
         }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Events And Features");
 
-        // load message
+
         boolean chatFormatEnabled = getSettings().getBoolean("CHAT_FORMAT_ENABLED");
         boolean hover = getSettings().getBoolean("HOVER_ENABLED");
         boolean clickevent = getSettings().getBoolean("CLICK_EVENT_ENABLED");
@@ -480,7 +480,7 @@ public final class Neon extends JavaPlugin {
         boolean debugmode = getSettings().getBoolean("DEBUG-MODE");
 
         String vaziat = debugmode ? CC.GREEN + "true " + CC.GRAY + "(" + debugversion + CC.GRAY + ")" : CC.RED + "false";
-        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = getSettings().getBoolean("DEBUG-MODE");
         String dbtype = getDatabaseManager().getString("DATABASE.TYPE");
 
         long loadTime = System.currentTimeMillis() - startTime;
@@ -540,11 +540,11 @@ public final class Neon extends JavaPlugin {
         return true;
     }
 
-    // GLOBAL API
+
     public NeonAPI getNeonAPI() {
         return api;
     }
-    // LOCAL API
+
     public AntiSpamManager getAntiSpamManager() {
         return this.antiSpamManager;
     }
@@ -581,9 +581,9 @@ public final class Neon extends JavaPlugin {
         return settings;
     }
 
-    //public Database getDatabase() {
-    //    return database;
-    //}
+
+
+
 
     public static Neon getInstance() {
         if (instance == null) {
@@ -595,7 +595,7 @@ public final class Neon extends JavaPlugin {
         return locales;
     }
 
-    // papi hooker
+
     private boolean isPlaceholderAPIInstalled() {
         Plugin placeholderAPI = getServer().getPluginManager().getPlugin("PlaceholderAPI");
         return placeholderAPI != null && placeholderAPI.isEnabled();

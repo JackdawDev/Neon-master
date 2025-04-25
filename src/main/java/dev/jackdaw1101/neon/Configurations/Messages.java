@@ -35,7 +35,7 @@ public class Messages {
         File messagesFile = new File(pluginDir, "messages.yml");
 
         if (!messagesFile.exists()) {
-            this.plugin.saveResource("messages.yml", false); // Save the default file if it doesn't exist
+            this.plugin.saveResource("messages.yml", false);
         }
 
         FileConfiguration messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
@@ -48,7 +48,7 @@ public class Messages {
     }
 
     public String getMessage(String key, Object... placeholders) {
-        String message = this.messages.getOrDefault(key, key); // Get the message or use the key as fallback
+        String message = this.messages.getOrDefault(key, key);
         return this.applyPlaceholders(message, placeholders);
     }
 
@@ -84,7 +84,7 @@ public class Messages {
 
         File messagesFile = new File(pluginDir, "messages.yml");
 
-        //    ConfigUpdater.update(this.plugin, "messages.yml", messagesFile);
+
         this.plugin.reloadConfig();
 
         this.loadMessages();

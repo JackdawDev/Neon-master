@@ -69,10 +69,10 @@ public class JoinLeaveListener implements Listener {
             try {
                 clickAction = NeonPlayerJoinEvent.ClickAction.valueOf(clickActionString);
             } catch (IllegalArgumentException e) {
-                clickAction = NeonPlayerJoinEvent.ClickAction.RUN_COMMAND; // Set a default
+                clickAction = NeonPlayerJoinEvent.ClickAction.RUN_COMMAND;
             }
         } else {
-            clickAction = NeonPlayerJoinEvent.ClickAction.RUN_COMMAND; // Set a default
+            clickAction = NeonPlayerJoinEvent.ClickAction.RUN_COMMAND;
         }
 
         List<String> hoverText = settings.getStringList("JOIN.HOVER.TEXT");

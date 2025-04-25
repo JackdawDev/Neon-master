@@ -42,7 +42,7 @@ public class Locales {
         LocaleConfig = new File(pluginDir, "locale.yml");
 
         if (!LocaleConfig.exists()) {
-            plugin.saveResource("locale.yml", false); // This saves the default settings.yml from resources
+            plugin.saveResource("locale.yml", false);
         }
 
         LocaleFile = YamlConfiguration.loadConfiguration(LocaleConfig);
@@ -79,7 +79,7 @@ public class Locales {
     public void addValue(String path, Object value, String comment) {
         LocaleFile.set(path, value);
 
-        // Add the comment
+
         if (comment != null && !comment.isEmpty()) {
         }
 

@@ -18,7 +18,7 @@ public class CommandLoggerListener implements Listener {
         if (event.isCancelled()) return;
 
         Player player = event.getPlayer();
-        String command = event.getMessage(); // Get the full command
+        String command = event.getMessage();
 
         boolean commandLoggerEnabled = (Boolean) this.plugin.getSettings().getBoolean("LOG-COMMANDS");
 

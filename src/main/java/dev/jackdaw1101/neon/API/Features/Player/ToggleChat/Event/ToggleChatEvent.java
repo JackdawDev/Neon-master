@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class ToggleChatEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
     private final Player player;
-    private boolean newState; // true if chat is now toggled off
+    private boolean newState;
     private boolean cancelled;
 
     public ToggleChatEvent(Player player, boolean newState) {

@@ -36,7 +36,7 @@ public class MuteChatCommand extends NeonCommand {
             return true;
         }
 
-        //boolean isMuted = chatMuteManager.isChatMuted();
+
         boolean isMuted = plugin.getChatMuteManager().isChatMuted();
         if (args.length == 0) {
             isMuted = !isMuted;

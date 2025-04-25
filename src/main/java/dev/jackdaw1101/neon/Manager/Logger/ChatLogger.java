@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class ChatLogger {
     private final Neon plugin;
-    private static final String LOG_FOLDER = "plugins/Neon/Logs/Chat"; // Path to log folder
+    private static final String LOG_FOLDER = "plugins/Neon/Logs/Chat";
     private final Player player;
     private final String message;
 
@@ -30,22 +30,22 @@ public class ChatLogger {
     private void logToFile() {
         File folder = new File(LOG_FOLDER);
 
-        boolean debugMode = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");  // Default to true if not set
+        boolean debugMode = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");
         if (!folder.exists() && !folder.mkdirs()) {
             if (debugMode) {
                 Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Failed to create log folder at " + CC.D_RED + LOG_FOLDER);}
             return;
         }
 
-        // Generate log file name based on the date
+
         String logFileName = new SimpleDateFormat("yyyy-MM-dd").format(new Date()) + ".log";
         File logFile = new File(folder, logFileName);
 
-        // Log format: [time_date] <player>: <message>
+
         String timestamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
         String logEntry = String.format("[%s] <%s>: %s%n", timestamp, player.getName(), message);
 
-        // Write to the log file
+
         try (FileWriter writer = new FileWriter(logFile, true)) {
             writer.write(logEntry);
         } catch (IOException e) {

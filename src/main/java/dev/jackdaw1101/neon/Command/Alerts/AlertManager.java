@@ -42,12 +42,12 @@ public class AlertManager implements CommandExecutor {
         return true;
     }
 
-    // Public method to check if a player has alerts disabled
+
     public boolean isAlertsDisabled(Player player) {
         return alertsDisabled.contains(player.getUniqueId());
     }
 
-    // Public method to enable or disable alerts for a player
+
     public void setAlertsDisabled(Player player, boolean disabled) {
         if (disabled) {
             alertsDisabled.add(player.getUniqueId());
@@ -56,7 +56,7 @@ public class AlertManager implements CommandExecutor {
         }
     }
 
-    // New public method to toggle alerts, usable from other classes
+
     public void toggleAlerts(Player player) {
         if (alertsDisabled.contains(player.getUniqueId())) {
             this.setAlertsDisabled(player, true);
@@ -67,7 +67,7 @@ public class AlertManager implements CommandExecutor {
         }
     }
 
-    // Private method to play sound when the player lacks permission
+
     private void playNoPermissionSound(Player player) {
         if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
             if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {

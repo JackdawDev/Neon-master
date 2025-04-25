@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class SwearManager {
 
-    //SWEAR API
+
     private final Neon plugin;
     private final Map<String, Integer> playerStrikes;
 

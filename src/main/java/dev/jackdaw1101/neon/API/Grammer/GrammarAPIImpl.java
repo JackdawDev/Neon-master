@@ -14,7 +14,7 @@ public class GrammarAPIImpl implements GrammarAPI {
 
     public GrammarAPIImpl(Neon plugin) {
         this.plugin = plugin;
-        // Initialize with default words
+
         customAutoCorrectWords.put("i", "I");
         customAutoCorrectWords.put("im", "I'm");
         customAutoCorrectWords.put("i'm", "I'm");

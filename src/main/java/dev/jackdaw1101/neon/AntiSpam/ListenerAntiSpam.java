@@ -34,7 +34,7 @@ public class ListenerAntiSpam implements Listener {
         String message = event.getMessage();
         UUID uuid = player.getUniqueId();
 
-        // Similar message detection
+
         if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.BLOCK-SIMILAR-MESSAGES") &&
             !player.hasPermission(plugin.getPermissionManager().getString("SIMILARITY-BYPASS"))) {
 
@@ -56,7 +56,7 @@ public class ListenerAntiSpam implements Listener {
             }
         }
 
-        // Repetitive message detection
+
         if (plugin.getSettings().getBoolean("ANTI-SPAM.CHAT.BLOCK-REPETITIVE-MESSAGE") &&
             !player.hasPermission(plugin.getPermissionManager().getString("ANTI-SPAM-BYPASS"))) {
 
@@ -78,7 +78,7 @@ public class ListenerAntiSpam implements Listener {
             }
         }
 
-        // Repetitive characters detection
+
         int maxRepetitions = plugin.getSettings().getInt("ANTI-SPAM.CHAT.ANTI-REPETITIVE-CHARACTERS");
         if (maxRepetitions > 0 &&
             hasExcessiveRepetitiveCharacters(message, maxRepetitions) &&
@@ -96,7 +96,7 @@ public class ListenerAntiSpam implements Listener {
             if (event.isCancelled()) return;
         }
 
-        // Chat delay check
+
         checkChatDelay(event, player, message, uuid);
     }
 
@@ -108,7 +108,7 @@ public class ListenerAntiSpam implements Listener {
         String command = event.getMessage();
         UUID uuid = player.getUniqueId();
 
-        // Command repetitive check
+
         if (plugin.getSettings().getBoolean("ANTI-SPAM.COMMANDS.BLOCK-REPETITIVE-COMMANDS") &&
             !player.hasPermission(plugin.getPermissionManager().getString("BYPASS-DUP-COMMAND"))) {
 
@@ -133,7 +133,7 @@ public class ListenerAntiSpam implements Listener {
             }
         }
 
-        // Command repetitive characters
+
         int maxRepetitions = plugin.getSettings().getInt("ANTI-SPAM.COMMANDS.ANTI-REPETITIVE-CHARACTERS");
         if (maxRepetitions > 0 &&
             hasExcessiveRepetitiveCharacters(command, maxRepetitions) &&
@@ -151,7 +151,7 @@ public class ListenerAntiSpam implements Listener {
             if (event.isCancelled()) return;
         }
 
-        // Command delay check
+
         checkCommandDelay(event, player, uuid);
     }
 
@@ -317,7 +317,7 @@ public class ListenerAntiSpam implements Listener {
         }
     }
 
-    // Existing utility methods (unchanged)
+
     private double calculateMessageSimilarity(String lastMessage, String newMessage) {
         String[] lastWords = lastMessage.split("\\s+");
         String[] newWords = newMessage.split("\\s+");

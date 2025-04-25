@@ -43,8 +43,8 @@ public class ClearChatCommand implements CommandExecutor {
 
         String hasBypass = (String) plugin.getPermissionManager().getString("CHAT-CLEAR.BYPASS-PERMISSION");
 
-        int emptyLines = (int) plugin.getSettings().getInt("CHAT-CLEAR.EMPTY-LINES"); // Default to 100 lines if not set
-        boolean broadcast = (boolean) plugin.getSettings().getBoolean("CHAT_CLEAR.BROADCAST-TO-PLAYER"); // Default to true if not set
+        int emptyLines = (int) plugin.getSettings().getInt("CHAT-CLEAR.EMPTY-LINES");
+        boolean broadcast = (boolean) plugin.getSettings().getBoolean("CHAT_CLEAR.BROADCAST-TO-PLAYER");
 
         for (int i = 0; i < emptyLines; i++) {
             Bukkit.broadcastMessage("");

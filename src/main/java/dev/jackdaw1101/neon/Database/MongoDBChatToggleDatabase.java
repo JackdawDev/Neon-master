@@ -30,24 +30,24 @@ public class MongoDBChatToggleDatabase implements ChatToggleDatabase {
             String connectionString = plugin.getDatabaseManager().getString("MONGODB.URL");
             String databaseName = plugin.getDatabaseManager().getString("MONGODB.DATABASE");
 
-            // Configure connection settings
+
             mongoClient = MongoClients.create(connectionString);
             database = mongoClient.getDatabase(databaseName);
             collection = database.getCollection("chat_toggle");
             isConnected = true;
 
-            // Create index if it doesn't exist
+
             Bson index = new Document("uuid", 1);
             collection.createIndex(index);
 
-            // Test the connection
+
             collection.countDocuments();
 
             plugin.getLogger().info("MongoDB connection established successfully!");
         } catch (Exception e) {
             plugin.getLogger().severe("MongoDB connection failed: " + e.getMessage());
             isConnected = false;
-            shutdown(); // Clean up if initialization fails
+            shutdown();
         }
     }
 
@@ -58,7 +58,7 @@ public class MongoDBChatToggleDatabase implements ChatToggleDatabase {
                 mongoClient != null &&
                 database != null &&
                 collection != null &&
-                mongoClient.listDatabaseNames().first() != null; // Test connection
+                mongoClient.listDatabaseNames().first() != null;
         } catch (Exception e) {
             plugin.getLogger().warning("Error checking MongoDB initialization status: " + e.getMessage());
             return false;
@@ -84,8 +84,8 @@ public class MongoDBChatToggleDatabase implements ChatToggleDatabase {
 
     @Override
     public void save() {
-        // MongoDB doesn't need explicit save operations as it writes immediately
-        // But we can verify the connection is healthy
+
+
         if (!isInitialized()) {
             plugin.getLogger().warning("Attempted to save when MongoDB is not initialized");
             return;

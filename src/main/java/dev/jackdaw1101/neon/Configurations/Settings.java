@@ -34,7 +34,7 @@ public class Settings {
         settingsFile = new File(pluginDir, "settings.yml");
 
         if (!settingsFile.exists()) {
-            plugin.saveResource("settings.yml", false); // This saves the default settings.yml from resources
+            plugin.saveResource("settings.yml", false);
         }
 
         settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
@@ -61,7 +61,7 @@ public class Settings {
     public void addValue(String path, Object value, String comment) {
         settingsConfig.set(path, value);
 
-        // Add the comment
+
         if (comment != null && !comment.isEmpty()) {
         }
 
@@ -75,7 +75,7 @@ public class Settings {
     public boolean reloadSettings() throws IOException {
         settingsConfig = YamlConfiguration.loadConfiguration(settingsFile);
 
-        ConfigUpdater.update(this.plugin, "settings.yml", settingsFile); // Assuming this is a utility method
+        ConfigUpdater.update(this.plugin, "settings.yml", settingsFile);
 
         this.plugin.reloadConfig();
 

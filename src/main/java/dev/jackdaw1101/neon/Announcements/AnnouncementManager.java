@@ -33,7 +33,7 @@ public class AnnouncementManager {
             public void run() {
                 updateSchedulers();
             }
-        }.runTaskTimerAsynchronously(plugin, 0L, 100L); // Update every 5 seconds (100 ticks)
+        }.runTaskTimerAsynchronously(plugin, 0L, 100L);
     }
 
     private void updateSchedulers() {
@@ -41,7 +41,6 @@ public class AnnouncementManager {
 
         if (announcementsSection == null) return;
 
-        // Cancel and remove tasks that are no longer in the config
         tasks.keySet().removeIf(key -> {
             if (!announcementsSection.contains(key)) {
                 tasks.get(key).cancel();
@@ -50,22 +49,19 @@ public class AnnouncementManager {
             return false;
         });
 
-        // Update or start tasks for announcements
         for (String key : announcementsSection.getKeys(false)) {
             ConfigurationSection announcement = announcementsSection.getConfigurationSection(key);
             if (announcement == null) continue;
 
-            int interval = announcement.getInt("INTERVAL", 60); // Default interval: 60 seconds
+            int interval = announcement.getInt("INTERVAL", 60);
 
-            // If task exists but interval has changed, reschedule it
             if (tasks.containsKey(key)) {
                 AnnouncementTask existingTask = tasks.get(key);
                 if (existingTask.getInterval() != interval) {
-                    existingTask.cancel(); // Cancel old task
-                    tasks.put(key, createAndScheduleTask(key, interval)); // Create a new task
+                    existingTask.cancel();
+                    tasks.put(key, createAndScheduleTask(key, interval));
                 }
             } else {
-                // Start a new task for announcements that don't have one yet
                 tasks.put(key, createAndScheduleTask(key, interval));
             }
         }
@@ -73,7 +69,7 @@ public class AnnouncementManager {
 
     private AnnouncementTask createAndScheduleTask(String key, int interval) {
         AnnouncementTask task = new AnnouncementTask(key, interval);
-        task.runTaskTimerAsynchronously(plugin, 0L, interval * 20L); // Convert seconds to ticks
+        task.runTaskTimerAsynchronously(plugin, 0L, interval * 20L);
         return task;
     }
 
@@ -112,12 +108,12 @@ public class AnnouncementManager {
 
         BaseComponent[] components = new TextComponent[]{new TextComponent(message)};
 
-        // Handle hover effect
+
         if (hover && hoverContent != null) {
             components = addHoverEffect(components, hoverContent, player);
         }
 
-        // Handle click actions
+
         if (clickCommand && command != null && !command.isEmpty()) {
             components = addClickCommand(components, command);
         } else if (suggestCommand && commandToSuggest != null && !commandToSuggest.isEmpty()) {

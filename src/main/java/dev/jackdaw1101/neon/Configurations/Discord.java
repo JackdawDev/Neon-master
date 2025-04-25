@@ -32,7 +32,7 @@ public class Discord {
         File discordFile = new File(pluginDir, "discord.yml");
 
         if (!discordFile.exists()) {
-            this.plugin.saveResource("discord.yml", false); // Save the default file if it doesn't exist
+            this.plugin.saveResource("discord.yml", false);
         }
 
         FileConfiguration discordConfig = YamlConfiguration.loadConfiguration(discordFile);
@@ -45,7 +45,7 @@ public class Discord {
     }
 
     public String getDiscord(String key, Object... placeholders) {
-        String discord = this.discord.getOrDefault(key, key); // Get the message or use the key as fallback
+        String discord = this.discord.getOrDefault(key, key);
         return discord;
     }
 
@@ -74,12 +74,12 @@ public class Discord {
         File discordFile = new File(pluginDir, "discord.yml");
 
         try {
-            // ConfigUpdater.update(this.plugin, "discord.yml", discordFile);
+
             this.plugin.reloadConfig();
-            //} catch (IOException e) {
-            //  e.printStackTrace();
-            //     return false;
-            // }
+
+
+
+
 
             this.loadDiscord();
             return true;

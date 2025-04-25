@@ -58,10 +58,10 @@ public class NeonCommand implements CommandExecutor {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 ChatClearCommand chatClearCommand = new ChatClearCommand(plugin);
-                chatClearCommand.clearChat(player); // Passing player object
+                chatClearCommand.clearChat(player);
             } else {
                 ChatClearCommand chatClearCommand = new ChatClearCommand(plugin);
-                chatClearCommand.clearChat(sender); // Passing CommandSender for console handling
+                chatClearCommand.clearChat(sender);
             }
             return true;
         }
@@ -104,10 +104,10 @@ public class NeonCommand implements CommandExecutor {
 
             if (sender instanceof Player) {
                 MuteChatCommandNormal chatMute = new MuteChatCommandNormal(plugin);
-                chatMute.toggleChatMute(sender, args.length > 1 ? args[1] : null); // Passing player and optional argument
+                chatMute.toggleChatMute(sender, args.length > 1 ? args[1] : null);
             } else {
                 MuteChatCommandNormal chatMute = new MuteChatCommandNormal(plugin);
-                chatMute.toggleChatMute(sender, args.length > 1 ? args[1] : null); // Allow console execution
+                chatMute.toggleChatMute(sender, args.length > 1 ? args[1] : null);
             }
             return true;
         }
@@ -120,7 +120,7 @@ public class NeonCommand implements CommandExecutor {
 
             if (sender instanceof Player) {
                 Player player = (Player) sender;
-                plugin.getAlertManager().toggleAlerts(player); // Use the shared AlertManager instance
+                plugin.getAlertManager().toggleAlerts(player);
             } else {
                 sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("PLAYER-ONLY")));
             }
@@ -140,9 +140,9 @@ public class NeonCommand implements CommandExecutor {
             return true;
         }
 
-        // If the argument is not recognized, show the help message.
+
         sendHelp(sender);
-        return true; // Prevents further processing and shows the help message for invalid arguments.
+        return true;
     }
 
     public void sendHelp(CommandSender sender) {
@@ -152,7 +152,7 @@ public class NeonCommand implements CommandExecutor {
         String mainMessage = ChatColor.translateAlternateColorCodes('&', "&7 * &b&lBy Jackdaw1101&d");
         String blank = ChatColor.translateAlternateColorCodes('&', " ");
 
-        // Create clickable and hoverable messages for each command
+
         String reload = ChatColor.translateAlternateColorCodes('&', " &f* &eReload The Plugin");
         String help = ChatColor.translateAlternateColorCodes('&',  " &f* &eShows This Message");
         String chatclear = ChatColor.translateAlternateColorCodes('&', " &f* &eClears The Chat");
@@ -213,7 +213,7 @@ public class NeonCommand implements CommandExecutor {
         String page = ChatColor.translateAlternateColorCodes('&', " &ePage: &7(2/2)");
         String blank = ChatColor.translateAlternateColorCodes('&', " ");
 
-        // Create clickable and hoverable messages for each command
+
 
         String togglealerts = ChatColor.translateAlternateColorCodes('&', " &f* &eAdmin Alerts &7&o(toggle) &c&o&nNot Available Yet");
         String togglealertsconsole = ChatColor.translateAlternateColorCodes('&', " &f- &eClears The Chat");
@@ -264,7 +264,7 @@ public class NeonCommand implements CommandExecutor {
         } else if (!isSuggestCommand && isRunCommand) {
             message.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command));
         }
-        // FallBack Method
+
         else if (!isSuggestCommand && !isRunCommand) {
             message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, command));
         } else if (isSuggestCommand && isRunCommand) {

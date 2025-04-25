@@ -57,8 +57,8 @@ public class ChatClearCommand {
             player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("NO-PERMISSION")));
             return;
         }
-        int emptyLines = (int) plugin.getSettings().getInt("CHAT-CLEAR.EMPTY-LINES"); // Default to 100 lines if not set
-        boolean broadcast = (boolean) plugin.getSettings().getBoolean("CHAT-CLEAR.BROADCAST-TO-PLAYER"); // Default to true if not set
+        int emptyLines = (int) plugin.getSettings().getInt("CHAT-CLEAR.EMPTY-LINES");
+        boolean broadcast = (boolean) plugin.getSettings().getBoolean("CHAT-CLEAR.BROADCAST-TO-PLAYER");
 
         for (int i = 0; i < emptyLines; i++) {
             Bukkit.broadcastMessage("");
