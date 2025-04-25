@@ -78,6 +78,7 @@ ISOUNDS-UTIL: false
 # - {main_theme} - Main Theme of plugin editable in messages.yml (usable in all files)
 # - {second_theme} - Second Theme of plugin editable in messages.yml (usable in all files)
 # - {third_theme} - Third Theme of plugin editable in messages.yml (usable in all files)
+# (!) internal placeholders can be used in all files and only in Strings
 #
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
 # It Also Supports Mini Messaging
