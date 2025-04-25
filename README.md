@@ -1183,7 +1183,9 @@ addonManager.unregisterAddon("MyAddon");
 
 ## Hex & Colors
 **To use hex colors you need to run Neon on a 1.16+ MC Version**
+```yaml
 * <#0000FF>Message</#FFFFFF>
 * &#0000FF
-* rainbow Message /rainbow (use <> for these)
+* <rainbow> Message </rainbow>
 * <color-name>Message</color-name>
+```
