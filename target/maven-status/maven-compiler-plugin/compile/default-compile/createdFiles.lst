@@ -47,7 +47,6 @@ dev\jackdaw1101\neon\Database\MemoryChatToggleDatabase.class
 dev\jackdaw1101\neon\AntiCaps\AntiCapsSystem$CapsCheckResult.class
 dev\jackdaw1101\neon\API\Chat\Events\ChatMessageEvent.class
 dev\jackdaw1101\neon\Manager\ChatFormat.class
-dev\jackdaw1101\neon\Chat\Manager\ChatMuteManager.class
 dev\jackdaw1101\neon\API\Features\Player\ToggleChat\ChatToggleAPI.class
 dev\jackdaw1101\neon\Neon.class
 dev\jackdaw1101\neon\AntiSpam\AntiSpamManager.class
@@ -67,7 +66,6 @@ dev\jackdaw1101\neon\AntiSpam\ListenerAntiSpam.class
 dev\jackdaw1101\neon\AutoResponse\AutoResponse.class
 dev\jackdaw1101\neon\Command\tabcomp\NeonTabCompleter.class
 dev\jackdaw1101\neon\API\Features\AntiSwear\AntiSwearAPIImpl.class
-dev\jackdaw1101\neon\API\Features\JoinLeave\ClickAction.class
 dev\jackdaw1101\neon\Command\Logger\CommandLogger.class
 dev\jackdaw1101\neon\Utils\StringUtil\IStringUtils.class
 dev\jackdaw1101\neon\API\Features\Player\ToggleChat\Event\ToggleChatEvent.class
@@ -78,6 +76,7 @@ dev\jackdaw1101\neon\API\Features\AntiUnicode\AntiUnicodeEvent.class
 dev\jackdaw1101\neon\Command\ChatClear\ChatClearCommand.class
 dev\jackdaw1101\neon\API\Features\AntiSwear\Event\SwearDetectEvent.class
 dev\jackdaw1101\neon\API\Features\JoinLeave\Events\NeonPlayerJoinEvent$ClickAction.class
+dev\jackdaw1101\neon\API\Features\ChatMute\ChatMuteManager.class
 dev\jackdaw1101\neon\API\Chat\ChatAPI.class
 dev\jackdaw1101\neon\API\Features\Player\WelcomeEvent.class
 dev\jackdaw1101\neon\Command\Logger\CommandLoggerListener.class

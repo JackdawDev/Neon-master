@@ -1,8 +1,8 @@
 package dev.jackdaw1101.neon.API;
 
 import dev.jackdaw1101.neon.AddonHandler.AddonManager;
-import dev.jackdaw1101.neon.Configurations.Settings;
 import dev.jackdaw1101.neon.Neon;
+import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -165,11 +165,18 @@ public class NeonAPI {
     }
 
     /**
+     * Gets The neon prefix
+     * @return The string
+     */
+    public String getNeonPrefix() {
+        return ColorHandler.color(Neon.getInstance().getMessageManager().getString("PREFIX"));
+    }
+
+    /**
      * Shuts down the API and cleans up resources
      */
     public void shutdown() {
         Bukkit.getConsoleSender().sendMessage("[Neon] Shutting down API...");
-        // Perform any cleanup needed
         Bukkit.getConsoleSender().sendMessage("[Neon] API shutdown complete.");
     }
 }

@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.AddonHandler;
 
-import dev.jackdaw1101.neon.Utils.Chat.CC;
+import dev.jackdaw1101.neon.API.Utils.CC;
 import org.bukkit.Bukkit;
 
 import java.util.*;
@@ -152,11 +152,7 @@ public class AddonManager {
 
         @Override
         public String toString() {
-            return "AddonInfo{" +
-                "name='" + name + '\'' +
-                ", version='" + version + '\'' +
-                ", registeredFor=" + getFormattedUptime() +
-                '}';
+            return CC.GRAY + "Addon Name: " + CC.YELLOW + name + "\n" + CC.GRAY + "Version: " + CC.YELLOW + version;
         }
     }
 }

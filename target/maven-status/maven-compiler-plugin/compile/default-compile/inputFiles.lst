@@ -1,4 +1,5 @@
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiUnicode\AntiUnicodeEvent.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\AntiSwearAPIImpl.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Grammer\Event\GrammarCheckEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\Player\WelcomeEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSpam\AntiSpamManager.java
@@ -21,8 +22,8 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Discord.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Chat\MuteChatCommandNormal.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\MOTD\WelcomeListener.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\AntiSwearAPI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\JoinLeave\NeonJoinLeaveAPI.java
-C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Chat\Manager\ChatMuteManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AutoResponse\AutoResponseAPI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Utils\Utils.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Messages.java
@@ -36,12 +37,12 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSwear\SwearManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSpam\AntiSpamEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Utils\ISounds\SoundUtil.java
-C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\JoinLeave\ClickAction.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSwear\AntiSwearSystem.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\GrammerAPI\GrammerAPI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Chat\MuteChatCommand.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Utils\ISounds\XSounds.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\ToggleChat\ToggleChatCommand.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\Event\SwearDetectEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\Player\ToggleChat\ChatToggleAPIImpl.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Locales.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Database.java
@@ -60,7 +61,9 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Neon.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Grammer\GrammarAPI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AddonHandler\AddonManager.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\Event\AntiSwearEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\NeonReloadCommand.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\Event\SwearPunishEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSwear\Logger\AntiSwearLogger.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSwear\Discord\WebhookManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Logger\CommandLogger.java
@@ -71,6 +74,7 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\MentionEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSpam\ListenerAntiSpam.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Permissions.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\ChatMute\ChatMuteManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\ConfigFile.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\ChatFormat.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiAdvertise\AntiLinkSystem.java

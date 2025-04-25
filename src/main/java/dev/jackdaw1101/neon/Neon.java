@@ -41,7 +41,7 @@ import dev.jackdaw1101.neon.Manager.ChatFormat;
 import dev.jackdaw1101.neon.Manager.JoinLeave.JoinLeaveListener;
 import dev.jackdaw1101.neon.Manager.MOTD.WelcomeListener;
 import dev.jackdaw1101.neon.Manager.MentionManager.ListenerMentions;
-import dev.jackdaw1101.neon.Utils.Chat.CC;
+import dev.jackdaw1101.neon.API.Utils.CC;
 import dev.jackdaw1101.neon.Utils.Core.DebugUtil;
 import dev.jackdaw1101.neon.Utils.File.FileUtils;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
@@ -302,6 +302,8 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading API...");
         this.addonManager = new AddonManager(getLogger());
         this.api = new NeonAPI(this, addonManager);
+        Bukkit.getServicesManager().register(NeonAPI.class, api, this, ServicePriority.Highest);
+        Bukkit.getServicesManager().register(AddonManager.class, addonManager, this, ServicePriority.Highest);
         this.antiSwearAPI = new AntiSwearAPIImpl(this, swearManager);
         Bukkit.getServicesManager().register(AntiSwearAPI.class, antiSwearAPI, this, ServicePriority.Normal);
         chatToggleAPI = new ChatToggleAPIImpl(this);
@@ -516,6 +518,11 @@ public final class Neon extends JavaPlugin {
         List<String> ymlFiles = FileUtils.getYmlFiles(getDataFolder());
         for (String fileName : ymlFiles) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "  * " + CC.GREEN + fileName);
+        }
+        if (getNeonAPI().getRegisteredAddons() != null) {
+            Bukkit.getConsoleSender().sendMessage(CC.AQUA + " * " + CC.YELLOW + "Addons Registered: " + CC.BLUE + getNeonAPI().getRegisteredAddons());
+        } else {
+            Bukkit.getConsoleSender().sendMessage(CC.AQUA + " * " + CC.YELLOW + "Addons Registered: " + CC.RED + "None");
         }
         Bukkit.getConsoleSender().sendMessage(CC.DARK_AQUA + "  ");
         Bukkit.getConsoleSender().sendMessage(CC.D_AQUA + "=============================================");
