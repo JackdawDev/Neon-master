@@ -40,11 +40,6 @@ public class NeonReloadCommand implements CommandExecutor {
 
     public void executeReload(CommandSender sender) {
 
-
-
-
-
-
         plugin.getLocales().reloadLocales();
         plugin.getSettings().reload();
         plugin.getMessageManager().reload();
