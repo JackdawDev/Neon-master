@@ -173,6 +173,38 @@ public class NeonAPI {
     }
 
     /**
+     * Gets The neon main theme
+     * @return The string
+     */
+    public String getNeonMainTheme() {
+        return ColorHandler.color(Neon.getInstance().getMessageManager().getString("MAIN-THEME"));
+    }
+
+    /**
+     * Gets The neon second theme
+     * @return The string
+     */
+    public String getNeonSecondTheme() {
+        return ColorHandler.color(Neon.getInstance().getMessageManager().getString("SECOND-THEME"));
+    }
+
+    /**
+     * Gets The neon third theme
+     * @return The string
+     */
+    public String getNeonThirdTheme() {
+        return ColorHandler.color(Neon.getInstance().getMessageManager().getString("THIRD-THEME"));
+    }
+
+    /**
+     * Gets The neon Version
+     * @return The string
+     */
+    public String getNeonVersion() {
+        return ColorHandler.color(Neon.getInstance().getDescription().getVersion());
+    }
+
+    /**
      * Shuts down the API and cleans up resources
      */
     public void shutdown() {
