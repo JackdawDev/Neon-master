@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,9 +34,20 @@ public class WelcomeListener implements Listener {
             return;
         }
 
-        if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
-            clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
+        boolean delayEnabled = plugin.getSettings().getBoolean("ASYNC.ENABLED");
+        int delayTicks = plugin.getSettings().getInt("ASYNC.DELAY-TICKS");
+        if (delayEnabled) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
+                    clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
+                }
+                }, delayTicks);
+        } else {
+            if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
+                clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
+            }
         }
+
 
 
         List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-MESSAGE");
@@ -58,7 +70,15 @@ public class WelcomeListener implements Listener {
         List<String> finalMessages = welcomeEvent.getMessageLines();
         String soundToPlay = welcomeEvent.getSound();
 
-        sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
+        if (delayEnabled) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
+            }, delayTicks);
+        } else {
+            sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
+        }
+
+       // sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
     }
 
     private void clearChat(Player player, int lines) {

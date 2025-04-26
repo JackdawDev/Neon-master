@@ -44,7 +44,14 @@ public class JoinLeaveListener implements Listener {
         boolean delayEnabled = settings.getBoolean("ASYNC.ENABLED");
         int delayTicks = settings.getInt("ASYNC.DELAY-TICKS");
 
-        processJoinEvent(event);
+
+        if (delayEnabled) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                processJoinEvent(event);
+            }, delayTicks);
+        } else {
+            processJoinEvent(event);
+        }
     }
 
     private void processJoinEvent(PlayerJoinEvent event) {
@@ -113,7 +120,13 @@ public class JoinLeaveListener implements Listener {
 
         boolean delayEnabled = settings.getBoolean("ASYNC.ENABLED");
         int delayTicks = settings.getInt("ASYNC.DELAY-TICKS");
-        processLeaveEvent(event);
+        if (delayEnabled) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                processLeaveEvent(event);
+            }, delayTicks);
+        } else {
+            processLeaveEvent(event);
+        }
     }
 
     private void processLeaveEvent(PlayerQuitEvent event) {

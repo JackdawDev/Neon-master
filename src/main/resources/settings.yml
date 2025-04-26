@@ -84,6 +84,21 @@ ISOUNDS-UTIL: false
 # It Also Supports Mini Messaging
 #
 ########################################################
+#                       Performance                    #
+########################################################
+#
+# Performance Related Configuration System
+#
+# ASYNC: This feature adds a delay system to some features to make sure the server won't lose performance
+# and makes sure that the feature is fully compatible ith all plugins
+# it is highly recommended to enable this feature is you want a balanced but a bit unstable experience
+# al-though it helps with performanced but its runned on Main Thread that's why it's unstable for poor cpus
+# ENABLED: toggle the system on or off
+# DELAY-TICKS: Higher values will cause it to execute some tasks like join messages a bit late. Recommended value is 5 - 10
+ASYNC:
+  ENABLED: false
+  DELAY-TICKS: 5
+########################################################
 #                  ChatFormat                          #
 ########################################################
 #
