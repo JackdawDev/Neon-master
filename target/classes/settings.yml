@@ -19,6 +19,15 @@ DEBUG-MODE: false
 # Server Name: name of the server for webhooks and messaging
 SERVER-NAME: "Lobby"
 #
+# Neon Update Checker system
+# Would you want to be notified when a new update release? or have the plugin Auto Updated?
+# It's recommended to keeping the AUTO-UPDATE Enabled as it's not much stable
+#
+# But Keep the check update enabled so you can be notified!
+UPDATE-SYSTEM:
+  AUTO-UPDATE: false
+  CHECK-UPDATE: true
+#
 ########################################################
 #                   SOUND UTILS                        #
 ########################################################
@@ -84,6 +93,21 @@ ISOUNDS-UTIL: false
 # It Also Supports Mini Messaging
 #
 ########################################################
+#                       Performance                    #
+########################################################
+#
+# Performance Related Configuration System
+#
+# ASYNC: This feature adds a delay system to some features to make sure the server won't lose performance
+# and makes sure that the feature is fully compatible ith all plugins
+# it is highly recommended to enable this feature is you want a balanced but a bit unstable experience
+# al-though it helps with performanced but its runned on Main Thread that's why it's unstable for poor cpus
+# ENABLED: toggle the system on or off
+# DELAY-TICKS: Higher values will cause it to execute some tasks like join messages a bit late. Recommended value is 5 - 10
+ASYNC:
+  ENABLED: false
+  DELAY-TICKS: 5
+########################################################
 #                  ChatFormat                          #
 ########################################################
 #
@@ -94,11 +118,15 @@ CHAT-FORMAT-ENABLED: true
 # Enable or disable hover functionality
 HOVER-ENABLED: true
 #
-# Enable or disable chat click suggest command
-# this uses CLICK-COMMAND value
+# Enable or disable chat click actions
 CLICK-EVENT-ENABLED: true
 #
-# Enable or disable chat click run command. (!) You can't this while you have CLICK-EVENT-ENABLED enabled. You can use one at a time!
+# Enable or disable chat click run command. (!) You can't this while you have RUN-COMMAND-ENABLED enabled. You can use one at a time!
+# this also uses the CLICK-COMMAND value.
+# (!) Enabling both of them will cause it to use Suggest Command as default
+SUGGEST-COMMAND-ENABLED: true
+#
+# Enable or disable chat click run command. (!) You can't this while you have SUGGEST-COMMAND-ENABLED enabled. You can use one at a time!
 # this also uses the CLICK-COMMAND value.
 # (!) Enabling both of them will cause it to use Suggest Command as default
 RUN-COMMAND-ENABLED: false
@@ -740,3 +768,102 @@ COMMANDS:
   # Would You Like To Enable /mutechat Command (This Does Not Have Effect on /neon mutechat Command)
   MUTE-CHAT: true
 #
+########################################################
+#                Per World Chat System                 #
+########################################################
+#
+# Per World CHat System
+# You can edit worlds in locale.yml
+# if you want to enable this feature set this to true
+PER-WORLD-CHAT-ENABLED: false
+#
+########################################################
+#                     Integration                      #
+########################################################
+#
+# Available Plugins: Bedwars1058, Bedwars2023
+#
+# BEDWARS1058 - by Andrie1058
+# BEDWARS2023 - by tomkeuper
+#
+# Bedwars Chat Settings
+#
+# Available placeholders: <player>, <arena>, <message>, <teamcolor>
+# (!) Disable Bedwars1058 & Bedwars2023 Chat Format
+#
+# Enable the Integration
+BEDWARS1058-SUPPORT: false
+#
+# Enable Bedwars2023 Integration
+BEDWARS2023-SUPPORT: false
+#
+# Settings Related (For both BW1058 & BW2023)
+# Hex and Placeholders Supported
+BEDWARS-CHAT:
+  WAITING-LOBBY:
+    # Format for chat while players are in the waiting lobby (waiting/starting state).
+    # Available placeholders:
+    # - <player> -> Sender's name
+    # - <arena> -> Arena name
+    # - <arena_displayname> -> Arena display name
+    # - <message> -> Message sent
+    FORMAT: "&7[&b<arena>&7] &f<player>&7: &r<message>"
+    #
+    # Should the chat message have hover text? (true/false)
+    HOVER-ENABLED: true
+    #
+    # Lines shown when hovering over a chat message.
+    # Supports placeholders: <player>, <arena>
+    HOVER:
+      - "&fPlayer: &b<player>"
+      - "&fArena: &b<arena>"
+      - "&fStatus: &aWaiting"
+    #
+    # Should clicking the chat message trigger a click event? (true/false)
+    CLICK-EVENT: true
+    #
+    # Should the click event paste a command in chat on CLick?
+    SUGGEST-COMMAND: true
+    #
+    # Should the click command be RUN immediately? (true/false)
+    # If false, it will SUGGEST the command in chat for the player to edit before sending.
+    RUN-COMMAND: false
+    #
+    # Command to run or suggest when clicking the message.
+    # Supports <player> placeholder (e.g., /msg <player>)
+    CLICK-COMMAND: "/msg <player> "
+  #
+  PLAYING:
+    # Format for chat while players are in the arena playing (playing state).
+    # Available placeholders:
+    # - <player> -> Sender's name
+    # - <arena> -> Arena name
+    # - <arena_displayname> -> Arena display name
+    # - <message> -> Message sent
+    # - <teamcolor> -> Team color code (e.g., blue, red)
+    # - <teamname> -> Team name (e.g, [Red])
+    FORMAT: "<teamcolor><player> &7➤ &r<message>"
+    #
+    # Should the chat message have hover text? (true/false)
+    HOVER-ENABLED: true
+    #
+    # Lines shown when hovering over a chat message.
+    # Supports placeholders: <player>, <arena>
+    HOVER:
+      - "&fPlayer: &b<player>"
+      - "&fArena: &b<arena>"
+      - "&fStatus: &cPlaying"
+    #
+    # Should clicking the chat message trigger a click event? (true/false)
+    CLICK-EVENT: true
+    #
+    # Should the click event paste a command in chat on CLick?
+    SUGGEST-COMMAND: true
+    #
+    # Should the click command be RUN immediately? (true/false)
+    # If false, it will SUGGEST the command in chat for the player to edit before sending.
+    RUN-COMMAND: false
+    #
+    # Command to run or suggest when clicking the message.
+    # Supports <player> placeholder (e.g., /msg <player>)
+    CLICK-COMMAND: "/msg <player> "

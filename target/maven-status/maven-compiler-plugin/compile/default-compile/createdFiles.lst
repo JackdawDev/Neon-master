@@ -6,6 +6,7 @@ dev\jackdaw1101\neon\API\Grammer\GrammarAPIImpl.class
 dev\jackdaw1101\neon\AntiAdvertise\Logger\AntiADLogger.class
 dev\jackdaw1101\neon\Configurations\ConfigFile.class
 dev\jackdaw1101\neon\Command\API\CommandManager.class
+dev\jackdaw1101\neon\Integeration\Bedwars2023Integration$1.class
 dev\jackdaw1101\neon\API\Utils\CC.class
 dev\jackdaw1101\neon\API\Features\JoinLeave\Events\NeonPlayerJoinEvent.class
 dev\jackdaw1101\neon\AntiSwear\Logger\AntiSwearLogger.class
@@ -54,6 +55,7 @@ dev\jackdaw1101\neon\Manager\MentionManager\ListenerMentions.class
 dev\jackdaw1101\neon\API\Grammer\Event\GrammarCheckEvent.class
 dev\jackdaw1101\neon\Configurations\Database.class
 dev\jackdaw1101\neon\AntiSwear\Discord\WebhookManager$1.class
+dev\jackdaw1101\neon\Integeration\Bedwars1058Integration.class
 dev\jackdaw1101\neon\AntiSwear\AntiSwearSystem.class
 dev\jackdaw1101\neon\Command\ToggleChat\Listener\ChatListener.class
 dev\jackdaw1101\neon\Command\Chat\MuteChatCommandNormal.class
@@ -76,6 +78,7 @@ dev\jackdaw1101\neon\API\Features\AntiUnicode\AntiUnicodeEvent.class
 dev\jackdaw1101\neon\Command\ChatClear\ChatClearCommand.class
 dev\jackdaw1101\neon\API\Features\AntiSwear\Event\SwearDetectEvent.class
 dev\jackdaw1101\neon\API\Features\JoinLeave\Events\NeonPlayerJoinEvent$ClickAction.class
+dev\jackdaw1101\neon\Integeration\Bedwars1058Integration$1.class
 dev\jackdaw1101\neon\API\Features\ChatMute\ChatMuteManager.class
 dev\jackdaw1101\neon\API\Chat\ChatAPI.class
 dev\jackdaw1101\neon\API\Features\Player\WelcomeEvent.class
@@ -86,11 +89,15 @@ dev\jackdaw1101\neon\API\Features\AutoResponse\Event\AutoResponseEvent.class
 dev\jackdaw1101\neon\API\Features\AntiCaps\AntiCapsEvent.class
 dev\jackdaw1101\neon\Manager\JoinLeave\JoinLeaveListener.class
 dev\jackdaw1101\neon\Utils\ISounds\SoundUtil.class
+dev\jackdaw1101\neon\Manager\UpdateChecker\UpdateChecker.class
 dev\jackdaw1101\neon\Command\ChatClear\ClearChatCommand.class
 dev\jackdaw1101\neon\Configurations\Discord.class
 dev\jackdaw1101\neon\API\Utils\ColorHandler.class
+dev\jackdaw1101\neon\Manager\Chat\WorldChatIntegration.class
+dev\jackdaw1101\neon\Integeration\Bedwars2023Integration.class
 dev\jackdaw1101\neon\API\Features\AntiSwear\Event\AntiSwearEvent.class
 dev\jackdaw1101\neon\Announcements\AnnouncementManager$1.class
+dev\jackdaw1101\neon\Utils\Metrics\MetricsManager.class
 dev\jackdaw1101\neon\AddonHandler\AddonManager$AddonInfo.class
 dev\jackdaw1101\neon\Utils\File\FileUtils.class
 dev\jackdaw1101\neon\Utils\Core\DebugUtil.class

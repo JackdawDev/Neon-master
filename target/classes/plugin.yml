@@ -1,5 +1,5 @@
 name: Neon
-version: '1.0'
+version: '1.0-ALPHA'
 main: dev.jackdaw1101.neon.Neon
 api-version: "1.13"
 authors:

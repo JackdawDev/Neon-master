@@ -4,7 +4,7 @@
   <groupId>dev.Jackdaw1101</groupId>
   <artifactId>Neon</artifactId>
   <name>Neon</name>
-  <version>1.0</version>
+  <version>1.0-ALPHA</version>
   <build>
     <resources>
       <resource>
@@ -33,6 +33,26 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.4.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>org.bstats</pattern>
+                  <shadedPattern>dev.jackdaw1101.neon.libs.bstats</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -51,6 +71,10 @@
     <repository>
       <id>sonatype</id>
       <url>https://oss.sonatype.org/content/groups/public/</url>
+    </repository>
+    <repository>
+      <id>spigot-repo</id>
+      <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
     </repository>
   </repositories>
   <dependencies>
@@ -77,6 +101,20 @@
       <artifactId>placeholderapi</artifactId>
       <version>2.11.6</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tompkeuper</groupId>
+      <artifactId>BedWars2023</artifactId>
+      <version>1.3.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/libs/BedWars-1.3.0.jar</systemPath>
+    </dependency>
+    <dependency>
+      <groupId>com.andrei1058.bedwars</groupId>
+      <artifactId>BedWars1058</artifactId>
+      <version>23.12</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/libs/bedwars-plugin-25.2.jar</systemPath>
     </dependency>
   </dependencies>
   <properties>

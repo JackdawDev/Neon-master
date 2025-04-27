@@ -1,6 +1,7 @@
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiUnicode\AntiUnicodeEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\AntiSwearAPIImpl.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Grammer\Event\GrammarCheckEvent.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\Chat\WorldChatIntegration.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\Player\WelcomeEvent.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AntiSpam\AntiSpamManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\Player\ToggleChat\ChatToggleDatabase.java
@@ -20,6 +21,7 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\ChatClear\ClearChatCommand.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Discord.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Chat\MuteChatCommandNormal.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Integeration\Bedwars2023Integration.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\MOTD\WelcomeListener.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AntiSwear\AntiSwearAPI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\JoinLeave\NeonJoinLeaveAPI.java
@@ -48,6 +50,7 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\Database.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Chat\ListenerMuteChat.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Features\AutoResponse\AutoResponseAPIImpl.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Integeration\Bedwars1058Integration.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\AutoResponse\AutoResponse.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Announcements\AnnouncementManager.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Database\MemoryChatToggleDatabase.java
@@ -82,5 +85,6 @@ C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\ne
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Configurations\ConfigFileBackUp.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Chat\ChatAPI.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Database\SQLiteChatToggleDatabase.java
+C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Manager\UpdateChecker\UpdateChecker.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\API\Grammer\GrammarAPIImpl.java
 C:\Users\Administrator\Desktop\Jackdaw1101\Neon\src\main\java\dev\jackdaw1101\neon\Command\Alerts\AlertManager.java

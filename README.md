@@ -134,7 +134,7 @@ Place the Neon-1.0.jar file inside a libs folder in your project directory.
 your-project/  
 ├── src/  
 ├── libs/  
-│   └── Neon-1.0.jar  
+│   └── Neon-<version>.jar  
 ├── pom.xml (Maven)  
 └── build.gradle (Gradle)
 └── Maven (pom.xml)
@@ -145,9 +145,9 @@ Add this dependency to your pom.xml:
 <dependency>
    <groupId>dev.Jackdaw1101</groupId>
    <artifactId>neon</artifactId>
-   <version>1.0</version>
+   <version>$VERSION</version>
    <scope>system</scope>
-   <systemPath>${project.basedir}/libs/Neon-1.0.jar</systemPath>
+   <systemPath>${project.basedir}/libs/Neon-$VERSION.jar</systemPath>
 </dependency>
 ```
 ### 🟢 Gradle (build.gradle)
