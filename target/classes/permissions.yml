@@ -12,6 +12,9 @@
 #               Main Permissions              #
 ###############################################
 #
+# Update Notification on join
+UPDATE-NOTIFICATION: "neon.update.notify"
+#
 # Reload: The permission for the reload command
 RELOAD: "neon.reload"
 #
