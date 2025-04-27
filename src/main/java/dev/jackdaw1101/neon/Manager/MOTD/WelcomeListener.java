@@ -1,6 +1,7 @@
 package dev.jackdaw1101.neon.Manager.MOTD;
 
 import dev.jackdaw1101.neon.API.Features.Player.WelcomeEvent;
+import dev.jackdaw1101.neon.Manager.UpdateChecker.UpdateChecker;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
@@ -32,6 +33,26 @@ public class WelcomeListener implements Listener {
         Player player = event.getPlayer();
         if (!(boolean) plugin.getSettings().getBoolean("ENABLE-WELCOME-SYSTEM")) {
             return;
+        }
+
+        if (player.hasPermission(plugin.getPermissionManager().getString("UPDATE-NOTIFICATION"))) {
+            UpdateChecker updateChecker = new UpdateChecker(plugin, 124425);
+
+            boolean delayEnabled = plugin.getSettings().getBoolean("ASYNC.ENABLED");
+            int delayTicks = plugin.getSettings().getInt("ASYNC.DELAY-TICKS");
+            if (delayEnabled) {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    if (updateChecker.isUpdateRequired() && plugin.getSettings().getBoolean("UPDATE-SYSTEM.CHECK-UPDATE")) {
+                        String latestVersion = updateChecker.getUpdateVersion();
+                        updateChecker.sendUpdateMessagePlayer(latestVersion, player);
+                    }
+                }, delayTicks);
+            } else {
+                if (updateChecker.isUpdateRequired() && plugin.getSettings().getBoolean("UPDATE-SYSTEM.CHECK-UPDATE")) {
+                    String latestVersion = updateChecker.getUpdateVersion();
+                    updateChecker.sendUpdateMessagePlayer(latestVersion, player);
+                }
+            }
         }
 
         boolean delayEnabled = plugin.getSettings().getBoolean("ASYNC.ENABLED");

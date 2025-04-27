@@ -109,3 +109,57 @@ AUTO-RESPONSES:
     - "&cPlease check the rules at &6/server-rules."
   help:
     - "&bNeed help? Ask in chat or type &e/help."
+#
+########################################################
+#                Per World Chat System                 #
+########################################################
+#
+# Set up per-world chat formats below.
+# <world-name>:
+#   FORMAT: how the chat message looks
+#   HOVER: lines shown when you hover over the chat message
+#   HOVER-ENABLED: true/false, whether hover text should be shown
+#   CLICK-EVENT: true/false, whether clicking on the message should trigger an event
+#   RUN-COMMAND: true/false, whether clicking runs or suggests a command
+#   CLICK-COMMAND: command or text suggested/executed on click
+#   SUGGEST-COMMAND: Command that will get pasted in player chat on click
+#
+# The Worlds that are not here use the default Chat Formater
+PER-WORLD-CHATS:
+  #
+  world:
+    FORMAT: "&7[&aWorld&7] &r<player>: &f<message>"
+    HOVER:
+      - "&aPlayer: &f<player>"
+      - "&aWorld: &fworld"
+      - "&7Click to message!"
+    HOVER-ENABLED: true
+    CLICK-EVENT: true
+    RUN-COMMAND: false
+    SUGGEST-COMMAND: true
+    CLICK-COMMAND: "/msg <player> "
+  #
+  world_nether:
+    FORMAT: "&7[&cNether&7] &r<player>: &6<message>"
+    HOVER:
+      - "&cBurning up, <player>?"
+      - "&eNether World Chat!"
+    HOVER-ENABLED: true
+    CLICK-EVENT: true
+    RUN-COMMAND: false
+    SUGGEST-COMMAND: true
+    CLICK-COMMAND: "/msg <player> "
+  #
+  world_the_end:
+    FORMAT: "&7[&5The End&7] &r<player>: &d<message>"
+    HOVER:
+      - "&5Ender whisper from <player>..."
+      - "&dMysterious end chat!"
+    HOVER-ENABLED: true
+    CLICK-EVENT: true
+    RUN-COMMAND: true
+    SUGGEST-COMMAND: false
+    CLICK-COMMAND: "/tpa <player>"
+
+
+
