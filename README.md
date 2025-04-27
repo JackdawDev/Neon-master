@@ -37,6 +37,10 @@ all features are customizeable through the settings.yml!
 
 - Optimized and lightweight. have no impact on performance
 
+- Per World Chat
+
+_ COmpatiblity with BedWars Plugins
+
 # 📢 Auto Announce System
 
 the **Auto Announce System**! This system automatically broadcasts announcements to players with customizable settings, including sounds, hover messages, clickable actions, and more.
@@ -1437,3 +1441,34 @@ SQLITE-CHATTOGGLE:
 # Links
 - [Discord](https://discord.com/invite/HXVdWGdQ6B)
 - [SpigotMC](https://www.spigotmc.org/resources/neon.124425/)
+
+# Integrations
+## BedWars Plugins
+**Bedwars1058 and Bedwars2023 are 2 supported plugins that we can modify their chat while in waiting lobby and playing**
+
+How To use it?
+1. Download one of the supported Bedwars Plugins (latest)
+2. Go To Their Folders > config.yml and disable `chat-settings.format`
+3. Now go to the Neon > settings.yml and enable BEDWARS1058/2023-SUPPORT
+4. Configure the related section
+5. Restart and boom! you have it there
+
+# Requirements
+- Java 17 or higher (since 1.1-ALPHA)
+- Any Spigot Forks from 1.8 to the latest that support Java 17
+- PlaceholderAPI
+
+## Per World Chat
+**Allows you to manage the chat format, hover and actions for each word. and players will only be able to recieve the messages from players that are in their world**
+
+How to use?
+```yaml
+# <world-name>:
+#   FORMAT: how the chat message looks
+#   HOVER: lines shown when you hover over the chat message
+#   HOVER-ENABLED: true/false, whether hover text should be shown
+#   CLICK-EVENT: true/false, whether clicking on the message should trigger an event
+#   RUN-COMMAND: true/false, whether clicking runs or suggests a command
+#   CLICK-COMMAND: command or text suggested/executed on click
+#   SUGGEST-COMMAND: Command that will get pasted in player chat on click
+```

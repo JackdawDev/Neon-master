@@ -112,7 +112,7 @@
       <dependency>
           <groupId>com.andrei1058.bedwars</groupId>
           <artifactId>BedWars1058</artifactId>
-          <version>23.12</version>
+          <version>25.2</version>
           <scope>system</scope>
           <systemPath>${project.basedir}/libs/bedwars-plugin-25.2.jar</systemPath>
       </dependency>
