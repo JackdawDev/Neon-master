@@ -37,14 +37,19 @@ import dev.jackdaw1101.neon.Database.MongoDBChatToggleDatabase;
 import dev.jackdaw1101.neon.Database.MySQLChatToggleDatabase;
 import dev.jackdaw1101.neon.Database.SQLiteChatToggleDatabase;
 import dev.jackdaw1101.neon.GrammerAPI.GrammerAPI;
+import dev.jackdaw1101.neon.Integeration.Bedwars1058Integration;
+import dev.jackdaw1101.neon.Integeration.Bedwars2023Integration;
+import dev.jackdaw1101.neon.Manager.Chat.WorldChatIntegration;
 import dev.jackdaw1101.neon.Manager.ChatFormat;
 import dev.jackdaw1101.neon.Manager.JoinLeave.JoinLeaveListener;
 import dev.jackdaw1101.neon.Manager.MOTD.WelcomeListener;
 import dev.jackdaw1101.neon.Manager.MentionManager.ListenerMentions;
 import dev.jackdaw1101.neon.API.Utils.CC;
+import dev.jackdaw1101.neon.Manager.UpdateChecker.UpdateChecker;
 import dev.jackdaw1101.neon.Utils.Core.DebugUtil;
 import dev.jackdaw1101.neon.Utils.File.FileUtils;
 import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
+import dev.jackdaw1101.neon.Utils.Metrics.MetricsManager;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -287,8 +292,6 @@ public final class Neon extends JavaPlugin {
 
         loadAntiAdLogFolder();
         loadCOmmandLOgger();
-        loadChatLogLogFolder();
-        loadAntiSwearLogFolder();
         loadDataFolder();
         createFolders();
 
@@ -434,7 +437,10 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Mentions System.");
         }
-
+        getServer().getPluginManager().registerEvents(new WorldChatIntegration(this), this);
+        if (isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per World Chat System..");
+        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY +"[SoundUtil] Loaded ISound for version " + SoundUtil.getVersion());
 
         getServer().getPluginManager().registerEvents(new CommandLoggerListener(this), this);
@@ -463,6 +469,17 @@ public final class Neon extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Log Files.");
         }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Events And Features");
+
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Started Hooking into Plugins...");
+        getServer().getPluginManager().registerEvents(new Bedwars1058Integration(this), this);
+        if (isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Bedwars1058 Hook");
+        }
+        getServer().getPluginManager().registerEvents(new Bedwars2023Integration(this), this);
+        if (isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Bedwars2023 Hook");
+        }
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Finished Hoooking into plugins!");
 
 
         boolean chatFormatEnabled = getSettings().getBoolean("CHAT_FORMAT_ENABLED");
@@ -528,6 +545,18 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.D_AQUA + "=============================================");
         DebugUtil.checkDebug(this);
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Done!");
+
+        MetricsManager.initService(this);
+        UpdateChecker updateChecker = new UpdateChecker(this, 124425);
+        if (updateChecker.isUpdateRequired() && getSettings().getBoolean("UPDATE-SYSTEM.CHECK-UPDATE")) {
+            String latestVersion = updateChecker.getUpdateVersion();
+            updateChecker.sendUpdateMessage(latestVersion);
+
+            updateChecker.autoUpdate();
+        }
+        if (!updateChecker.isUpdateRequired() && getSettings().getBoolean("UPDATE-SYSTEM.CHECK-UPDATE")) {
+            Bukkit.getConsoleSender().sendMessage(CC.GREEN + "[Neon] No Updates Available!");
+        }
     }
 
     private boolean checkConfigVersion() {
