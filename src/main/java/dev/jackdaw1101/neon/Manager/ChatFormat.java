@@ -35,6 +35,7 @@ public class ChatFormat implements Listener {
         boolean isChatInConsoleEnabled = (Boolean) this.plugin.getSettings().getBoolean("CHAT-IN-CONSOLE");
         boolean logchat = (boolean) plugin.getSettings().getBoolean("LOG-CHAT");
         boolean isRunCommandEnabled = (Boolean) this.plugin.getSettings().getBoolean("RUN-COMMAND-ENABLED");
+        boolean isSuggestCommand = (Boolean) this.plugin.getSettings().getBoolean("SUGGEST-COMMAND-ENABLED");
 
         Player sender = event.getPlayer();
         String message = event.getMessage();
@@ -58,7 +59,7 @@ public class ChatFormat implements Listener {
 
             String format = chatAPI.getChatFormat(sender);
 
-            String clickCommand = ColorHandler.color(this.plugin.getSettings().getString("CLICK-COMMAND").toString());
+            String clickCommand = this.plugin.getSettings().getString("CLICK-COMMAND");
 
 
             String hoverText = this.chatAPI.processHoverLines(sender, message);
@@ -85,7 +86,7 @@ public class ChatFormat implements Listener {
 
 
             for (Player viewer : event.getRecipients()) {
-                this.chatAPI.sendFormattedMessage(viewer, format, finalHoverText, chatMessageEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled, isRunCommandEnabled);
+                this.chatAPI.sendFormattedMessage(viewer, format, finalHoverText, chatMessageEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled, isRunCommandEnabled, isSuggestCommand);
             }
 
 

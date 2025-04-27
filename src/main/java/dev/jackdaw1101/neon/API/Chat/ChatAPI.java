@@ -7,6 +7,7 @@ import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -39,6 +40,10 @@ public class ChatAPI {
             format = handleLuckPermsPrefixSuffix(sender, format);
         }
 
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            format = PlaceholderAPI.setPlaceholders(sender, format);
+        }
+
         return format.replace("<player>", sender.getName()).replace("%message%", "{MESSAGE}");
     }
 
@@ -60,7 +65,7 @@ public class ChatAPI {
         return hoverText.toString();
     }
 
-    public void sendFormattedMessage(Player viewer, String format, String hoverText, String clickCommand, boolean isHoverEnabled, boolean isClickEventEnabled, boolean isRunCommandEnabled) {
+    public void sendFormattedMessage(Player viewer, String format, String hoverText, String clickCommand, boolean isHoverEnabled, boolean isClickEventEnabled, boolean isRunCommandEnabled, boolean isSuggestCommand) {
         TextComponent chatMessage = new TextComponent(TextComponent.fromLegacyText(format));
 
         if (isHoverEnabled) {
@@ -70,7 +75,8 @@ public class ChatAPI {
         if (isClickEventEnabled) {
             if (isRunCommandEnabled) {
                 chatMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, clickCommand));
-            } else {
+            }
+            if (isSuggestCommand) {
                 chatMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, clickCommand));
             }
         }
