@@ -30,14 +30,14 @@ public class Bedwars2023Integration implements Listener {
 
     @EventHandler
     public void onChatMessage(ChatMessageEvent event) {
+        if (!plugin.getSettings().getBoolean("BEDWARS1058-SUPPORT")) {
+            return;
+        }
         if (!Bukkit.getPluginManager().isPluginEnabled("BedWars1058")) {
             return;
         }
         Player sender = event.getSender();
         com.tomkeuper.bedwars.api.BedWars api = Bukkit.getServicesManager().load(BedWars.class);
-        if (!plugin.getSettings().getBoolean("BEDWARS1058-SUPPORT")) {
-            return;
-        }
 
 
         if (api == null) {

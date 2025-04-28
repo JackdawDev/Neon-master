@@ -30,15 +30,15 @@ public class Bedwars1058Integration implements Listener {
 
     @EventHandler
     public void onChatMessage(ChatMessageEvent event) {
+        if (!plugin.getSettings().getBoolean("BEDWARS1058-SUPPORT")) {
+            return;
+        }
+
         if (!Bukkit.getPluginManager().isPluginEnabled("BedWars1058")) {
             return;
         }
         Player sender = event.getSender();
         BedWars api = Bukkit.getServicesManager().load(BedWars.class);
-        if (!plugin.getSettings().getBoolean("BEDWARS1058-SUPPORT")) {
-            return;
-        }
-
 
         if (api == null) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Fatal Error: Bedwars1058 API is not available!");
