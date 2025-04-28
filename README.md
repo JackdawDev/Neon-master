@@ -41,6 +41,8 @@ all features are customizeable through the settings.yml!
 
 _ COmpatiblity with BedWars Plugins
 
+# You cannot re release the plugin without permission or re-sell the plugin
+
 # 📢 Auto Announce System
 
 the **Auto Announce System**! This system automatically broadcasts announcements to players with customizable settings, including sounds, hover messages, clickable actions, and more.
