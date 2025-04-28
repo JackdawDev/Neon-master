@@ -90,7 +90,6 @@ ISOUNDS-UTIL: false
 # (!) internal placeholders can be used in all files and only in Strings
 #
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
-# It Also Supports Mini Messaging
 #
 ########################################################
 #                       Performance                    #
@@ -234,6 +233,15 @@ CHAT-CLEAR:
 # (!) Enabling both of them will cause it to use Suggest Command as default
 #
 # General settings for the join message
+#
+# Would you want all player have the same join message?
+NORMAL-JOIN-MESSAGE: true
+#
+# Do you want players with different Permissions have different Join Messages (per group)?
+# Editable in locales.yml
+PER-GROUP-JOIN: false
+#
+# General Settings for Normal
 JOIN:
   ENABLED: true
   FORMAT: '&e<player> &ahas joined the game!'

@@ -41,6 +41,7 @@ import dev.jackdaw1101.neon.Integeration.Bedwars1058Integration;
 import dev.jackdaw1101.neon.Integeration.Bedwars2023Integration;
 import dev.jackdaw1101.neon.Manager.Chat.WorldChatIntegration;
 import dev.jackdaw1101.neon.Manager.ChatFormat;
+import dev.jackdaw1101.neon.Manager.JoinLeave.GroupJoinMessageHandler;
 import dev.jackdaw1101.neon.Manager.JoinLeave.JoinLeaveListener;
 import dev.jackdaw1101.neon.Manager.MOTD.WelcomeListener;
 import dev.jackdaw1101.neon.Manager.MentionManager.ListenerMentions;
@@ -74,6 +75,7 @@ public final class Neon extends JavaPlugin {
     private SwearManager swearManager;
     private AnnouncementManager announcementManager;
     private ConfigFile locales;
+    private GroupJoinMessageHandler groupJoinMessageHandler;
 
     private ConfigFile database;
     private AddonManager addonManager;
@@ -437,6 +439,10 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Mentions System.");
         }
+        groupJoinMessageHandler = new GroupJoinMessageHandler();
+        if (isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per Group Join Message System.");
+        }
         getServer().getPluginManager().registerEvents(new WorldChatIntegration(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per World Chat System..");
@@ -610,9 +616,9 @@ public final class Neon extends JavaPlugin {
         return settings;
     }
 
-
-
-
+    public GroupJoinMessageHandler getPerGroupChat() {
+        return groupJoinMessageHandler;
+    }
 
     public static Neon getInstance() {
         if (instance == null) {

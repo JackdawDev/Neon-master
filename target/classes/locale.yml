@@ -15,6 +15,15 @@
 # Format Of Hex Colors
 # <#0000FF>Message</#FFFFFF>
 # &#0000FF
+# <rainbow>Message</rainbow>
+# <color-name>Message</color-name>
+#
+# Internal Placeholders (all support HEX)
+# - {prefix} - Prefix of plugin editable in messages.yml (usable in all files)
+# - {main_theme} - Main Theme of plugin editable in messages.yml (usable in all files)
+# - {second_theme} - Second Theme of plugin editable in messages.yml (usable in all files)
+# - {third_theme} - Third Theme of plugin editable in messages.yml (usable in all files)
+# (!) internal placeholders can be used in all files and only in Strings
 #
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
 #
@@ -160,6 +169,52 @@ PER-WORLD-CHATS:
     RUN-COMMAND: true
     SUGGEST-COMMAND: false
     CLICK-COMMAND: "/tpa <player>"
+  #
+########################################################
+#                Per Group Join Message                #
+########################################################
+# Per Group Join Message
+#
+# Supports Hex Color and Placeholders
+#
+# Groups that are not applied here will use the default join message
+# How to use?
+# <group-name>:
+#   FORMAT: how the join message looks
+#   PERMISSION: the permission required to trigger this join message
+#   PRIORITY: higher number = stronger priority (if player matches multiple groups)
+#   HOVER: lines shown when you hover over the join message
+#   HOVER-ENABLED: true/false, whether hover text should be shown
+#   CLICK-EVENT: true/false, whether clicking on the message should trigger an event
+#   RUN-COMMAND: true/false, whether clicking runs a command
+#   SUGGEST-COMMAND: true/false, whether clicking suggests (pastes) a command into chat
+#   CLICK-COMMAND: command or text triggered or suggested on click
+#
+JOIN-GROUPS:
+  owner:
+    FORMAT: "&c[Owner] %player_name% joined the game!"
+    PERMISSION: "neon.join.owner"
+    PRIORITY: 100
+    HOVER:
+      - "&7Welcome our beloved &cOwner&7!"
+      - "&eClick to greet %player_name%!"
+    HOVER-ENABLED: true
+    CLICK-EVENT: true
+    RUN-COMMAND: false
+    SUGGEST-COMMAND: true
+    CLICK-COMMAND: "/msg %player_name% Welcome back, legend!"
+  #
+  admin:
+    FORMAT: "&b[Admin] %player_name% has arrived!"
+    PERMISSION: "neon.join.admin"
+    PRIORITY: 90
+    HOVER:
+      - "&7Say hello to our &bAdmin&7!"
+    HOVER-ENABLED: true
+    CLICK-EVENT: true
+    RUN-COMMAND: true
+    SUGGEST-COMMAND: false
+    CLICK-COMMAND: "/warp admin-hall"
 
 
 

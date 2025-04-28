@@ -1472,3 +1472,23 @@ How to use?
 #   CLICK-COMMAND: command or text suggested/executed on click
 #   SUGGEST-COMMAND: Command that will get pasted in player chat on click
 ```
+
+## Per Group Join Message
+**Allows you to have custom designs for join messages of each player**
+
+How to use?
+1. go to settings.yml and enable `PER-GROUP-JOIN` and disable `NORMAL-JOIN-MESSAGE`
+2. go to locales.yml and start configuring under `JOIN-GROUPS`
+
+```yaml
+# <group-name>:
+#   FORMAT: how the join message looks
+#   PERMISSION: the permission required to trigger this join message
+#   PRIORITY: higher number = stronger priority (if player matches multiple groups)
+#   HOVER: lines shown when you hover over the join message
+#   HOVER-ENABLED: true/false, whether hover text should be shown
+#   CLICK-EVENT: true/false, whether clicking on the message should trigger an event
+#   RUN-COMMAND: true/false, whether clicking runs a command
+#   SUGGEST-COMMAND: true/false, whether clicking suggests (pastes) a command into chat
+#   CLICK-COMMAND: command or text triggered or suggested on click
+```

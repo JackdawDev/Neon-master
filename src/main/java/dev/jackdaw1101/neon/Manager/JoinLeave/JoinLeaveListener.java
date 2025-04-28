@@ -43,14 +43,27 @@ public class JoinLeaveListener implements Listener {
 
         boolean delayEnabled = settings.getBoolean("ASYNC.ENABLED");
         int delayTicks = settings.getInt("ASYNC.DELAY-TICKS");
+        boolean normal = settings.getBoolean("NORMAL-JOIN-MESSAGE");
+        boolean pergroup = settings.getBoolean("PER-GROUP-JOIN");
 
-
-        if (delayEnabled) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+        if (normal) {
+            if (delayEnabled) {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    processJoinEvent(event);
+                }, 1L * delayTicks);
+            } else {
                 processJoinEvent(event);
-            }, delayTicks);
-        } else {
-            processJoinEvent(event);
+            }
+        }
+
+        if (pergroup) {
+            if (delayEnabled) {
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    plugin.getPerGroupChat().sendGroupJoin(event.getPlayer());
+                }, 1L * delayTicks);
+            } else {
+                plugin.getPerGroupChat().sendGroupJoin(event.getPlayer());
+            }
         }
     }
 
