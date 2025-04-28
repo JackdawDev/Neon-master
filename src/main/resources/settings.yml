@@ -256,6 +256,15 @@ JOIN:
   CLICK-COMMAND: "/message <player> " # Also used as url
 #
 # General settings for the leave message
+#
+#Would you want all player have the same join message?
+NORMAL-LEAVE-MESSAGE: true
+#
+# Do you want players with different Permissions have different Join Messages (per group)?
+# Editable in locales.yml
+PER-GROUP-LEAVE: false
+#
+# General Settings for Normal
 LEAVE:
   ENABLED: true
   FORMAT: '&e<player> &chas left the game!'

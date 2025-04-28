@@ -42,6 +42,7 @@ import dev.jackdaw1101.neon.Integeration.Bedwars2023Integration;
 import dev.jackdaw1101.neon.Manager.Chat.WorldChatIntegration;
 import dev.jackdaw1101.neon.Manager.ChatFormat;
 import dev.jackdaw1101.neon.Manager.JoinLeave.GroupJoinMessageHandler;
+import dev.jackdaw1101.neon.Manager.JoinLeave.GroupLeaveMessageHandler;
 import dev.jackdaw1101.neon.Manager.JoinLeave.JoinLeaveListener;
 import dev.jackdaw1101.neon.Manager.MOTD.WelcomeListener;
 import dev.jackdaw1101.neon.Manager.MentionManager.ListenerMentions;
@@ -76,6 +77,7 @@ public final class Neon extends JavaPlugin {
     private AnnouncementManager announcementManager;
     private ConfigFile locales;
     private GroupJoinMessageHandler groupJoinMessageHandler;
+    private GroupLeaveMessageHandler groupLeaveMessageHandler;
 
     private ConfigFile database;
     private AddonManager addonManager;
@@ -440,6 +442,7 @@ public final class Neon extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Mentions System.");
         }
         groupJoinMessageHandler = new GroupJoinMessageHandler();
+        groupLeaveMessageHandler = new GroupLeaveMessageHandler();
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per Group Join Message System.");
         }
@@ -618,6 +621,10 @@ public final class Neon extends JavaPlugin {
 
     public GroupJoinMessageHandler getPerGroupChat() {
         return groupJoinMessageHandler;
+    }
+
+    public GroupLeaveMessageHandler getPerGroupLeave() {
+        return groupLeaveMessageHandler;
     }
 
     public static Neon getInstance() {

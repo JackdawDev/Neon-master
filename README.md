@@ -1473,12 +1473,13 @@ How to use?
 #   SUGGEST-COMMAND: Command that will get pasted in player chat on click
 ```
 
-## Per Group Join Message
+## Per Group Join/leave Message
 **Allows you to have custom designs for join messages of each player**
 
 How to use?
 1. go to settings.yml and enable `PER-GROUP-JOIN` and disable `NORMAL-JOIN-MESSAGE`
 2. go to locales.yml and start configuring under `JOIN-GROUPS`
+3. Enable `JOIN.ENABLED` and `LEAVE.ENABLED` in settings.yml
 
 ```yaml
 # <group-name>:
