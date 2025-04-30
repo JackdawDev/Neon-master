@@ -96,7 +96,6 @@ public class GroupLeaveMessageHandler {
             }
         }
 
-        // Fire the custom event
         NeonPlayerLeaveEvent event = new NeonPlayerLeaveEvent(
             player,
             message,
@@ -108,12 +107,10 @@ public class GroupLeaveMessageHandler {
         );
         Bukkit.getPluginManager().callEvent(event);
 
-        // Check if cancelled
         if (event.isCancelled()) {
             return;
         }
 
-        // Send final join message
         sendJoinMessage(player, event);
     }
 

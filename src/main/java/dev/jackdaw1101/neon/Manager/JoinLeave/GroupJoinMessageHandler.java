@@ -95,7 +95,6 @@ public class GroupJoinMessageHandler {
             }
         }
 
-        // Fire the custom event
         NeonPlayerJoinEvent event = new NeonPlayerJoinEvent(
             player,
             message,
@@ -107,12 +106,10 @@ public class GroupJoinMessageHandler {
         );
         Bukkit.getPluginManager().callEvent(event);
 
-        // Check if cancelled
         if (event.isCancelled()) {
             return;
         }
 
-        // Send final join message
         sendJoinMessage(player, event);
     }
 

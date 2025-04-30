@@ -15,7 +15,6 @@ public class MetricsManager {
     private MetricsManager(Neon plugin) {
         metrics = new Metrics(plugin, 25630);
 
-        // base metrics
         metrics.addCustomChart(new SimplePie("isound", () -> String.valueOf(plugin.getSettings().getBoolean("ISOUNDS-UTIL"))));
         metrics.addCustomChart(new SimplePie("xsound", () -> String.valueOf(plugin.getSettings().getBoolean("XSOUNDS-UTIL"))));
         metrics.addCustomChart(new SimplePie("chat_format", () -> String.valueOf(plugin.getSettings().getBoolean("CHAT-FORMAT-ENABLED"))));
