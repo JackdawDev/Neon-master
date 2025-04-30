@@ -1,57 +1,57 @@
 package dev.jackdaw1101.neon;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
-import dev.jackdaw1101.neon.API.Features.AntiSwear.AntiSwearAPI;
-import dev.jackdaw1101.neon.API.Features.AntiSwear.AntiSwearAPIImpl;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPI;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPIImpl;
-import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleAPI;
-import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleAPIImpl;
-import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleDatabase;
-import dev.jackdaw1101.neon.API.Grammer.GrammarAPI;
-import dev.jackdaw1101.neon.API.Grammer.GrammarAPIImpl;
-import dev.jackdaw1101.neon.API.NeonAPI;
-import dev.jackdaw1101.neon.AddonHandler.AddonManager;
-import dev.jackdaw1101.neon.Announcements.AnnouncementManager;
-import dev.jackdaw1101.neon.AntiAdvertise.AntiLinkSystem;
-import dev.jackdaw1101.neon.AntiCaps.AntiCapsSystem;
-import dev.jackdaw1101.neon.AntiSpam.AntiSpamManager;
-import dev.jackdaw1101.neon.AntiSpam.ListenerAntiSpam;
-import dev.jackdaw1101.neon.AntiSwear.AntiSwearSystem;
-import dev.jackdaw1101.neon.AntiSwear.SwearManager;
-import dev.jackdaw1101.neon.AntiUniCode.ListenerAntiUnicode;
-import dev.jackdaw1101.neon.AutoResponse.AutoResponse;
-import dev.jackdaw1101.neon.Chat.ListenerMuteChat;
-import dev.jackdaw1101.neon.API.Features.ChatMute.ChatMuteManager;
-import dev.jackdaw1101.neon.Command.API.CommandManager;
-import dev.jackdaw1101.neon.Command.Alerts.AlertManager;
-import dev.jackdaw1101.neon.Command.Chat.MuteChatCommand;
-import dev.jackdaw1101.neon.Command.ToggleChat.Listener.ChatListener;
-import dev.jackdaw1101.neon.Command.ToggleChat.ToggleChatCommand;
-import dev.jackdaw1101.neon.Command.ChatClear.ClearChatCommand;
-import dev.jackdaw1101.neon.Command.Logger.CommandLoggerListener;
-import dev.jackdaw1101.neon.Command.NeonCommand;
-import dev.jackdaw1101.neon.Command.tabcomp.NeonTabCompleter;
-import dev.jackdaw1101.neon.Configurations.*;
-import dev.jackdaw1101.neon.Database.MongoDBChatToggleDatabase;
-import dev.jackdaw1101.neon.Database.MySQLChatToggleDatabase;
-import dev.jackdaw1101.neon.Database.SQLiteChatToggleDatabase;
-import dev.jackdaw1101.neon.GrammerAPI.GrammerAPI;
-import dev.jackdaw1101.neon.Integeration.Bedwars1058Integration;
-import dev.jackdaw1101.neon.Integeration.Bedwars2023Integration;
-import dev.jackdaw1101.neon.Manager.Chat.WorldChatIntegration;
-import dev.jackdaw1101.neon.Manager.ChatFormat;
-import dev.jackdaw1101.neon.Manager.JoinLeave.GroupJoinMessageHandler;
-import dev.jackdaw1101.neon.Manager.JoinLeave.GroupLeaveMessageHandler;
-import dev.jackdaw1101.neon.Manager.JoinLeave.JoinLeaveListener;
-import dev.jackdaw1101.neon.Manager.MOTD.WelcomeListener;
-import dev.jackdaw1101.neon.Manager.MentionManager.ListenerMentions;
-import dev.jackdaw1101.neon.API.Utils.CC;
-import dev.jackdaw1101.neon.Manager.UpdateChecker.UpdateChecker;
-import dev.jackdaw1101.neon.Utils.Core.DebugUtil;
-import dev.jackdaw1101.neon.Utils.File.FileUtils;
-import dev.jackdaw1101.neon.Utils.ISounds.SoundUtil;
-import dev.jackdaw1101.neon.Utils.Metrics.MetricsManager;
+import dev.jackdaw1101.neon.api.modules.moderation.AntiSwearAPI;
+import dev.jackdaw1101.neon.implementions.AntiSwearAPIImpl;
+import dev.jackdaw1101.neon.api.modules.moderation.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.implementions.NeonJoinLeaveAPIImpl;
+import dev.jackdaw1101.neon.api.modules.moderation.ChatToggleAPI;
+import dev.jackdaw1101.neon.implementions.ChatToggleAPIImpl;
+import dev.jackdaw1101.neon.database.ChatToggleDatabase;
+import dev.jackdaw1101.neon.api.modules.grammar.GrammarAPI;
+import dev.jackdaw1101.neon.implementions.GrammarAPIImpl;
+import dev.jackdaw1101.neon.api.NeonAPI;
+import dev.jackdaw1101.neon.api.addons.AddonManager;
+import dev.jackdaw1101.neon.integration.IntegrationHandler;
+import dev.jackdaw1101.neon.modules.automated.AnnouncementManager;
+import dev.jackdaw1101.neon.modules.moderation.AntiLinkSystem;
+import dev.jackdaw1101.neon.modules.moderation.AntiCapsSystem;
+import dev.jackdaw1101.neon.manager.moderation.AntiSpamManager;
+import dev.jackdaw1101.neon.modules.moderation.AntiSpamSystem;
+import dev.jackdaw1101.neon.modules.moderation.AntiSwearSystem;
+import dev.jackdaw1101.neon.manager.moderation.SwearManager;
+import dev.jackdaw1101.neon.modules.moderation.AntiUnicodeSystem;
+import dev.jackdaw1101.neon.modules.automated.AutoResponse;
+import dev.jackdaw1101.neon.modules.chat.listeners.ChatMuteListener;
+import dev.jackdaw1101.neon.manager.chat.ChatMuteManager;
+import dev.jackdaw1101.neon.api.command.CommandManager;
+import dev.jackdaw1101.neon.manager.commands.AlertManager;
+import dev.jackdaw1101.neon.modules.commands.MuteChatCommand;
+import dev.jackdaw1101.neon.modules.chat.listeners.ToggleChatListener;
+import dev.jackdaw1101.neon.modules.commands.ToggleChatCommand;
+import dev.jackdaw1101.neon.modules.commands.ClearChatCommand;
+import dev.jackdaw1101.neon.manager.commands.loggers.CommandLoggerManager;
+import dev.jackdaw1101.neon.commands.NeonCommand;
+import dev.jackdaw1101.neon.commands.NeonTabCompleter;
+import dev.jackdaw1101.neon.database.togglechat.MongoDBChatToggleDatabase;
+import dev.jackdaw1101.neon.database.togglechat.MySQLChatToggleDatabase;
+import dev.jackdaw1101.neon.database.togglechat.SQLiteChatToggleDatabase;
+import dev.jackdaw1101.neon.modules.automated.GrammerAPI;
+import dev.jackdaw1101.neon.integration.bedwars1058.Bedwars1058Integration;
+import dev.jackdaw1101.neon.integration.bedwars2023.Bedwars2023Integration;
+import dev.jackdaw1101.neon.modules.chat.PerWorldChatSystem;
+import dev.jackdaw1101.neon.modules.chat.ChatFormat;
+import dev.jackdaw1101.neon.manager.JoinLeave.GroupJoinMessageHandler;
+import dev.jackdaw1101.neon.manager.JoinLeave.GroupLeaveMessageHandler;
+import dev.jackdaw1101.neon.manager.JoinLeave.JoinLeaveListener;
+import dev.jackdaw1101.neon.manager.MOTD.WelcomeListener;
+import dev.jackdaw1101.neon.manager.MentionManager.ListenerMentions;
+import dev.jackdaw1101.neon.api.utilities.CC;
+import dev.jackdaw1101.neon.utils.UpdateChecker;
+import dev.jackdaw1101.neon.utils.DebugUtil;
+import dev.jackdaw1101.neon.utils.FileUtils;
+import dev.jackdaw1101.neon.utils.configs.ConfigFile;
+import dev.jackdaw1101.neon.utils.metrics.MetricsManager;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -82,7 +82,7 @@ public final class Neon extends JavaPlugin {
     private ConfigFile database;
     private AddonManager addonManager;
     private ToggleChatCommand toggleChatCommand;
-    private ChatListener chatListener;
+    private ToggleChatListener chatListener;
     private AlertManager alertManager;
     private static Neon instance;
     private ChatToggleDatabase chatToggleDatabase;
@@ -395,7 +395,7 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Spam Event API.");
         }
-        getServer().getPluginManager().registerEvents(new ListenerAntiSpam(this), this);
+        getServer().getPluginManager().registerEvents(new AntiSpamSystem(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Spam Listener.");
         }
@@ -412,7 +412,7 @@ public final class Neon extends JavaPlugin {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Auto Response Listener.");
         }
         this.chatMuteManager = new ChatMuteManager(this);
-        getServer().getPluginManager().registerEvents(new ListenerMuteChat(this), this);
+        getServer().getPluginManager().registerEvents(new ChatMuteListener(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Chat Mute.");
         }
@@ -424,7 +424,7 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Grammar API.");
         }
-        chatListener = new ChatListener(this);
+        chatListener = new ToggleChatListener(this);
         getServer().getPluginManager().registerEvents(chatListener, this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Toggle Chat API.");
@@ -433,7 +433,7 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Caps System.");
         }
-        getServer().getPluginManager().registerEvents(new ListenerAntiUnicode(this), this);
+        getServer().getPluginManager().registerEvents(new AntiUnicodeSystem(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Unicode System.");
         }
@@ -446,13 +446,13 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per Group Join Message System.");
         }
-        getServer().getPluginManager().registerEvents(new WorldChatIntegration(this), this);
+        getServer().getPluginManager().registerEvents(new PerWorldChatSystem(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per World Chat System..");
         }
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY +"[SoundUtil] Loaded ISound for version " + SoundUtil.getVersion());
+        Bukkit.getConsoleSender().sendMessage(CC.GRAY +"[SoundUtil] Loaded ISound for version " + dev.jackdaw1101.neon.utils.sounds.ISound.getVersion());
 
-        getServer().getPluginManager().registerEvents(new CommandLoggerListener(this), this);
+        getServer().getPluginManager().registerEvents(new CommandLoggerManager(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Command Logger.");
         }
@@ -480,11 +480,12 @@ public final class Neon extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Events And Features");
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Started Hooking into Plugins...");
-        getServer().getPluginManager().registerEvents(new Bedwars1058Integration(this), this);
+        IntegrationHandler handler = new IntegrationHandler(this);
+        handler.registerIntegration(new Bedwars1058Integration());
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Bedwars1058 Hook");
         }
-        getServer().getPluginManager().registerEvents(new Bedwars2023Integration(this), this);
+        handler.registerIntegration(new Bedwars2023Integration());
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Bedwars2023 Hook");
         }
