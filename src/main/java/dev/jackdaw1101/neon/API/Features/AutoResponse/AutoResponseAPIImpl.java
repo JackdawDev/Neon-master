@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.AutoResponse;
+package dev.jackdaw1101.neon.api.features.autoresponse;
 
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.configuration.ConfigurationSection;

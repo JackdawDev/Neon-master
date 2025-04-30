@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.Player.ToggleChat.Event;
+package dev.jackdaw1101.neon.api.features.player.togglechat.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

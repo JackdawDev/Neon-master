@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.AntiSwear.Discord;
+package dev.jackdaw1101.neon.antiswear.discord;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.api.utils.CC;

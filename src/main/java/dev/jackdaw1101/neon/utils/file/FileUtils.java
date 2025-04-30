@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.Utils.File;
+package dev.jackdaw1101.neon.utils.file;
 
 import java.io.File;
 import java.util.ArrayList;

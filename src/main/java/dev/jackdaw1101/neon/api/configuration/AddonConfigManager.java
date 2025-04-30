@@ -1,7 +1,7 @@
-package dev.jackdaw1101.neon.API.Configuration;
+package dev.jackdaw1101.neon.api.configuration;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
-import dev.jackdaw1101.neon.API.Utils.CC;
+import dev.jackdaw1101.neon.api.utils.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -28,8 +28,8 @@ public class AddonConfigManager {
         this.configName = configName.endsWith(".yml") ? configName : configName + ".yml";
         this.useSubfolder = useSubfolder;
         this.customSubfolder = useSubfolder ?
-            (customSubfolder != null ? customSubfolder : "configs") :
-            null;
+                (customSubfolder != null ? customSubfolder : "configs") :
+                null;
         initialize();
     }
 
@@ -37,10 +37,10 @@ public class AddonConfigManager {
         File configFolder;
         if (customSubfolder != null) {
             configFolder = new File(addon.getDataFolder().getParentFile(),
-                "Neon/Addons/" + addon.getName() + "/" + customSubfolder);
+                    "Neon/Addons/" + addon.getName() + "/" + customSubfolder);
         } else {
             configFolder = new File(addon.getDataFolder().getParentFile(),
-                "Neon/Addons/" + addon.getName());
+                    "Neon/Addons/" + addon.getName());
         }
 
         if (!configFolder.exists()) {
@@ -100,7 +100,7 @@ public class AddonConfigManager {
             BufferedReader reader = null;
             if (configFile.exists()) {
                 reader = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
+                        new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
 
                 String line;
                 String currentKey = "";
@@ -131,7 +131,7 @@ public class AddonConfigManager {
 
             File tempFile = new File(configFile.getParentFile(), configFile.getName() + ".tmp");
             BufferedWriter writer = new BufferedWriter(
-                new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
+                    new OutputStreamWriter(new FileOutputStream(tempFile), StandardCharsets.UTF_8));
 
             for (String l : lines) {
                 writer.write(l);
@@ -141,7 +141,7 @@ public class AddonConfigManager {
             writer.close();
 
             Files.move(tempFile.toPath(), configFile.toPath(),
-                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                    java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
             config = YamlConfiguration.loadConfiguration(configFile);
         } catch (IOException e) {
@@ -157,7 +157,7 @@ public class AddonConfigManager {
             InputStream defConfigStream = addon.getResource(configName);
             if (defConfigStream != null) {
                 YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(
-                    new InputStreamReader(defConfigStream, StandardCharsets.UTF_8));
+                        new InputStreamReader(defConfigStream, StandardCharsets.UTF_8));
                 config.setDefaults(defConfig);
             }
 
@@ -206,7 +206,7 @@ public class AddonConfigManager {
             if (resource == null) return;
 
             YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(
-                new InputStreamReader(resource, StandardCharsets.UTF_8));
+                    new InputStreamReader(resource, StandardCharsets.UTF_8));
 
             for (String key : defaultConfig.getKeys(true)) {
                 if (!config.contains(key)) {
@@ -253,8 +253,8 @@ public class AddonConfigManager {
             for (int i = 0; i < placeholders.length; i += 2) {
                 if (i + 1 >= placeholders.length) break;
                 message = message.replace(
-                    String.valueOf(placeholders[i]),
-                    String.valueOf(placeholders[i + 1])
+                        String.valueOf(placeholders[i]),
+                        String.valueOf(placeholders[i + 1])
                 );
             }
         }

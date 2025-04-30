@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.AntiCaps;
+package dev.jackdaw1101.neon.api.features.anticaps;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.manager.logger;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.CC;
+import dev.jackdaw1101.neon.api.utils.CC;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -33,7 +33,8 @@ public class ChatLogger {
         boolean debugMode = (boolean) plugin.getSettings().getBoolean("DEBUG-MODE");
         if (!folder.exists() && !folder.mkdirs()) {
             if (debugMode) {
-                Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Failed to create log folder at " + CC.D_RED + LOG_FOLDER);}
+                Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Failed to create log folder at " + CC.D_RED + LOG_FOLDER);
+            }
             return;
         }
 

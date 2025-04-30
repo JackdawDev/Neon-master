@@ -1,8 +1,8 @@
-package dev.jackdaw1101.neon.Utils.Core;
+package dev.jackdaw1101.neon.utils.core;
 
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.CC;
+import dev.jackdaw1101.neon.api.utils.CC;
 import org.bukkit.Bukkit;
 
 public class DebugUtil {
@@ -21,7 +21,7 @@ public class DebugUtil {
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Stopped Debug Util.");
     }
 
-        private static int getLoadedClassCount() {
+    private static int getLoadedClassCount() {
         return java.lang.management.ManagementFactory.getClassLoadingMXBean().getLoadedClassCount();
     }
 }

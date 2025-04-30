@@ -2,7 +2,7 @@ package dev.jackdaw1101.neon.autoresponse;
 
 import dev.jackdaw1101.neon.api.features.autoresponse.AutoResponseAPI;
 import dev.jackdaw1101.neon.api.features.autoresponse.AutoResponseAPIImpl;
-import dev.jackdaw1101.neon.api.features.autoresponse.Event.AutoResponseEvent;
+import dev.jackdaw1101.neon.api.features.autoresponse.event.AutoResponseEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import dev.jackdaw1101.neon.utils.isounds.SoundUtil;

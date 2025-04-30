@@ -36,6 +36,7 @@ public class Bedwars2023Integration implements Listener {
         if (!Bukkit.getPluginManager().isPluginEnabled("BedWars1058")) {
             return;
         }
+
         Player sender = event.getSender();
         com.tomkeuper.bedwars.api.BedWars api = Bukkit.getServicesManager().load(BedWars.class);
 
@@ -68,9 +69,9 @@ public class Bedwars2023Integration implements Listener {
         if (waitingChat == null) return;
 
         String format = ColorHandler.color(waitingChat.getString("FORMAT"))
-            .replace("<player>", sender.getName())
-            .replace("<arena>", arena.getArenaName())
-            .replace("<message>", event.getMessage());
+                .replace("<player>", sender.getName())
+                .replace("<arena>", arena.getArenaName())
+                .replace("<message>", event.getMessage());
 
         List<String> hoverLines = waitingChat.getStringList("HOVER");
         if (hoverLines.isEmpty()) {
@@ -78,22 +79,22 @@ public class Bedwars2023Integration implements Listener {
         }
 
         String hoverText = ColorHandler.color(String.join("\n", hoverLines))
-            .replace("<player>", sender.getName())
-            .replace("<arena>", arena.getArenaName())
-            .replace("<arena_displayname>", arena.getDisplayName());
+                .replace("<player>", sender.getName())
+                .replace("<arena>", arena.getArenaName())
+                .replace("<arena_displayname>", arena.getDisplayName());
 
         event.setCancelled(true);
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
-                viewer,
-                format,
-                hoverText,
-                waitingChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
-                waitingChat.getBoolean("HOVER-ENABLED"),
-                waitingChat.getBoolean("CLICK-EVENT"),
-                waitingChat.getBoolean("RUN-COMMAND"),
-                waitingChat.getBoolean("SUGGEST-COMMAND")
+                    viewer,
+                    format,
+                    hoverText,
+                    waitingChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
+                    waitingChat.getBoolean("HOVER-ENABLED"),
+                    waitingChat.getBoolean("CLICK-EVENT"),
+                    waitingChat.getBoolean("RUN-COMMAND"),
+                    waitingChat.getBoolean("SUGGEST-COMMAND")
             );
         }
 
@@ -111,13 +112,13 @@ public class Bedwars2023Integration implements Listener {
         }
 
         String format = ColorHandler.color(playingChat.getString("FORMAT"))
-            .replace("<player>", sender.getName())
-            .replace("<arena>", arena.getArenaName())
-            .replace("<teamcolor>", teamColor)
-            .replace("<message>", event.getMessage())
-            .replace("<teamname>", teamColor + "[" + team.getName() + "]")
-            .replace("<teamletter>", team.getName())
-            .replace("<arena_displayname>", arena.getDisplayName());
+                .replace("<player>", sender.getName())
+                .replace("<arena>", arena.getArenaName())
+                .replace("<teamcolor>", teamColor)
+                .replace("<message>", event.getMessage())
+                .replace("<teamname>", teamColor + "[" + team.getName() + "]")
+                .replace("<teamletter>", team.getName())
+                .replace("<arena_displayname>", arena.getDisplayName());
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             format = PlaceholderAPI.setPlaceholders(sender, format);
@@ -129,9 +130,9 @@ public class Bedwars2023Integration implements Listener {
         }
 
         String hoverText = ColorHandler.color(String.join("\n", hoverLines))
-            .replace("<player>", sender.getName())
-            .replace("<arena>", arena.getArenaName())
-            .replace("<arena_displayname>", arena.getDisplayName());
+                .replace("<player>", sender.getName())
+                .replace("<arena>", arena.getArenaName())
+                .replace("<arena_displayname>", arena.getDisplayName());
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             hoverText = PlaceholderAPI.setPlaceholders(sender, hoverText);
@@ -141,14 +142,14 @@ public class Bedwars2023Integration implements Listener {
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
-                viewer,
-                format,
-                hoverText,
-                playingChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
-                playingChat.getBoolean("HOVER-ENABLED"),
-                playingChat.getBoolean("CLICK-EVENT"),
-                playingChat.getBoolean("RUN-COMMAND"),
-                playingChat.getBoolean("SUGGEST-COMMAND")
+                    viewer,
+                    format,
+                    hoverText,
+                    playingChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
+                    playingChat.getBoolean("HOVER-ENABLED"),
+                    playingChat.getBoolean("CLICK-EVENT"),
+                    playingChat.getBoolean("RUN-COMMAND"),
+                    playingChat.getBoolean("SUGGEST-COMMAND")
             );
         }
 

@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Grammer.Event;
+package dev.jackdaw1101.neon.api.grammer.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

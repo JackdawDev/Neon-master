@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.JoinLeave.Events;
+package dev.jackdaw1101.neon.api.features.joinleave.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

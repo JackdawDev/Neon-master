@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.AntiUnicode;
+package dev.jackdaw1101.neon.api.features.antiunicode;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

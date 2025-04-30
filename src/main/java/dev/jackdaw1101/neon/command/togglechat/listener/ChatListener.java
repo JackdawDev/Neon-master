@@ -1,7 +1,7 @@
-package dev.jackdaw1101.neon.Command.ToggleChat.Listener;
+package dev.jackdaw1101.neon.command.togglechat.listener;
 
-import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.ChatToggleAPI;
 import dev.jackdaw1101.neon.Neon;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

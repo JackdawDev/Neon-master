@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Grammer;
+package dev.jackdaw1101.neon.api.grammer;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.utils.stringutil.IStringUtils;
@@ -90,7 +90,8 @@ public class GrammarAPIImpl implements GrammarAPI {
         if (isCapitalizationEnabled()) {
             try {
                 processed = processed.substring(0, 1).toUpperCase() + processed.substring(1);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         if (isPunctuationCheckEnabled()) {

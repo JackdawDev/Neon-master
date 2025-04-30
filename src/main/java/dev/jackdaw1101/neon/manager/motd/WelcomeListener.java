@@ -1,9 +1,9 @@
 package dev.jackdaw1101.neon.manager.motd;
 
-import dev.jackdaw1101.neon.API.Features.Player.WelcomeEvent;
+import dev.jackdaw1101.neon.api.features.player.WelcomeEvent;
+import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import dev.jackdaw1101.neon.manager.updatechecker.UpdateChecker;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import dev.jackdaw1101.neon.utils.isounds.SoundUtil;
 import dev.jackdaw1101.neon.utils.isounds.XSounds;
 import me.clip.placeholderapi.PlaceholderAPI;

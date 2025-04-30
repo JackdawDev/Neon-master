@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.Player;
+package dev.jackdaw1101.neon.api.features.player;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;

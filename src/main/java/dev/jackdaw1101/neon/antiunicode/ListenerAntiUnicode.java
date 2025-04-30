@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.antiuniCode;
+package dev.jackdaw1101.neon.antiunicode;
 
 import dev.jackdaw1101.neon.api.features.antiunicode.AntiUnicodeEvent;
 import dev.jackdaw1101.neon.Neon;

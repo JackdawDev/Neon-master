@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.command.togglechat;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.features.player.ToggleChat.ChatToggleAPIImpl;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleAPIImpl;
 import dev.jackdaw1101.neon.api.utils.CC;
 import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import dev.jackdaw1101.neon.utils.isounds.SoundUtil;

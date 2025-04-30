@@ -1,9 +1,9 @@
 package dev.jackdaw1101.neon.manager.mentionmanager;
 
 
-import dev.jackdaw1101.neon.API.Features.MentionEvent;
+import dev.jackdaw1101.neon.api.features.MentionEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.ColorHandler;
+import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import dev.jackdaw1101.neon.utils.isounds.SoundUtil;
 import dev.jackdaw1101.neon.utils.isounds.XSounds;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -111,7 +111,7 @@ public class ListenerMentions implements Listener {
     private void notifyPlayer(Player target, Player sender) {
 
         String notifyMessage = plugin.getMessageManager().getString("MENTION-NOTIFY")
-            .replace("%sender%", sender.getName());
+                .replace("%sender%", sender.getName());
         notifyMessage = applyPlaceholders(sender, notifyMessage);
         target.sendMessage(ColorHandler.color(notifyMessage));
 
@@ -132,9 +132,9 @@ public class ListenerMentions implements Listener {
             subtitle = applyPlaceholders(sender, subtitle.replace("%sender%", sender.getName()));
 
             target.sendTitle(
-                ColorHandler.color(title),
-                ColorHandler.color(subtitle),
-                10, 40, 10
+                    ColorHandler.color(title),
+                    ColorHandler.color(subtitle),
+                    10, 40, 10
             );
         }
     }

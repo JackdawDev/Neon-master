@@ -1,6 +1,6 @@
-package dev.jackdaw1101.neon.API.Features.Player.ToggleChat;
+package dev.jackdaw1101.neon.api.features.player.togglechat;
 
-import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.Event.ToggleChatEvent;
+import dev.jackdaw1101.neon.api.features.player.togglechat.event.ToggleChatEvent;
 import dev.jackdaw1101.neon.database.MemoryChatToggleDatabase;
 import dev.jackdaw1101.neon.database.MongoDBChatToggleDatabase;
 import dev.jackdaw1101.neon.database.MySQLChatToggleDatabase;

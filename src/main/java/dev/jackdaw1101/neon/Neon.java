@@ -5,9 +5,9 @@ import dev.jackdaw1101.neon.api.features.antiswear.AntiSwearAPI;
 import dev.jackdaw1101.neon.api.features.antiswear.AntiSwearAPIImpl;
 import dev.jackdaw1101.neon.api.features.joinleave.NeonJoinLeaveAPI;
 import dev.jackdaw1101.neon.api.features.joinleave.NeonJoinLeaveAPIImpl;
-import dev.jackdaw1101.neon.api.features.player.ToggleChat.ChatToggleAPI;
-import dev.jackdaw1101.neon.api.features.player.ToggleChat.ChatToggleAPIImpl;
-import dev.jackdaw1101.neon.api.features.player.ToggleChat.ChatToggleDatabase;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleAPI;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleAPIImpl;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleDatabase;
 import dev.jackdaw1101.neon.api.grammer.GrammarAPI;
 import dev.jackdaw1101.neon.api.grammer.GrammarAPIImpl;
 import dev.jackdaw1101.neon.api.NeonAPI;
@@ -19,7 +19,7 @@ import dev.jackdaw1101.neon.antispam.AntiSpamManager;
 import dev.jackdaw1101.neon.antispam.ListenerAntiSpam;
 import dev.jackdaw1101.neon.antiswear.AntiSwearSystem;
 import dev.jackdaw1101.neon.antiswear.SwearManager;
-import dev.jackdaw1101.neon.antiuniCode.ListenerAntiUnicode;
+import dev.jackdaw1101.neon.antiunicode.ListenerAntiUnicode;
 import dev.jackdaw1101.neon.autoresponse.AutoResponse;
 import dev.jackdaw1101.neon.chat.ListenerMuteChat;
 import dev.jackdaw1101.neon.api.features.chatmute.ChatMuteManager;
@@ -137,7 +137,6 @@ public final class Neon extends JavaPlugin {
         if (!getDataFolder().exists()) {
             getDataFolder().mkdir();
         }
-
         File addonsFolder = new File(getDataFolder(), "Addons");
         if (!addonsFolder.exists()) {
             addonsFolder.mkdir();

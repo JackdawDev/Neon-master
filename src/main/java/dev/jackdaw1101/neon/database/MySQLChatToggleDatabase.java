@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.database;
 
-import dev.jackdaw1101.neon.api.features.player.ToggleChat.ChatToggleDatabase;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleDatabase;
 import dev.jackdaw1101.neon.Neon;
 
 import java.sql.*;

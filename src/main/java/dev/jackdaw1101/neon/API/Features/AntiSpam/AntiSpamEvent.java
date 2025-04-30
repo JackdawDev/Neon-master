@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.AntiSpam;
+package dev.jackdaw1101.neon.api.features.antispam;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

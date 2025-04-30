@@ -1,9 +1,9 @@
 package dev.jackdaw1101.neon.manager.chat;
 
-import dev.jackdaw1101.neon.API.Chat.ChatAPI;
-import dev.jackdaw1101.neon.API.Chat.Events.ChatMessageEvent;
+import dev.jackdaw1101.neon.api.chat.ChatAPI;
+import dev.jackdaw1101.neon.api.chat.event.ChatMessageEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.ColorHandler;
+import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,25 +45,25 @@ public class WorldChatIntegration implements Listener {
         }
 
         format = ColorHandler.color(format)
-            .replace("<player>", sender.getName())
-            .replace("<message>", event.getMessage());
+                .replace("<player>", sender.getName())
+                .replace("<message>", event.getMessage());
 
         String hoverText = ColorHandler.color(String.join("\n", hoverLines))
-            .replace("<player>", sender.getName());
+                .replace("<player>", sender.getName());
 
         event.setCancelled(true);
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
             if (viewer.getWorld().equals(sender.getWorld())) {
                 api.sendFormattedMessage(
-                    viewer,
-                    format,
-                    hoverText,
-                    worldSection.getString("CLICK-COMMAND"),
-                    worldSection.getBoolean("HOVER-ENABLED"),
-                    worldSection.getBoolean("CLICK-EVENT"),
-                    worldSection.getBoolean("RUN-COMMAND"),
-                    worldSection.getBoolean("SUGGEST-COMMAND")
+                        viewer,
+                        format,
+                        hoverText,
+                        worldSection.getString("CLICK-COMMAND"),
+                        worldSection.getBoolean("HOVER-ENABLED"),
+                        worldSection.getBoolean("CLICK-EVENT"),
+                        worldSection.getBoolean("RUN-COMMAND"),
+                        worldSection.getBoolean("SUGGEST-COMMAND")
                 );
             }
         }

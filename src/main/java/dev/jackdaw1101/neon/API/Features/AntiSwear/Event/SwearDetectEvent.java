@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.AntiSwear.Event;
+package dev.jackdaw1101.neon.api.features.antiswear.event;
 
 import org.bukkit.entity.Player;
 

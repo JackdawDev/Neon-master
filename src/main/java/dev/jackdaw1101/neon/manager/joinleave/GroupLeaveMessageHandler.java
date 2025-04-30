@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.manager.joinleave;
 
-import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerLeaveEvent;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.api.features.joinleave.events.NeonPlayerLeaveEvent;
+import dev.jackdaw1101.neon.api.features.joinleave.NeonJoinLeaveAPI;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
@@ -43,15 +43,15 @@ public class GroupLeaveMessageHandler {
             String clickCommand = section.getString("CLICK-COMMAND", "");
 
             groupMessages.put(key, new GroupJoinMessage(
-                permission,
-                priority,
-                format,
-                hoverEnabled,
-                hoverText,
-                clickEnabled,
-                suggestCommand,
-                runCommand,
-                clickCommand
+                    permission,
+                    priority,
+                    format,
+                    hoverEnabled,
+                    hoverText,
+                    clickEnabled,
+                    suggestCommand,
+                    runCommand,
+                    clickCommand
             ));
         }
     }
@@ -98,13 +98,13 @@ public class GroupLeaveMessageHandler {
 
         // Fire the custom event
         NeonPlayerLeaveEvent event = new NeonPlayerLeaveEvent(
-            player,
-            message,
-            hoverEnabled,
-            clickEnabled,
-            clickCommand,
-            clickAction,
-            hover
+                player,
+                message,
+                hoverEnabled,
+                clickEnabled,
+                clickCommand,
+                clickAction,
+                hover
         );
         Bukkit.getPluginManager().callEvent(event);
 
@@ -134,11 +134,11 @@ public class GroupLeaveMessageHandler {
         NeonJoinLeaveAPI.ClickAction clickAction = event.isClickEnabled() ? convertClickAction(event.getClickAction()) : NeonJoinLeaveAPI.ClickAction.RUN_COMMAND;
 
         neonJoinLeaveAPI.sendCustomJoinMessage(
-            player,
-            joinMessage,
-            hoverText,
-            clickCommand,
-            clickAction
+                player,
+                joinMessage,
+                hoverText,
+                clickCommand,
+                clickAction
         );
     }
 

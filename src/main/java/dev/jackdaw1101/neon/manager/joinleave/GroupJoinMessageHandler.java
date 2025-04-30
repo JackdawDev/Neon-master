@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.manager.joinleave;
 
-import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerJoinEvent;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.api.features.joinleave.events.NeonPlayerJoinEvent;
+import dev.jackdaw1101.neon.api.features.joinleave.NeonJoinLeaveAPI;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;

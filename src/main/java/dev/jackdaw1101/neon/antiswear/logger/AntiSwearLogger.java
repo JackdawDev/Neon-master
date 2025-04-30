@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.AntiSwear.Logger;
+package dev.jackdaw1101.neon.antiswear.logger;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.api.utils.CC;

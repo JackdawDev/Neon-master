@@ -1,11 +1,11 @@
 package dev.jackdaw1101.neon.manager.joinleave;
 
-import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerJoinEvent;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.Events.NeonPlayerLeaveEvent;
-import dev.jackdaw1101.neon.API.Features.JoinLeave.NeonJoinLeaveAPIImpl;
-import dev.jackdaw1101.neon.Configurations.ConfigFile;
+import dev.jackdaw1101.neon.api.features.joinleave.events.NeonPlayerJoinEvent;
+import dev.jackdaw1101.neon.api.features.joinleave.events.NeonPlayerLeaveEvent;
+import dev.jackdaw1101.neon.api.features.joinleave.NeonJoinLeaveAPIImpl;
+import dev.jackdaw1101.neon.configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.ColorHandler;
+import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -102,13 +102,13 @@ public class JoinLeaveListener implements Listener {
         }
 
         NeonPlayerJoinEvent neonEvent = new NeonPlayerJoinEvent(
-            event.getPlayer(),
-            message,
-            isHoverEnabled,
-            isClickEnabled,
-            clickCommand,
-            clickAction,
-            hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), true)) : hoverText
+                event.getPlayer(),
+                message,
+                isHoverEnabled,
+                isClickEnabled,
+                clickCommand,
+                clickAction,
+                hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), true)) : hoverText
         );
 
         Bukkit.getPluginManager().callEvent(neonEvent);
@@ -116,13 +116,13 @@ public class JoinLeaveListener implements Listener {
         if (neonEvent.isCancelled()) return;
 
         sendJoinLeaveMessage(
-            event.getPlayer(),
-            neonEvent.getJoinMessage(),
-            neonEvent.isHoverEnabled(),
-            neonEvent.isClickEnabled(),
-            neonEvent.getClickCommand(),
-            neonEvent.getClickAction(),
-            neonEvent.getHoverText()
+                event.getPlayer(),
+                neonEvent.getJoinMessage(),
+                neonEvent.isHoverEnabled(),
+                neonEvent.isClickEnabled(),
+                neonEvent.getClickCommand(),
+                neonEvent.getClickAction(),
+                neonEvent.getHoverText()
         );
     }
 
@@ -179,21 +179,21 @@ public class JoinLeaveListener implements Listener {
         }
 
         NeonPlayerLeaveEvent.ClickAction clickAction = NeonPlayerLeaveEvent.ClickAction.valueOf(
-            settings.getString("LEAVE.CLICK-ACTION")
+                settings.getString("LEAVE.CLICK-ACTION")
         );
 
         NeonPlayerLeaveEvent neonEvent = new NeonPlayerLeaveEvent(
-            event.getPlayer(),
-            message,
-            isHoverEnabled,
-            isClickEnabled,
-            clickCommand,
-            clickAction,
-            hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), false)) : hoverText
+                event.getPlayer(),
+                message,
+                isHoverEnabled,
+                isClickEnabled,
+                clickCommand,
+                clickAction,
+                hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), false)) : hoverText
         );
     }
 
-        public String apply(String text, Player target) {
+    public String apply(String text, Player target) {
         return PlaceholderAPI.setPlaceholders(target, text);
     }
 
@@ -209,8 +209,8 @@ public class JoinLeaveListener implements Listener {
 
             String joinedHoverText = String.join("\n", updatedHoverText);
             messageComponent.setHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                new BaseComponent[]{new TextComponent(joinedHoverText)}
+                    HoverEvent.Action.SHOW_TEXT,
+                    new BaseComponent[]{new TextComponent(joinedHoverText)}
             ));
         }
 

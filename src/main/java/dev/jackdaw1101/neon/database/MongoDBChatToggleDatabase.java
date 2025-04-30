@@ -3,7 +3,7 @@ package dev.jackdaw1101.neon.database;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
-import dev.jackdaw1101.neon.api.features.player.ToggleChat.ChatToggleDatabase;
+import dev.jackdaw1101.neon.api.features.player.togglechat.ChatToggleDatabase;
 import dev.jackdaw1101.neon.Neon;
 import org.bson.Document;
 import org.bson.conversions.Bson;

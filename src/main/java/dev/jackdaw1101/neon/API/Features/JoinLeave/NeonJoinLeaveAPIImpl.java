@@ -1,8 +1,8 @@
-package dev.jackdaw1101.neon.API.Features.JoinLeave;
+package dev.jackdaw1101.neon.api.features.joinleave;
 
 import dev.jackdaw1101.neon.configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.ColorHandler;
+import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -52,8 +52,8 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
         if (processedHoverText != null) {
             String joinedHoverText = String.join("\n", processedHoverText);
             messageComponent.setHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                new BaseComponent[]{new TextComponent(joinedHoverText)}
+                    HoverEvent.Action.SHOW_TEXT,
+                    new BaseComponent[]{new TextComponent(joinedHoverText)}
             ));
         }
 
@@ -108,8 +108,8 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
         if (processedHoverText != null) {
             String joinedHoverText = String.join("\n", processedHoverText);
             messageComponent.setHoverEvent(new HoverEvent(
-                HoverEvent.Action.SHOW_TEXT,
-                new BaseComponent[]{new TextComponent(joinedHoverText)}
+                    HoverEvent.Action.SHOW_TEXT,
+                    new BaseComponent[]{new TextComponent(joinedHoverText)}
             ));
         }
 

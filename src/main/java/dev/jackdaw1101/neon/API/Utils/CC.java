@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Utils;
+package dev.jackdaw1101.neon.api.utils;
 
 import org.bukkit.ChatColor;
 

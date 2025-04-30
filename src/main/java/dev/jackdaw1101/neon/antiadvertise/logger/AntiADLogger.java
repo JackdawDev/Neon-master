@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.AntiAdvertise.Logger;
+package dev.jackdaw1101.neon.antiadvertise.logger;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.api.utils.CC;

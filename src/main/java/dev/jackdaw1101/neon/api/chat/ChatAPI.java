@@ -1,6 +1,7 @@
-package dev.jackdaw1101.neon.API.Chat;
+package dev.jackdaw1101.neon.api.chat;
+
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.Utils.ColorHandler;
+import dev.jackdaw1101.neon.api.utils.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.model.user.User;
@@ -25,8 +26,8 @@ public class ChatAPI {
 
     public String processMessageColorCodes(Player sender, String message) {
         return sender.hasPermission(this.plugin.getPermissionManager().getString("COLOR-CODES"))
-            ? ChatColor.translateAlternateColorCodes('&', message)
-            : removeColorCodes(message);
+                ? ChatColor.translateAlternateColorCodes('&', message)
+                : removeColorCodes(message);
     }
 
     public String removeColorCodes(String message) {
@@ -99,7 +100,7 @@ public class ChatAPI {
             String prefix = user.getCachedData().getMetaData().getPrefix();
             String suffix = user.getCachedData().getMetaData().getSuffix();
             format = format.replace("<lp_prefix>", (prefix != null ? prefix : ""))
-                .replace("<lp_suffix>", (suffix != null ? suffix : ""));
+                    .replace("<lp_suffix>", (suffix != null ? suffix : ""));
         }
         return format;
     }

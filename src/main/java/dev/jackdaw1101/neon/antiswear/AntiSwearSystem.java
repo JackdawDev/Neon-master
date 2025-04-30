@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.antiswear;
 
-import dev.jackdaw1101.neon.api.features.antiswear.Event.SwearDetectEvent;
-import dev.jackdaw1101.neon.api.features.antiswear.Event.SwearPunishEvent;
+import dev.jackdaw1101.neon.api.features.antiswear.event.SwearDetectEvent;
+import dev.jackdaw1101.neon.api.features.antiswear.event.SwearPunishEvent;
 import dev.jackdaw1101.neon.antiswear.discord.WebhookManager;
 import dev.jackdaw1101.neon.antiswear.logger.AntiSwearLogger;
 import dev.jackdaw1101.neon.command.alerts.AlertManager;

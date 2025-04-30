@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.Utils.StringUtil;
+package dev.jackdaw1101.neon.utils.stringutil;
 
 public class IStringUtils {
 

@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.API.Features.AutoResponse.Event;
+package dev.jackdaw1101.neon.api.features.autoresponse.event;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

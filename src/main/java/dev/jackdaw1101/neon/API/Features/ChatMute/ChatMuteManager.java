@@ -1,20 +1,17 @@
-package dev.jackdaw1101.neon.API.Features.ChatMute;
+package dev.jackdaw1101.neon.api.features.chatmute;
 
 import dev.jackdaw1101.neon.Neon;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ChatMuteManager {
     private final Neon plugin;
+    @Setter
+    @Getter
     private boolean chatMuted = false;
 
     public ChatMuteManager(Neon plugin) {
         this.plugin = plugin;
     }
 
-    public boolean isChatMuted() {
-        return chatMuted;
-    }
-
-    public void setChatMuted(boolean muted) {
-        this.chatMuted = muted;
-    }
 }

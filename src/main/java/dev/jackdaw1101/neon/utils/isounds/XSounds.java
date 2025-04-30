@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.Utils.ISounds;
+package dev.jackdaw1101.neon.utils.isounds;
 
 import com.cryptomorin.xseries.XSound;
 import org.bukkit.entity.Player;

@@ -1,6 +1,6 @@
-package dev.jackdaw1101.neon.API.Features.AntiSwear;
+package dev.jackdaw1101.neon.api.features.antiswear;
 
-import dev.jackdaw1101.neon.AntiSwear.SwearManager;
+import dev.jackdaw1101.neon.antiswear.SwearManager;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.entity.Player;
 
@@ -169,24 +169,24 @@ public class AntiSwearAPIImpl implements AntiSwearAPI {
 
         if (threeReturnE) {
             message = message.replace("3", "e")
-                .replace("1", "i")
-                .replace("!", "i")
-                .replace("@", "a")
-                .replace("7", "t")
-                .replace("0", "o")
-                .replace("5", "s")
-                .replace("$", "s")
-                .replace("8", "b");
+                    .replace("1", "i")
+                    .replace("!", "i")
+                    .replace("@", "a")
+                    .replace("7", "t")
+                    .replace("0", "o")
+                    .replace("5", "s")
+                    .replace("$", "s")
+                    .replace("8", "b");
         } else {
             message = message.replace("3", "s")
-                .replace("1", "i")
-                .replace("!", "i")
-                .replace("@", "a")
-                .replace("7", "t")
-                .replace("0", "o")
-                .replace("5", "s")
-                .replace("$", "s")
-                .replace("8", "b");
+                    .replace("1", "i")
+                    .replace("!", "i")
+                    .replace("@", "a")
+                    .replace("7", "t")
+                    .replace("0", "o")
+                    .replace("5", "s")
+                    .replace("$", "s")
+                    .replace("8", "b");
         }
 
         return message.replaceAll("\\p{Punct}|\\d", "").trim();
