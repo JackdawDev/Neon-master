@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.API.Features.JoinLeave;
 
-import dev.jackdaw1101.neon.Configurations.ConfigFile;
+import dev.jackdaw1101.neon.configurations.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.Utils.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;

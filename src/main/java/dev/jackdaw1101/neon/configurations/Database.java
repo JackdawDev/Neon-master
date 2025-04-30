@@ -1,0 +1,85 @@
+package dev.jackdaw1101.neon.configurations;
+
+import dev.jackdaw1101.neon.Neon;
+import dev.jackdaw1101.neon.api.utils.CC;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import java.io.File;
+import java.io.IOException;
+
+public class Database {
+
+    private final Neon plugin;
+    private File dbFile;
+    private FileConfiguration dbSettings;
+
+    private static final String HEADER =
+            "########################################################\n" +
+                    "# _   _   by Jackdaw1101                             #\n" +
+                    "#| \\ | | ___  ___  _ __      Main Configuration For  #\n" +
+                    "#|  \\| |/ _ \\/ _ \\| '_ \\     NeonPlugin!            #\n" +
+                    "#| |\\  |  __/ (_) | | | |                             #\n" +
+                    "#|_| \\_|\\___|\\___/|_| |_|  (0.0.1)         #\n" +
+                    "########################################################";
+
+    public Database(Neon plugin) {
+        this.plugin = plugin;
+        createDBfile();
+    }
+
+    private void createDBfile() {
+        dbFile = new File(plugin.getDataFolder(), "database.yml");
+
+        if (!dbFile.exists()) {
+            plugin.saveResource("database.yml", false);
+        }
+
+        dbSettings = YamlConfiguration.loadConfiguration(dbFile);
+
+        if (!dbSettings.contains("header")) {
+            dbSettings.options().header(HEADER);
+        }
+
+        ConfigUpdate();
+    }
+
+    public void ConfigUpdate() {
+        dbSettings.options().copyDefaults(true);
+    }
+
+    public void saveDatabase() {
+        try {
+            dbSettings.save(dbFile);
+        } catch (IOException e) {
+            plugin.getLogger().severe(CC.BD_RED + "Can't Save The File");
+            e.printStackTrace();
+        }
+    }
+
+    public Object getValue(String path) {
+        return dbSettings.get(path);
+    }
+
+    public Object getValue(String path, Object defaultValue) {
+        return dbSettings.get(path, defaultValue);
+    }
+
+
+    public void addValue(String path, Object value, String comment) {
+        dbSettings.set(path, value);
+
+
+        if (comment != null && !comment.isEmpty()) {
+        }
+
+        saveDatabase();
+    }
+
+
+    public FileConfiguration getDBSettings(String s) {
+        return dbSettings;
+    }
+
+
+    }

@@ -1,10 +1,10 @@
 package dev.jackdaw1101.neon.API.Features.Player.ToggleChat;
 
 import dev.jackdaw1101.neon.API.Features.Player.ToggleChat.Event.ToggleChatEvent;
-import dev.jackdaw1101.neon.Database.MemoryChatToggleDatabase;
-import dev.jackdaw1101.neon.Database.MongoDBChatToggleDatabase;
-import dev.jackdaw1101.neon.Database.MySQLChatToggleDatabase;
-import dev.jackdaw1101.neon.Database.SQLiteChatToggleDatabase;
+import dev.jackdaw1101.neon.database.MemoryChatToggleDatabase;
+import dev.jackdaw1101.neon.database.MongoDBChatToggleDatabase;
+import dev.jackdaw1101.neon.database.MySQLChatToggleDatabase;
+import dev.jackdaw1101.neon.database.SQLiteChatToggleDatabase;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
