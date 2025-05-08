@@ -1,12 +1,12 @@
 package dev.jackdaw1101.neon.modules.moderation;
 
-import dev.jackdaw1101.neon.api.modules.events.AntiLinkTriggerEvent;
+import dev.jackdaw1101.neon.API.modules.events.AntiLinkTriggerEvent;
 import dev.jackdaw1101.neon.utils.webhooks.AntiAdvertiseWebhookManager;
 import dev.jackdaw1101.neon.utils.logs.AntiAdvertiseLogger;
 import dev.jackdaw1101.neon.manager.commands.AlertManager;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.utilities.CC;
-import dev.jackdaw1101.neon.api.utilities.ColorHandler;
+import dev.jackdaw1101.neon.API.utilities.CC;
+import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.Bukkit;

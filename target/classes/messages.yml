@@ -211,3 +211,13 @@ ALERTS-ENABLED: "{prefix} {main_theme}Admin alerts have been &aEnabled{main_them
 #
 # Alert Toggle Off
 ALERTS-DISABLED: "{prefix} {main_theme}Admin alerts have been &cDisabled{main_theme}!"
+#
+########################################################
+#                          AI                          #
+########################################################
+#
+# Ai flag & admin notify messages
+AI:
+  FLAGGED: "{prefix} &cPlease do not swear (<categories>)"
+  STAFF-ALERT: "{prefix} &c<player> was flagged for &7(<categories>)&c: &4<message>"
+#

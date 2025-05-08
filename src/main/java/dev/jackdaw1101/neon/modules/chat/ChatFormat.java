@@ -1,10 +1,10 @@
 package dev.jackdaw1101.neon.modules.chat;
 
-import dev.jackdaw1101.neon.api.modules.events.ChatMessageEvent;
+import dev.jackdaw1101.neon.API.modules.events.ChatMessageEvent;
 import dev.jackdaw1101.neon.manager.moderation.SwearManager;
 import dev.jackdaw1101.neon.utils.logs.ChatLogger;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.modules.chat.ChatAPI;
+import dev.jackdaw1101.neon.API.modules.chat.ChatAPI;
 import dev.jackdaw1101.neon.modules.moderation.AntiSwearSystem;
 import dev.jackdaw1101.neon.manager.commands.AlertManager;
 import org.bukkit.entity.Player;

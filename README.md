@@ -665,6 +665,41 @@ public void onSwearDetected(SwearDetectEvent event) {
 }
 ```
 
+## 🔹 AI Anti Swear Event
+
+```java
+public class AiSwearDetectEvent extends Event {
+  public static HandlerList getHandlerList() { return handlers; }
+  @Override public HandlerList getHandlers() { return handlers; }
+
+  // Flagged player
+  public Player getPlayer() { return player; }
+  
+  //Flagged message
+  public String getMessage() { return message; }
+  
+  // Category
+  public List<String> getCategories() { return categories; }
+  
+}
+```
+Example Usage
+
+```java
+@EventHandler
+public void onAISwearDetected(AiSwearDetectEvent event) {
+  // send a message to admins
+  for (Player p : Bukkit.getOnlinePlayers()) {
+    if (p.hasPermission("ai.alert")) {
+      p.sendMessage(CC.RED + event.getPlayer().getName() + " Has used a bad word: " + event.getMessage());
+    }
+  }
+
+  // Optional: Cancel the original message
+  event.setCancelled(true);
+}
+```
+
 ## 🔹 SwearPunishEvent
 ```java
 public class SwearPunishEvent extends AntiSwearEvent {
@@ -1253,7 +1288,7 @@ config.setHeader(
 ```java
 package com.yourproject.myaddon;
 
-import dev.jackdaw1101.neon.api.addons.AddonConfigManager;
+import dev.jackdaw1101.neon.API.addons.AddonConfigManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MyAddon extends JavaPlugin {

@@ -1,10 +1,10 @@
 package dev.jackdaw1101.neon.modules.automated;
 
-import dev.jackdaw1101.neon.api.modules.moderation.AutoResponseAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.AutoResponseAPI;
 import dev.jackdaw1101.neon.implementions.AutoResponseAPIImpl;
-import dev.jackdaw1101.neon.api.modules.events.AutoResponseEvent;
+import dev.jackdaw1101.neon.API.modules.events.AutoResponseEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.utilities.ColorHandler;
+import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import me.clip.placeholderapi.PlaceholderAPI;

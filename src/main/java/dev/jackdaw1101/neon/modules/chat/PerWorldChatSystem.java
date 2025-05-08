@@ -1,9 +1,9 @@
 package dev.jackdaw1101.neon.modules.chat;
 
-import dev.jackdaw1101.neon.api.modules.chat.ChatAPI;
-import dev.jackdaw1101.neon.api.modules.events.ChatMessageEvent;
+import dev.jackdaw1101.neon.API.modules.chat.ChatAPI;
+import dev.jackdaw1101.neon.API.modules.events.ChatMessageEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.utilities.ColorHandler;
+import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

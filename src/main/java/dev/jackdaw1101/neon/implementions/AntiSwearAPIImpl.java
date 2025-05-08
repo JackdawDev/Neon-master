@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.implementions;
 
-import dev.jackdaw1101.neon.api.modules.moderation.AntiSwearAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.AntiSwearAPI;
 import dev.jackdaw1101.neon.manager.moderation.SwearManager;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.entity.Player;

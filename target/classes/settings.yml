@@ -884,3 +884,28 @@ BEDWARS-CHAT:
     # Command to run or suggest when clicking the message.
     # Supports <player> placeholder (e.g., /msg <player>)
     CLICK-COMMAND: "/msg <player> "
+#
+########################################################
+#                          AI                          #
+########################################################
+#
+# AI Based Anti Swear (BETA)
+# ENABLED: enable the system
+# API-KEY: Your openAI Api That can be achieved at https://platform.openai.com/api-keys (required)
+# CATEGORIES: what should be blocked?
+# ACTIONS: cancel, send message to player or send an alert to staff
+AI:
+  ENABLED: true
+  API-KEY: "your-openai-api-key"
+  CATEGORIES:
+    - hate
+    - self-harm
+    - sexual
+    - violence
+    - harassment
+    - profanity
+  ACTIONS:
+    CANCEL-MESSAGE: true
+    NOTIFY-PLAYER: true
+    NOTIFY-STAFF: true
+

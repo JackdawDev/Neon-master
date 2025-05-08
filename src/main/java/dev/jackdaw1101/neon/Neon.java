@@ -1,19 +1,20 @@
 package dev.jackdaw1101.neon;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
-import dev.jackdaw1101.neon.api.modules.moderation.AntiSwearAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.AntiSwearAPI;
 import dev.jackdaw1101.neon.implementions.AntiSwearAPIImpl;
-import dev.jackdaw1101.neon.api.modules.moderation.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.NeonJoinLeaveAPI;
 import dev.jackdaw1101.neon.implementions.NeonJoinLeaveAPIImpl;
-import dev.jackdaw1101.neon.api.modules.moderation.ChatToggleAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.ChatToggleAPI;
 import dev.jackdaw1101.neon.implementions.ChatToggleAPIImpl;
 import dev.jackdaw1101.neon.database.ChatToggleDatabase;
-import dev.jackdaw1101.neon.api.modules.grammar.GrammarAPI;
 import dev.jackdaw1101.neon.implementions.GrammarAPIImpl;
-import dev.jackdaw1101.neon.api.NeonAPI;
-import dev.jackdaw1101.neon.api.addons.AddonManager;
+import dev.jackdaw1101.neon.API.NeonAPI;
+import dev.jackdaw1101.neon.API.addons.AddonManager;
 import dev.jackdaw1101.neon.integration.IntegrationHandler;
 import dev.jackdaw1101.neon.modules.automated.AnnouncementManager;
+import dev.jackdaw1101.neon.modules.automated.ai.OpenAIModerationManager;
+import dev.jackdaw1101.neon.modules.automated.ai.listener.ChatListener;
 import dev.jackdaw1101.neon.modules.moderation.AntiLinkSystem;
 import dev.jackdaw1101.neon.modules.moderation.AntiCapsSystem;
 import dev.jackdaw1101.neon.manager.moderation.AntiSpamManager;
@@ -24,7 +25,7 @@ import dev.jackdaw1101.neon.modules.moderation.AntiUnicodeSystem;
 import dev.jackdaw1101.neon.modules.automated.AutoResponse;
 import dev.jackdaw1101.neon.modules.chat.listeners.ChatMuteListener;
 import dev.jackdaw1101.neon.manager.chat.ChatMuteManager;
-import dev.jackdaw1101.neon.api.command.CommandManager;
+import dev.jackdaw1101.neon.API.command.CommandManager;
 import dev.jackdaw1101.neon.manager.commands.AlertManager;
 import dev.jackdaw1101.neon.modules.commands.MuteChatCommand;
 import dev.jackdaw1101.neon.modules.chat.listeners.ToggleChatListener;
@@ -36,17 +37,17 @@ import dev.jackdaw1101.neon.commands.NeonTabCompleter;
 import dev.jackdaw1101.neon.database.togglechat.MongoDBChatToggleDatabase;
 import dev.jackdaw1101.neon.database.togglechat.MySQLChatToggleDatabase;
 import dev.jackdaw1101.neon.database.togglechat.SQLiteChatToggleDatabase;
-import dev.jackdaw1101.neon.modules.automated.GrammerAPI;
+import dev.jackdaw1101.neon.modules.automated.GrammarAPI;
 import dev.jackdaw1101.neon.integration.bedwars1058.Bedwars1058Integration;
 import dev.jackdaw1101.neon.integration.bedwars2023.Bedwars2023Integration;
 import dev.jackdaw1101.neon.modules.chat.PerWorldChatSystem;
 import dev.jackdaw1101.neon.modules.chat.ChatFormat;
-import dev.jackdaw1101.neon.manager.JoinLeave.GroupJoinMessageHandler;
-import dev.jackdaw1101.neon.manager.JoinLeave.GroupLeaveMessageHandler;
-import dev.jackdaw1101.neon.manager.JoinLeave.JoinLeaveListener;
-import dev.jackdaw1101.neon.manager.MOTD.WelcomeListener;
-import dev.jackdaw1101.neon.manager.MentionManager.ListenerMentions;
-import dev.jackdaw1101.neon.api.utilities.CC;
+import dev.jackdaw1101.neon.modules.player.GroupJoinMessageHandler;
+import dev.jackdaw1101.neon.modules.player.GroupLeaveMessageHandler;
+import dev.jackdaw1101.neon.modules.player.JoinLeaveListener;
+import dev.jackdaw1101.neon.modules.player.WelcomeListener;
+import dev.jackdaw1101.neon.modules.mention.MentionSystem;
+import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.utils.UpdateChecker;
 import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.FileUtils;
@@ -87,10 +88,12 @@ public final class Neon extends JavaPlugin {
     private static Neon instance;
     private ChatToggleDatabase chatToggleDatabase;
     private ChatToggleAPI chatToggleAPI;
-    private GrammarAPI grammarAPI;
+    private dev.jackdaw1101.neon.API.modules.grammar.GrammarAPI grammarAPI;
     private NeonJoinLeaveAPI neonJoinLeaveAPI;
     private AntiSwearAPI antiSwearAPI;
     private NeonAPI api;
+    private OpenAIModerationManager moderationManager;
+
 
 
     @Override
@@ -318,7 +321,7 @@ public final class Neon extends JavaPlugin {
         neonJoinLeaveAPI = new NeonJoinLeaveAPIImpl(this);
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Starting API...");
         getServer().getServicesManager().register(NeonJoinLeaveAPI.class, neonJoinLeaveAPI, this, ServicePriority.Normal);
-        getServer().getServicesManager().register(GrammarAPI.class, grammarAPI, this, ServicePriority.Normal);
+        getServer().getServicesManager().register(dev.jackdaw1101.neon.API.modules.grammar.GrammarAPI.class, grammarAPI, this, ServicePriority.Normal);
         getServer().getServicesManager().register(ChatToggleAPI.class, chatToggleAPI, this, ServicePriority.Normal);
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded And Booted The API!");
 
@@ -411,6 +414,18 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Auto Response Listener.");
         }
+        String apiKey = getSettings().getString("AI.API-KEY");
+        List<String> categories = this.getSettings().getStringList("AI.CATEGORIES");
+        if (apiKey != null && !apiKey.isEmpty()) {
+            moderationManager = new OpenAIModerationManager(apiKey, categories);
+            getLogger().info("OpenAI Moderation Manager initialized.");
+        } else {
+            getLogger().warning("OpenAI API Key not found. Moderation will be disabled.");
+        }
+        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
+        if (isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded AI Chat Manager.");
+        }
         this.chatMuteManager = new ChatMuteManager(this);
         getServer().getPluginManager().registerEvents(new ChatMuteListener(this), this);
         if (isdebug) {
@@ -420,7 +435,7 @@ public final class Neon extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AntiSwearSystem(this, alertManager, swearManager), this);        if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Swear Listener.");
         }
-        getServer().getPluginManager().registerEvents(new GrammerAPI(this), this);
+        getServer().getPluginManager().registerEvents(new GrammarAPI(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Grammar API.");
         }
@@ -437,7 +452,7 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Anti Unicode System.");
         }
-        getServer().getPluginManager().registerEvents(new ListenerMentions(this), this);
+        getServer().getPluginManager().registerEvents(new MentionSystem(this), this);
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Mentions System.");
         }
@@ -602,6 +617,10 @@ public final class Neon extends JavaPlugin {
 
     public ConfigFile getDatabaseManager() {
         return this.database;
+    }
+
+    public OpenAIModerationManager getModerationManager() {
+        return moderationManager;
     }
 
     public ChatToggleAPI getChatToggleAPI() {

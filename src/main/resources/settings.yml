@@ -884,3 +884,42 @@ BEDWARS-CHAT:
     # Command to run or suggest when clicking the message.
     # Supports <player> placeholder (e.g., /msg <player>)
     CLICK-COMMAND: "/msg <player> "
+#
+########################################################
+#                          AI                          #
+########################################################
+#
+# AI Based Anti Swear (Not Tested)
+# ENABLED: enable the system
+# API-KEY: Your openAI Api That can be achieved at https://platform.openai.com/api-keys (required)
+# CATEGORIES: what should be blocked?
+# ACTIONS: cancel, send message to player or send an alert to staff
+#
+# PLAY-SOUND: Toggle The Sound Play System (on flag)
+# SOUND: The Sound That will be played to the mentioned
+#
+# (!) If You Are Using XSound Utils Use minecraft Normal sound ids
+# but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
+#
+# Check Line 33 For More Info About Sounds
+#
+# (!) Use Xsound Util For Better Experience
+#
+# (!) Don't use with normal anti swear!
+AI:
+  ENABLED: false
+  API-KEY: "your-openai-api-key"   # Paid
+  CATEGORIES:
+    - hate
+    - self-harm
+    - sexual
+    - violence
+    - harassment
+    - profanity
+  PLAY-SOUND: true
+  SOUND: "VILLAGER_NO"
+  ACTIONS:
+    CANCEL-MESSAGE: true
+    NOTIFY-PLAYER: true
+    NOTIFY-STAFF: true
+

@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.manager.commands;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.utilities.ColorHandler;
+import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.command.Command;

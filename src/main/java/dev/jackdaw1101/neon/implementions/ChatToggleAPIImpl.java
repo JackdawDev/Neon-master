@@ -1,8 +1,8 @@
 package dev.jackdaw1101.neon.implementions;
 
 import dev.jackdaw1101.neon.database.ChatToggleDatabase;
-import dev.jackdaw1101.neon.api.modules.moderation.ChatToggleAPI;
-import dev.jackdaw1101.neon.api.player.ToggleChatEvent;
+import dev.jackdaw1101.neon.API.modules.moderation.ChatToggleAPI;
+import dev.jackdaw1101.neon.API.player.ToggleChatEvent;
 import dev.jackdaw1101.neon.database.togglechat.MemoryChatToggleDatabase;
 import dev.jackdaw1101.neon.database.togglechat.MongoDBChatToggleDatabase;
 import dev.jackdaw1101.neon.database.togglechat.MySQLChatToggleDatabase;

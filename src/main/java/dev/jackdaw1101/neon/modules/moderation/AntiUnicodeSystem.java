@@ -1,8 +1,8 @@
 package dev.jackdaw1101.neon.modules.moderation;
 
-import dev.jackdaw1101.neon.api.modules.events.AntiUnicodeEvent;
+import dev.jackdaw1101.neon.API.modules.events.AntiUnicodeEvent;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.utilities.ColorHandler;
+import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.Bukkit;

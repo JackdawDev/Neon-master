@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.implementions;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.modules.grammar.GrammarAPI;
+import dev.jackdaw1101.neon.API.modules.grammar.GrammarAPI;
 
 import java.util.Arrays;
 import java.util.HashMap;

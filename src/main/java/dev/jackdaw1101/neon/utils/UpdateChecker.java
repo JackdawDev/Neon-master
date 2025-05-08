@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.utils;
 
-import dev.jackdaw1101.neon.api.utilities.CC;
+import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

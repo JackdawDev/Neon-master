@@ -162,3 +162,14 @@ CHAT-TOGGLE-USE: "neon.togglechat.use"
 #
 # Toggle The Admin Alerts
 TOGGLE-ALERTS: "neon.alerts.toggle"
+#
+########################################################
+#                          AI                          #
+########################################################
+#
+# Ai Anti Swear Bypass
+AI-BYPASS: "neon.ai.bypass"
+#
+# Get Notified When someone swear
+AI-NOTIFY: "neon.ai.admin"
+#

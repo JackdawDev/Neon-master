@@ -1,6 +1,6 @@
 package dev.jackdaw1101.neon.modules.chat.listeners;
 
-import dev.jackdaw1101.neon.api.modules.moderation.ChatToggleAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.ChatToggleAPI;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.implementions;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.api.modules.moderation.AutoResponseAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.AutoResponseAPI;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
