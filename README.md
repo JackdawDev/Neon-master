@@ -683,8 +683,7 @@ public class AiSwearDetectEvent extends Event {
   
 }
 ```
-Example Usage
-
+💡 Example Usage
 ```java
 @EventHandler
 public void onAISwearDetected(AiSwearDetectEvent event) {
