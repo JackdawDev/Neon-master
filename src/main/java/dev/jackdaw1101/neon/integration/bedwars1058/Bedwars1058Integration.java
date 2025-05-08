@@ -99,6 +99,8 @@ public class Bedwars1058Integration implements Integration, Listener {
             );
         }
 
+        format = PlaceholderAPI.setPlaceholders(sender, format);
+
         api.sendMessageToConsole(format);
     }
 

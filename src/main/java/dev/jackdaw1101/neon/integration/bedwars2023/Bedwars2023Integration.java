@@ -99,6 +99,8 @@ public class Bedwars2023Integration implements Integration, Listener {
             );
         }
 
+        format = PlaceholderAPI.setPlaceholders(sender, format);
+
         api.sendMessageToConsole(format);
     }
 
