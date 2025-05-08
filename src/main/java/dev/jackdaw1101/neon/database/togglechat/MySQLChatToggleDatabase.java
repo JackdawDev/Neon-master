@@ -32,7 +32,7 @@ public class MySQLChatToggleDatabase implements ChatToggleDatabase {
             boolean useSSL = plugin.getDatabaseManager().getBoolean("USE-SSL");
             boolean autoReconnect = plugin.getDatabaseManager().getBoolean("AUTO-RECONNECT");
             boolean failover = plugin.getDatabaseManager().getBoolean("FAIL-OVER-RED-ONLY");
-            int maxReconnect = plugin.getDatabaseManager().getInt("MAX-RECONNECTS");
+            int maxReconnect = plugin.getDatabaseManager().getInt("MYSQL.MAX-RECONNECTS");
 
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database +
                 "?useSSL=" + useSSL +
