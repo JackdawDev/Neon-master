@@ -7,6 +7,7 @@ import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.modules.chat.ChatAPI;
 import dev.jackdaw1101.neon.modules.moderation.AntiSwearSystem;
 import dev.jackdaw1101.neon.manager.commands.AlertManager;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -71,13 +72,25 @@ public class ChatFormat implements Listener {
             ChatMessageEvent chatMessageEvent = new ChatMessageEvent(sender, message, hoverText, clickCommand);
 
 
-            plugin.getServer().getPluginManager().callEvent(chatMessageEvent);
+            String finalFormat = format;
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.getServer().getPluginManager().callEvent(chatMessageEvent);
 
+                if (chatMessageEvent.isCancelled()) return;
 
-            if (chatMessageEvent.isCancelled()) {
-                event.setCancelled(true);
-                return;
-            }
+                String finalMessage = chatMessageEvent.getMessage();
+                String finalHoverText = chatMessageEvent.getHoverText();
+
+                for (Player viewer : event.getRecipients()) {
+                    this.chatAPI.sendFormattedMessage(viewer, finalFormat, finalHoverText,
+                        chatMessageEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled,
+                        isRunCommandEnabled, isSuggestCommand);
+                }
+
+                if (isChatInConsoleEnabled) {
+                    this.chatAPI.sendMessageToConsole(finalFormat);
+                }
+            });
 
 
             String finalMessage = chatMessageEvent.getMessage();
