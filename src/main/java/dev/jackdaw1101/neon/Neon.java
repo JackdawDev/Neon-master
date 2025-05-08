@@ -646,7 +646,7 @@ public final class Neon extends JavaPlugin {
         return chatMuteManager;
     }
 
-    public SwearManager getSwearManager() {
-        return swearManager;
-    }
+    //public SwearManager getSwearManager() {
+    //    return swearManager;
+    //}
 }
