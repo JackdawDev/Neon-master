@@ -84,6 +84,8 @@ public class Bedwars2023Integration implements Integration, Listener {
             .replace("<arena>", arena.getArenaName())
             .replace("<arena_displayname>", arena.getDisplayName());
 
+        hoverText = PlaceholderAPI.setPlaceholders(sender, hoverText);
+
         event.setCancelled(true);
 
         for (Player viewer : arena.getPlayers()) {
