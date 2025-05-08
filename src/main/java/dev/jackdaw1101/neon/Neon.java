@@ -449,7 +449,6 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Per World Chat System..");
         }
-        Bukkit.getConsoleSender().sendMessage(CC.GRAY +"[SoundUtil] Loaded ISound for version " + dev.jackdaw1101.neon.utils.sounds.ISound.getVersion());
 
         getServer().getPluginManager().registerEvents(new CommandLoggerManager(this), this);
         if (isdebug) {
