@@ -13,8 +13,6 @@ import dev.jackdaw1101.neon.API.NeonAPI;
 import dev.jackdaw1101.neon.API.addons.AddonManager;
 import dev.jackdaw1101.neon.integration.IntegrationHandler;
 import dev.jackdaw1101.neon.modules.automated.AnnouncementManager;
-import dev.jackdaw1101.neon.modules.automated.ai.OpenAIModerationManager;
-import dev.jackdaw1101.neon.modules.automated.ai.listener.ChatListener;
 import dev.jackdaw1101.neon.modules.moderation.AntiLinkSystem;
 import dev.jackdaw1101.neon.modules.moderation.AntiCapsSystem;
 import dev.jackdaw1101.neon.manager.moderation.AntiSpamManager;
@@ -92,8 +90,6 @@ public final class Neon extends JavaPlugin {
     private NeonJoinLeaveAPI neonJoinLeaveAPI;
     private AntiSwearAPI antiSwearAPI;
     private NeonAPI api;
-    private OpenAIModerationManager moderationManager;
-
 
 
     @Override
@@ -414,18 +410,6 @@ public final class Neon extends JavaPlugin {
         if (isdebug) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded Auto Response Listener.");
         }
-        String apiKey = getSettings().getString("AI.API-KEY");
-        List<String> categories = this.getSettings().getStringList("AI.CATEGORIES");
-        if (apiKey != null && !apiKey.isEmpty()) {
-            moderationManager = new OpenAIModerationManager(apiKey, categories);
-            getLogger().info("OpenAI Moderation Manager initialized.");
-        } else {
-            getLogger().warning("OpenAI API Key not found. Moderation will be disabled.");
-        }
-        getServer().getPluginManager().registerEvents(new ChatListener(this), this);
-        if (isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon-Debug] Loaded AI Chat Manager.");
-        }
         this.chatMuteManager = new ChatMuteManager(this);
         getServer().getPluginManager().registerEvents(new ChatMuteListener(this), this);
         if (isdebug) {
@@ -612,10 +596,6 @@ public final class Neon extends JavaPlugin {
 
     public ConfigFile getDatabaseManager() {
         return this.database;
-    }
-
-    public OpenAIModerationManager getModerationManager() {
-        return moderationManager;
     }
 
     public ChatToggleAPI getChatToggleAPI() {

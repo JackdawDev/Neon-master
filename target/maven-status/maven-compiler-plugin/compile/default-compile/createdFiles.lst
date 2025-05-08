@@ -37,7 +37,6 @@ dev\jackdaw1101\neon\API\addons\AddonManager.class
 dev\jackdaw1101\neon\database\togglechat\SQLiteChatToggleDatabase.class
 dev\jackdaw1101\neon\API\modules\moderation\NeonJoinLeaveAPI$ClickAction.class
 dev\jackdaw1101\neon\API\modules\moderation\NeonJoinLeaveAPI.class
-dev\jackdaw1101\neon\modules\automated\ai\listener\ChatListener.class
 dev\jackdaw1101\neon\commands\NeonTabCompleter.class
 dev\jackdaw1101\neon\modules\commands\ClearChatCommand.class
 dev\jackdaw1101\neon\manager\moderation\AntiSpamManager.class
@@ -84,7 +83,6 @@ dev\jackdaw1101\neon\implementions\AutoResponseAPIImpl.class
 dev\jackdaw1101\neon\modules\moderation\AntiUnicodeSystem.class
 dev\jackdaw1101\neon\API\modules\moderation\AntiSwearAPI.class
 dev\jackdaw1101\neon\API\player\NeonPlayerLeaveEvent$ClickAction.class
-dev\jackdaw1101\neon\modules\automated\ai\OpenAIModerationManager.class
 dev\jackdaw1101\neon\utils\logs\AntiAdvertiseLogger.class
 dev\jackdaw1101\neon\API\modules\moderation\AutoResponseAPI.class
 dev\jackdaw1101\neon\API\utilities\ColorHandler.class
