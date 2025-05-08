@@ -561,11 +561,6 @@ public final class Neon extends JavaPlugin {
         for (String fileName : ymlFiles) {
             Bukkit.getConsoleSender().sendMessage(CC.RED + "  * " + CC.GREEN + fileName);
         }
-        if (getNeonAPI().getRegisteredAddons() != null) {
-            Bukkit.getConsoleSender().sendMessage(CC.AQUA + " * " + CC.YELLOW + "Addons Registered: " + CC.BLUE + getNeonAPI().getRegisteredAddons());
-        } else {
-            Bukkit.getConsoleSender().sendMessage(CC.AQUA + " * " + CC.YELLOW + "Addons Registered: " + CC.RED + "None");
-        }
         Bukkit.getConsoleSender().sendMessage(CC.DARK_AQUA + "  ");
         Bukkit.getConsoleSender().sendMessage(CC.D_AQUA + "=============================================");
         DebugUtil.checkDebug(this);

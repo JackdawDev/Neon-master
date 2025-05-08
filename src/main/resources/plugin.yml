@@ -9,6 +9,8 @@ description: Neon Chat Manager
 softdepend:
   - PlaceholderAPI
   - LuckPerms
+  - BedWars1058
+  - BedWars2023
 commands:
   neon:
     description: Main command for Neon
