@@ -6,7 +6,7 @@
 
   <groupId>dev.Jackdaw1101</groupId>
   <artifactId>Neon</artifactId>
-  <version>1.1.2-ALPHA</version>
+  <version>1.2-ALPHA</version>
   <packaging>jar</packaging>
 
   <name>Neon</name>
@@ -162,6 +162,16 @@
           <artifactId>placeholderapi</artifactId>
           <version>2.11.6</version>
           <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>net.kyori</groupId>
+          <artifactId>adventure-api</artifactId>
+          <version>4.19.0</version>
+      </dependency>
+      <dependency>
+          <groupId>net.kyori</groupId>
+          <artifactId>adventure-text-minimessage</artifactId>
+          <version>4.14.0</version>
       </dependency>
       <dependency>
           <groupId>com.tchristofferson</groupId>

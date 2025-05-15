@@ -3,7 +3,7 @@
 #| \ | |      by Jackdaw1101                              #
 #|  \| |/ _ \/ _ \| '_ \      Messages Configuration For  #
 #| |\  |  __/ (_) | | | |     Neon!                       #
-# |_| \_|\___|\___/|_| |_|   (1.1.2)                      #
+# |_| \_|\___|\___/|_| |_|   (1.2)                        #
 ###########################################################
 #
 ####################################################
@@ -15,9 +15,38 @@
 # <#0000FF>Message</#FFFFFF>
 # &#0000FF
 # <rainbow>Message</rainbow>
+# <color-name>Message</color-name>
+#
+# Internal Placeholders (all support HEX)
+# - {prefix} - Prefix of plugin editable in messages.yml (usable in all files)
+# - {main_theme} - Main Theme of plugin editable in messages.yml (usable in all files)
+# - {second_theme} - Second Theme of plugin editable in messages.yml (usable in all files)
+# - {third_theme} - Third Theme of plugin editable in messages.yml (usable in all files)
+# (!) internal placeholders can be used in all files and only in Strings
 #
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
-# It also Supports Mini Messaging
+#
+# Mini Message Support (1.16+)
+#
+# Usage Example
+#
+# *   NO-PERMISSION: |
+# *     <red>Error!</red> <white>Something went wrong.
+# *     Please try again later or contact staff.
+# *   FORMAT: |
+# *     <hover:show_text:'<gold>Click to claim your reward!'>
+# *     <click:run_command:'/reward claim'>
+# *     <gradient:#FFAA00:#FFFF55>CLAIM NOW</gradient>
+# *     </click></hover>
+# *
+# * Supported tags:
+# * - Colors: <red>, <#hexcode>, <rgb:r,g,b>
+# * - Gradients: <gradient:#start:#end>text</gradient>
+# * - Rainbow: <rainbow>text</rainbow>
+# * - Formatting: <bold>, <italic>, <underlined>
+# * - Hover: <hover:show_text:'text'>
+# * - Click: <click:run_command:'/cmd'>
+# * - Newlines: <newline>
 #
 ####################################################
 #                  Global Messages                 #

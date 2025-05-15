@@ -3,7 +3,7 @@
 # | \ | |      by Jackdaw1101                          #
 # |  \| |/ _ \/ _ \| '_ \      Main Configuration For  #
 # | |\  |  __/ (_) | | | |     Neon!                   #
-# |_| \_|\___|\___/|_| |_|   (1.1.2)                   #
+# |_| \_|\___|\___/|_| |_|   (1.2)                     #
 ########################################################
 #
 # Don't Touch This!
@@ -90,6 +90,28 @@ ISOUNDS-UTIL: false
 # (!) internal placeholders can be used in all files and only in Strings
 #
 # Hex Colors Are Available On All Messages, Titles, Prefixes and...
+#
+# Mini Message Support (1.16+)
+#
+# Usage Example
+#
+# *   NO-PERMISSION: |
+# *     <red>Error!</red> <white>Something went wrong.
+# *     Please try again later or contact staff.
+# *   FORMAT: |
+# *     <hover:show_text:'<gold>Click to claim your reward!'>
+# *     <click:run_command:'/reward claim'>
+# *     <gradient:#FFAA00:#FFFF55>CLAIM NOW</gradient>
+# *     </click></hover>
+# *
+# * Supported tags:
+# * - Colors: <red>, <#hexcode>, <rgb:r,g,b>
+# * - Gradients: <gradient:#start:#end>text</gradient>
+# * - Rainbow: <rainbow>text</rainbow>
+# * - Formatting: <bold>, <italic>, <underlined>
+# * - Hover: <hover:show_text:'text'>
+# * - Click: <click:run_command:'/cmd'>
+# * - Newlines: <newline>
 #
 ########################################################
 #                       Performance                    #

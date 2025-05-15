@@ -1174,6 +1174,74 @@ return;
 }
 ```
 
+# 🚀 Neon Command Framework
+
+A complete Bukkit/Spigot command handling system featuring both abstract command implementation and dynamic command registration.
+
+## 📦 Components
+
+### 1. `NeonCommand` (Abstract Base Class)
+The foundation for all commands with built-in metadata support.
+
+### 2. `CommandManager`
+Handles dynamic command registration/unregistration without plugin.yml
+
+## 🔹 NeonCommand Implementation
+
+```java
+public class ExampleCommand extends NeonCommand {
+  public ExampleCommand() {
+    super(
+      "example",
+      "Sample command demonstration",
+      "/example <args>",
+      Arrays.asList("ex", "demo")
+    );
+  }
+
+  @Override
+  public boolean onCommand(CommandSender sender, String label, String[] args) {
+    sender.sendMessage("Command executed!");
+    return true;
+  }
+
+  @Override
+  public List<String> onTabComplete(CommandSender sender, String alias, String[] args) {
+    return Arrays.asList("option1", "option2");
+  }
+}
+```
+```java
+public class MyPlugin extends JavaPlugin {
+
+    @Override
+    public void onEnable() {
+        // Register commands
+        CommandManager.registerCommand(this, new TeleportCommand());
+        CommandManager.registerCommand(this, new GamemodeCommand());
+    }
+
+    @Override
+    public void onDisable() {
+        // Optional cleanup
+        CommandManager.unregisterCommand("teleport");
+        CommandManager.unregisterCommand("gamemode");
+    }
+}
+
+public class TeleportCommand extends NeonCommand {
+    public TeleportCommand() {
+        super("teleport", "Teleport to players", "/tp <player> [target]", List.of("tp"));
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, String label, String[] args) {
+        // Implementation here
+        return true;
+    }
+}
+```
+
 ### Additional Info About API and Event
 - You should use XSound from Xseries for Sounds and Enable XSound Util Usage in The Settings.yml
 - All messages support hex color
@@ -1385,10 +1453,43 @@ public class MyAddon extends JavaPlugin {
 ## Hex & Colors
 **To use hex colors you need to run Neon on a 1.16+ MC Version**
 ```yaml
-* <#0000FF>Message</#FFFFFF>
-* &#0000FF
-* <rainbow>Message</rainbow>
-* <color-name>Message</color-name>
+# Hex Colors Are Supported For Servers running versions above 1.16
+# Format Of Hex Colors
+# <#0000FF>Message</#FFFFFF>
+# &#0000FF
+# <rainbow>Message</rainbow>
+# <color-name>Message</color-name>
+#
+# Internal Placeholders (all support HEX)
+# - {prefix} - Prefix of plugin editable in messages.yml (usable in all files)
+# - {main_theme} - Main Theme of plugin editable in messages.yml (usable in all files)
+# - {second_theme} - Second Theme of plugin editable in messages.yml (usable in all files)
+# - {third_theme} - Third Theme of plugin editable in messages.yml (usable in all files)
+# (!) internal placeholders can be used in all files and only in Strings
+#
+# Hex Colors Are Available On All Messages, Titles, Prefixes and...
+#
+# Mini Message Support (1.16+)
+#
+# Usage Example
+#
+# *   NO-PERMISSION: |
+# *     <red>Error!</red> <white>Something went wrong.
+# *     Please try again later or contact staff.
+# *   FORMAT: |
+# *     <hover:show_text:'<gold>Click to claim your reward!'>
+# *     <click:run_command:'/reward claim'>
+# *     <gradient:#FFAA00:#FFFF55>CLAIM NOW</gradient>
+# *     </click></hover>
+# *
+# * Supported tags:
+# * - Colors: <red>, <#hexcode>, <rgb:r,g,b>
+# * - Gradients: <gradient:#start:#end>text</gradient>
+# * - Rainbow: <rainbow>text</rainbow>
+# * - Formatting: <bold>, <italic>, <underlined>
+# * - Hover: <hover:show_text:'text'>
+# * - Click: <click:run_command:'/cmd'>
+# * - Newlines: <newline>
 ```
 
 ## 🟢 ColorHandler

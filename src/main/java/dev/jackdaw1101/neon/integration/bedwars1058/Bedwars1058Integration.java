@@ -70,23 +70,23 @@ public class Bedwars1058Integration implements Integration, Listener {
     private void handleWaitingLobbyChat(ChatMessageEvent event, Player sender, Arena arena) {
         ConfigurationSection waitingChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.WAITING-LOBBY");
         if (waitingChat == null) return;
+        event.setCancelled(true);
 
-        String format = ColorHandler.color(waitingChat.getString("FORMAT"))
+        String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(waitingChat.getString("FORMAT"))
             .replace("<player>", sender.getName())
             .replace("<arena>", arena.getArenaName())
-            .replace("<message>", event.getMessage());
+            .replace("<message>", event.getMessage()));
 
         List<String> hoverLines = waitingChat.getStringList("HOVER");
         if (hoverLines.isEmpty()) hoverLines.add("&7No hover text.");
 
-        String hoverText = ColorHandler.color(String.join("\n", hoverLines))
+        String hoverText = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(String.join("\n", hoverLines))
             .replace("<player>", sender.getName())
             .replace("<arena>", arena.getArenaName())
-            .replace("<arena_displayname>", arena.getDisplayName());
+            .replace("<arena_displayname>", arena.getDisplayName()));
 
-        hoverText = PlaceholderAPI.setPlaceholders(sender, hoverText);
 
-        event.setCancelled(true);
+        //event.setCancelled(true);
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
@@ -101,26 +101,25 @@ public class Bedwars1058Integration implements Integration, Listener {
             );
         }
 
-        format = PlaceholderAPI.setPlaceholders(sender, format);
-
         api.sendMessageToConsole(format);
     }
 
     private void handlePlayingChat(ChatMessageEvent event, Player sender, Arena arena) {
         ConfigurationSection playingChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.PLAYING");
         if (playingChat == null) return;
+        event.setCancelled(true);
 
         ITeam team = arena.getTeam(sender);
         String teamColor = (team != null) ? team.getColor().chat().toString() : "&f";
 
-        String format = ColorHandler.color(playingChat.getString("FORMAT"))
+        String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(playingChat.getString("FORMAT"))
             .replace("<player>", sender.getName())
             .replace("<arena>", arena.getArenaName())
             .replace("<teamcolor>", teamColor)
             .replace("<message>", event.getMessage())
             .replace("<teamname>", teamColor + "[" + team.getName() + "]")
             .replace("<teamletter>", team.getName())
-            .replace("<arena_displayname>", arena.getDisplayName());
+            .replace("<arena_displayname>", arena.getDisplayName()));
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             format = PlaceholderAPI.setPlaceholders(sender, format);
@@ -129,16 +128,16 @@ public class Bedwars1058Integration implements Integration, Listener {
         List<String> hoverLines = playingChat.getStringList("HOVER");
         if (hoverLines.isEmpty()) hoverLines.add("&7No hover text.");
 
-        String hoverText = ColorHandler.color(String.join("\n", hoverLines))
+        String hoverText = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(String.join("\n", hoverLines))
             .replace("<player>", sender.getName())
             .replace("<arena>", arena.getArenaName())
-            .replace("<arena_displayname>", arena.getDisplayName());
+            .replace("<arena_displayname>", arena.getDisplayName()));
 
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             hoverText = PlaceholderAPI.setPlaceholders(sender, hoverText);
         }
 
-        event.setCancelled(true);
+        //event.setCancelled(true);
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(

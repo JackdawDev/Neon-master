@@ -92,16 +92,6 @@ public class ChatFormat implements Listener {
                 }
             });
 
-
-            String finalMessage = chatMessageEvent.getMessage();
-            String finalHoverText = chatMessageEvent.getHoverText();
-
-
-            for (Player viewer : event.getRecipients()) {
-                this.chatAPI.sendFormattedMessage(viewer, format, finalHoverText, chatMessageEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled, isRunCommandEnabled, isSuggestCommand);
-            }
-
-
             if (isChatInConsoleEnabled) {
                 this.chatAPI.sendMessageToConsole(format);
             }

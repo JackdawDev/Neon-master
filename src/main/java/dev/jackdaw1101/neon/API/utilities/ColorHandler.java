@@ -1,6 +1,9 @@
 package dev.jackdaw1101.neon.API.utilities;
 
 import dev.jackdaw1101.neon.Neon;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 
 import java.util.HashMap;
@@ -15,6 +18,9 @@ public class ColorHandler {
     public static final String MAINTHEME = Neon.getInstance().getMessageManager().getString("MAIN-THEME");
     public static final String SECONDTHEME = Neon.getInstance().getMessageManager().getString("SECOND-THEME");
     public static final String THIRDTHEME = Neon.getInstance().getMessageManager().getString("THIRD-THEME");
+
+    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
+    private static final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacySection();
 
     static {
         if (USE_BUKKIT_CHAT_COLOR) {
@@ -32,6 +38,11 @@ public class ColorHandler {
         return major < 1 || (major == 1 && minor < 16);
     }
 
+    /**
+     * Colorizes text using either legacy or modern formatting
+     * @param text The text to colorize
+     * @return Colorized text
+     */
     public static String color(String text) {
         if (text == null || text.isEmpty()) return "";
 
@@ -42,14 +53,45 @@ public class ColorHandler {
         }
     }
 
+    /**
+     * Colorizes text using MiniMessage formatting
+     * @param text The text to colorize
+     * @return Colorized Component
+     */
+    public static Component colorComponent(String text) {
+        if (text == null || text.isEmpty()) return Component.empty();
+        return miniMessage.deserialize(applyPlaceholders(text));
+    }
+
+    /**
+     * Converts a MiniMessage Component to legacy formatted string
+     * @param component The component to convert
+     * @return Legacy formatted string
+     */
+    public static String componentToLegacy(Component component) {
+        return legacySerializer.serialize(component);
+    }
+
     private static String applyHexColors(String text) {
-        text = org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
-        text = replaceAmpersandHexColors(text);
-        text = replaceHtmlHexColors(text);
-        text = replaceMiniMessageGradient(text);
-        text = replaceRainbowColors(text);
-        text = replaceNamedColors(text);
-        text = applyPlaceholders(text);
+        try {
+            Component component = miniMessage.deserialize(text);
+            text = legacySerializer.serialize(component);
+            text = org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
+            text = replaceAmpersandHexColors(text);
+            text = replaceHtmlHexColors(text);
+            text = replaceMiniMessageGradient(text);
+            text = replaceRainbowColors(text);
+            text = replaceNamedColors(text);
+            text = applyPlaceholders(text);
+        } catch (Exception e) {
+            text = org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
+            text = replaceAmpersandHexColors(text);
+            text = replaceHtmlHexColors(text);
+            text = replaceMiniMessageGradient(text);
+            text = replaceRainbowColors(text);
+            text = replaceNamedColors(text);
+            text = applyPlaceholders(text);
+        }
         return text;
     }
 
@@ -94,7 +136,6 @@ public class ColorHandler {
         return buffer.toString();
     }
 
-
     /**
      * Converts hex color codes of format &#0000FF to Minecraft color codes.
      */
@@ -126,12 +167,10 @@ public class ColorHandler {
             String text = matcher.group(2);
             String endHex = matcher.group(3);
 
-
             if (!startHex.equalsIgnoreCase(endHex)) {
                 String gradientText = applyGradient(startHex, endHex, text);
                 matcher.appendReplacement(buffer, gradientText);
             } else {
-
                 String solidColorText = hexToChatColor(startHex) + text;
                 matcher.appendReplacement(buffer, solidColorText);
             }
@@ -172,8 +211,6 @@ public class ColorHandler {
 
         while (matcher.find()) {
             String text = matcher.group(1);
-
-
             String rainbowText = applyRainbow(text);
             matcher.appendReplacement(buffer, rainbowText);
         }
@@ -189,15 +226,14 @@ public class ColorHandler {
         int length = text.length();
         if (length == 0) return "";
 
-
         String[] rainbowColors = {
-                "FF0000",
-                "FF7F00",
-                "FFFF00",
-                "00FF00",
-                "0000FF",
-                "4B0082",
-                "9400D3"
+            "FF0000",
+            "FF7F00",
+            "FFFF00",
+            "00FF00",
+            "0000FF",
+            "4B0082",
+            "9400D3"
         };
 
         StringBuilder rainbowText = new StringBuilder();
@@ -210,7 +246,6 @@ public class ColorHandler {
         return rainbowText.toString();
     }
 
-
     private static String replaceMiniMessageGradient(String input) {
         Pattern miniMessagePattern = Pattern.compile("<gradient:#([0-9a-fA-F]{6}):#([0-9a-fA-F]{6})>(.*?)</gradient>");
         Matcher matcher = miniMessagePattern.matcher(input);
@@ -220,7 +255,6 @@ public class ColorHandler {
             String startHex = matcher.group(1);
             String endHex = matcher.group(2);
             String text = matcher.group(3);
-
 
             String gradientText = applyGradient(startHex, endHex, text);
             matcher.appendReplacement(buffer, gradientText);
@@ -235,18 +269,18 @@ public class ColorHandler {
      */
     private static int[] hexToRGB(String hex) {
         return new int[]{
-                Integer.parseInt(hex.substring(0, 2), 16),
-                Integer.parseInt(hex.substring(2, 4), 16),
-                Integer.parseInt(hex.substring(4, 6), 16)
+            Integer.parseInt(hex.substring(0, 2), 16),
+            Integer.parseInt(hex.substring(2, 4), 16),
+            Integer.parseInt(hex.substring(4, 6), 16)
         };
     }
 
     private static String hexToChatColor(String hex) {
         char colorChar = '§';
         return colorChar + "x"
-                + colorChar + hex.charAt(0) + colorChar + hex.charAt(1)
-                + colorChar + hex.charAt(2) + colorChar + hex.charAt(3)
-                + colorChar + hex.charAt(4) + colorChar + hex.charAt(5);
+            + colorChar + hex.charAt(0) + colorChar + hex.charAt(1)
+            + colorChar + hex.charAt(2) + colorChar + hex.charAt(3)
+            + colorChar + hex.charAt(4) + colorChar + hex.charAt(5);
     }
 
     private static String applyPlaceholders(String text) {
@@ -256,5 +290,4 @@ public class ColorHandler {
             .replace("{second_theme}", SECONDTHEME)
             .replace("{third_theme}", THIRDTHEME);
     }
-
 }
