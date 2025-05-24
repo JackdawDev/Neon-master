@@ -1,5 +1,6 @@
 package dev.jackdaw1101.neon.modules.automated;
 
+import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
@@ -88,6 +89,8 @@ public class AnnouncementManager {
     }
 
     private void sendAnnouncementToPlayer(Player player, ConfigurationSection announcement) {
+        boolean isdebug = plugin.getSettings().getBoolean("DEBUG-MODE");
+
         List<String> text = announcement.getStringList("TEXT");
         boolean hover = announcement.getBoolean("HOVER", false);
         List<String> hoverContent = announcement.getStringList("HOVER-CONTENT");
@@ -105,6 +108,36 @@ public class AnnouncementManager {
 
         String message = String.join("\n", text);
         message = ColorHandler.color(message);
+
+        if (text == null && isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Text content is null");
+            return;
+        }
+
+        if (hover && hoverContent == null && isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Hover is enabled but the content is null");
+            return;
+        }
+
+        if (clickCommand && command == null && isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Click command enabled but command is null");
+            return;
+        }
+
+        if (openUrl && url == null && isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Open URL is enabled but the url is null");
+            return;
+        }
+
+        if (playSound && soundName == null && isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Sound Enabled but theres no sound");
+            return;
+        }
+
+        if (suggestCommand && commandToSuggest == null && isdebug) {
+            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Command suggestion enabled but the command to suggest is null");
+            return;
+        }
 
         BaseComponent[] components = new TextComponent[]{new TextComponent(message)};
 
