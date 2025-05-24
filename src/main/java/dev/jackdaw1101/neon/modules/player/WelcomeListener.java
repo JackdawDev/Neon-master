@@ -80,7 +80,9 @@ public class WelcomeListener implements Listener {
 
 
         PluginManager pluginManager = plugin.getServer().getPluginManager();
-        pluginManager.callEvent(welcomeEvent);
+        Bukkit.getScheduler().runTask(Neon.getInstance(), () -> {
+            pluginManager.callEvent(welcomeEvent);
+        });
 
 
         if (welcomeEvent.isCancelled()) {
