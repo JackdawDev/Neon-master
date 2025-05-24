@@ -364,13 +364,7 @@ public final class Neon extends JavaPlugin {
 
         getCommand("togglechat").setExecutor(toggleChatCommand);
         this.alertManager = new AlertManager(this);
-        try {
-            Thread.sleep(9);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Successfully Loaded Commands");
-
 
         Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Loading Features...");
         boolean isdebug = getSettings().getBoolean("DEBUG-MODE");
