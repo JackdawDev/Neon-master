@@ -3,7 +3,7 @@
 #| \ | |      by Jackdaw1101                              #
 #|  \| |/ _ \/ _ \| '_ \      Messages Configuration For  #
 #| |\  |  __/ (_) | | | |     Neon!                       #
-# |_| \_|\___|\___/|_| |_|   (1.2)                        #
+# |_| \_|\___|\___/|_| |_|   (1.2.1)                      #
 ###########################################################
 #
 ####################################################
@@ -242,11 +242,15 @@ ALERTS-ENABLED: "{prefix} {main_theme}Admin alerts have been &aEnabled{main_them
 ALERTS-DISABLED: "{prefix} {main_theme}Admin alerts have been &cDisabled{main_theme}!"
 #
 ########################################################
-#                          AI                          #
+#                     Integration                      #
 ########################################################
 #
-# Ai flag & admin notify messages
-AI:
-  FLAGGED: "{prefix} &cPlease do not swear (<categories>)"
-  STAFF-ALERT: "{prefix} &c<player> was flagged for &7(<categories>)&c: &4<message>"
+# BEDWARS - 1058 & 2023
 #
+BEDWARS:
+  #
+  # Shout Disabled (solo groups)
+  SHOUT-DISABLED-MESSAGE: "{prefix} &cYou Can't Shout in this match!"
+  #
+  # Shout Cooldown message
+  SHOUT-COOLDOWN-MESSAGE: "{prefix} &cYou must wait &4<time> &cseconds before shouting again!"

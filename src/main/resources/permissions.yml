@@ -3,7 +3,7 @@
 # | \ | |      by Jackdaw1101                              #
 # |  \| |/ _ \/ _ \| '_ \   Permissions Configuration For  #
 # | |\  |  __/ (_) | | | |  Neon!                          #
-# |_| \_|\___|\___/|_| |_|   (1.2)                         #
+# |_| \_|\___|\___/|_| |_|   (1.2.1)                       #
 ############################################################
 #
 # All Permissions are editable here
@@ -164,12 +164,11 @@ CHAT-TOGGLE-USE: "neon.togglechat.use"
 TOGGLE-ALERTS: "neon.alerts.toggle"
 #
 ########################################################
-#                          AI                          #
+#                     Integration                      #
 ########################################################
 #
-# Ai Anti Swear Bypass
-AI-BYPASS: "neon.ai.bypass"
+# BEDWARS - 1048 & 2023
 #
-# Get Notified When someone swear
-AI-NOTIFY: "neon.ai.admin"
-#
+# Shout delay Bypass
+BEDWARS:
+  SHOUT-BYPASS: "bw.shout.bypass"

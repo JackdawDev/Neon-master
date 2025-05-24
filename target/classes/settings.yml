@@ -3,7 +3,7 @@
 # | \ | |      by Jackdaw1101                          #
 # |  \| |/ _ \/ _ \| '_ \      Main Configuration For  #
 # | |\  |  __/ (_) | | | |     Neon!                   #
-# |_| \_|\___|\___/|_| |_|   (1.2)                     #
+# |_| \_|\___|\___/|_| |_|   (1.2.1)                   #
 ########################################################
 #
 # Don't Touch This!
@@ -525,6 +525,7 @@ ANNOUNCEMENTS:
 # ANTI-LINK: allows you to prevent players from sending links in chat
 # CHECK-COMMANDS: Allows It to check in commands so players cant send links using /msg
 # WHITELIST: links that the players are allowed to send
+# BYPASSED-COMMANDS: commands that are not checked
 # ALERT-ADMINS: Makes it so admins get notified when a link is sent
 # LOG: Log Players Messages That Been Flagged For Using Links
 # WARN-SOUND-ENABLED: Play Sound To Player When They Flagged By Anti Advertise
@@ -549,6 +550,8 @@ ANTI-LINK:
   WHITELIST:
     - "example.com"
     - "mywebsite.com"
+  BYPASSED-COMMANDS:
+    - "/skin"
   CANCEL-TYPE: "silent"  # Options: silent (only one option for now)
   ALERT-ADMINS: true
   LOG: false
@@ -839,6 +842,20 @@ BEDWARS2023-SUPPORT: false
 # Settings Related (For both BW1058 & BW2023)
 # Hex and Placeholders Supported
 BEDWARS-CHAT:
+  #
+  # Shout delay
+  SHOUT-COOLDOWN: 25
+  #
+  # The groups that shout is not enabled in and messages are sent to all players in the arena
+  SOLO-GROUPS:
+    - "solo"
+    - "1v1"
+    - "Solo"
+  #
+  # Shout Symbol
+  SHOUT-SYMBOL: "1"
+  #
+  # Waiting Lobby
   WAITING-LOBBY:
     # Format for chat while players are in the waiting lobby (waiting/starting state).
     # Available placeholders:
@@ -872,6 +889,76 @@ BEDWARS-CHAT:
     # Supports <player> placeholder (e.g., /msg <player>)
     CLICK-COMMAND: "/msg <player> "
   #
+  # Shout
+  SHOUT:
+    # Format for chat while players are in the arena playing (Shout).
+    # Available placeholders:
+    # - <player> -> Sender's name
+    # - <arena> -> Arena name
+    # - <arena_displayname> -> Arena display name
+    # - <message> -> Message sent
+    # - <teamcolor> -> Team color code (e.g., blue, red)
+    # - <teamname> -> Team name (e.g, [Red])
+    FORMAT: "&8[&6SHOUT&8] &7<teamcolor>[<teamletter>] <teamcolor><player>&7: &f<message>"
+    #
+    # Should the chat message have hover text? (true/false)
+    HOVER-ENABLED: true
+    #
+    # Lines shown when hovering over a chat message.
+    # Supports placeholders: <player>, <arena>
+    HOVER:
+      - "&fPlayer: <teamcolor><player>"
+      - "&fTeam: <teamcolor><teamname>"
+    #
+    # Should clicking the chat message trigger a click event? (true/false)
+    CLICK-EVENT: true
+    #
+    # Should the click event paste a command in chat on CLick?
+    SUGGEST-COMMAND: true
+    #
+    # Should the click command be RUN immediately? (true/false)
+    # If false, it will SUGGEST the command in chat for the player to edit before sending.
+    RUN-COMMAND: false
+    #
+    # Command to run or suggest when clicking the message.
+    # Supports <player> placeholder (e.g., /msg <player>)
+    CLICK-COMMAND: "/msg <player> "
+  #
+  # Spectator
+  SPECTATOR:
+    # Format for chat while players are in the arena playing or spectator & elimination (playing state & spectator).
+    # Available placeholders:
+    # - <player> -> Sender's name
+    # - <arena> -> Arena name
+    # - <arena_displayname> -> Arena display name
+    # - <message> -> Message sent
+    # - <teamname> -> [SPECTATOR]
+    FORMAT: "&7[SPECTATOR] <player>&8: &f<message>"
+    #
+    # Should the chat message have hover text? (true/false)
+    HOVER-ENABLED: true
+    #
+    # Lines shown when hovering over a chat message.
+    # Supports placeholders: <player>, <arena>
+    HOVER:
+      - "&7Spectator Chat"
+      - "&7Player: &f<player>"
+    #
+    # Command to run or suggest when clicking the message.
+    # Supports <player> placeholder (e.g., /msg <player>)
+    CLICK-COMMAND: "msg <player>"
+    #
+    # Should clicking the chat message trigger a click event? (true/false)
+    CLICK-EVENT: true
+    #
+    # Should the click command be RUN immediately? (true/false)
+    # If false, it will SUGGEST the command in chat for the player to edit before sending.
+    RUN-COMMAND: false
+    #
+    # Should the click event paste a command in chat on CLick?
+    SUGGEST-COMMAND: true
+  #
+  # Playing
   PLAYING:
     # Format for chat while players are in the arena playing (playing state).
     # Available placeholders:

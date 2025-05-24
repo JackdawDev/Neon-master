@@ -3,6 +3,7 @@ package dev.jackdaw1101.neon.modules.automated;
 import dev.jackdaw1101.neon.API.modules.events.GrammarCheckEvent;
 import dev.jackdaw1101.neon.implementions.GrammarAPIImpl;
 import dev.jackdaw1101.neon.Neon;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,7 +43,9 @@ public class GrammarAPI implements Listener {
             api.isCapitalizationEnabled()
         );
 
-        plugin.getServer().getPluginManager().callEvent(grammarEvent);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.getServer().getPluginManager().callEvent(grammarEvent);
+        });
 
         if (grammarEvent.isCancelled()) return;
 
