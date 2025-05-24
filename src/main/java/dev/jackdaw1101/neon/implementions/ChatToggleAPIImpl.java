@@ -69,7 +69,9 @@ public class ChatToggleAPIImpl implements ChatToggleAPI {
         }
 
         ToggleChatEvent event = new ToggleChatEvent(player, newState);
-        Bukkit.getPluginManager().callEvent(event);
+        Bukkit.getScheduler().runTask(Neon.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(event);
+        });
 
         if (event.isCancelled()) {
             if (isdebug) {

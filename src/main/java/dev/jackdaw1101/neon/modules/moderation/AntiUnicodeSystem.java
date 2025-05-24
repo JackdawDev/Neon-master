@@ -45,7 +45,9 @@ public class AntiUnicodeSystem implements Listener {
                 plugin.getSettings().getBoolean("ANTI-UNICODE.USE-SOUND")
             );
 
-            plugin.getServer().getPluginManager().callEvent(unicodeEvent);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.getServer().getPluginManager().callEvent(unicodeEvent);
+            });
 
             if (unicodeEvent.isCancelled()) {
                 return;

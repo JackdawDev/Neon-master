@@ -87,7 +87,9 @@ public class AntiCapsSystem implements Listener {
                 plugin.getSettings().getBoolean("ANTI-CAPS.SOUND-ENABLED")
             );
 
-            plugin.getServer().getPluginManager().callEvent(capsEvent);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                plugin.getServer().getPluginManager().callEvent(capsEvent);
+            });
 
             if (capsEvent.isCancelled()) {
                 return;

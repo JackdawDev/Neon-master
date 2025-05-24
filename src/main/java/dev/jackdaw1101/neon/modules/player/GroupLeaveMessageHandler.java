@@ -105,7 +105,9 @@ public class GroupLeaveMessageHandler {
             clickAction,
             hover
         );
-        Bukkit.getPluginManager().callEvent(event);
+        Bukkit.getScheduler().runTask(Neon.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(event);
+        });
 
         if (event.isCancelled()) {
             return;

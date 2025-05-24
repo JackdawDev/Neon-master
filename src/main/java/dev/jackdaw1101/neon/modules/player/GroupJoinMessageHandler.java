@@ -102,7 +102,9 @@ public class GroupJoinMessageHandler {
             clickAction,
             hover
         );
-        Bukkit.getPluginManager().callEvent(event);
+        Bukkit.getScheduler().runTask(Neon.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(event);
+        });
 
         if (event.isCancelled()) {
             return;

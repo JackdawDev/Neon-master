@@ -7,6 +7,7 @@ import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -272,7 +273,9 @@ public class AntiSpamSystem implements Listener {
     }
 
     private void handleSpamEvent(org.bukkit.event.Cancellable event, AntiSpamEvent spamEvent) {
-        plugin.getServer().getPluginManager().callEvent(spamEvent);
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            plugin.getServer().getPluginManager().callEvent(spamEvent);
+        });
 
         if (spamEvent.isCancelled()) {
             return;

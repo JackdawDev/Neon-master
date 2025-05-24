@@ -97,8 +97,11 @@ public class MentionSystem implements Listener {
                 newMessage = newMessage.replace(mentionTag, formattedMention).replace(mentioned.getName(), formattedMention);
 
 
-                MentionEvent mentionEvent = new MentionEvent(sender, mentioned, newMessage, mentionedBySymbol, mentionSymbol, false, false);
-                Bukkit.getPluginManager().callEvent(mentionEvent);
+                String finalNewMessage = newMessage;
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    MentionEvent mentionEvent = new MentionEvent(sender, mentioned, finalNewMessage, mentionedBySymbol, mentionSymbol, false, false);
+                    Bukkit.getPluginManager().callEvent(mentionEvent);
+                });
             }
         }
 

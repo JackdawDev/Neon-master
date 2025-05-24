@@ -203,13 +203,16 @@ public class AntiSwearSystem implements Listener {
                     new String(new char[swear.length()]).replace("\0", censorSymbol));
 
 
-                SwearDetectEvent detectEvent = new SwearDetectEvent(
+                    SwearDetectEvent detectEvent = new SwearDetectEvent(
                     player,
                     message,
                     swear,
                     censored
                 );
-                Bukkit.getPluginManager().callEvent(detectEvent);
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    Bukkit.getPluginManager().callEvent(detectEvent);
+                });
+
 
                 if (!detectEvent.isCancelled()) {
                     handleSwearViolation(
@@ -280,7 +283,9 @@ public class AntiSwearSystem implements Listener {
 
 
             SwearPunishEvent event = new SwearPunishEvent(player, "", strikes, command);
-            Bukkit.getPluginManager().callEvent(event);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                    Bukkit.getPluginManager().callEvent(event);
+                });
 
 
             String finalCommand = event.getPunishCommand();

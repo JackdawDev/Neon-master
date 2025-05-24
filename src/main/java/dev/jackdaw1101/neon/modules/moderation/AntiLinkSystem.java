@@ -41,9 +41,15 @@ public class AntiLinkSystem implements Listener {
             handleLinkCheck(event.getPlayer(), event.getMessage(), event);
         }
     }
-
     @EventHandler
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
+        List<String> bypassedcommands = plugin.getSettings().getStringList("ANTI-LINK.BYPASSED-COMMANDS");
+        String command = event.getMessage().split(" ")[0];
+
+        if (bypassedcommands.contains(command)) {
+            return;
+        }
+
         if (plugin.getSettings().getBoolean("ANTI-LINK.CHECK-COMMANDS")) {
             handleLinkCheck(event.getPlayer(), event.getMessage(), event);
         }
@@ -70,7 +76,9 @@ public class AntiLinkSystem implements Listener {
                     ColorHandler.color(plugin.getMessageManager().getString("ANTI-LINK.ALERT-MESSAGE"))
                 );
 
-                Bukkit.getPluginManager().callEvent(event);
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    Bukkit.getPluginManager().callEvent(event);
+                });
 
                 if (event.isCancelled()) {
                     return;

@@ -52,7 +52,9 @@ public class AutoResponse implements Listener {
                     api.isHoverEnabled()
                 );
 
-                Bukkit.getPluginManager().callEvent(responseEvent);
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    Bukkit.getPluginManager().callEvent(responseEvent);
+                });
 
                 if (responseEvent.isCancelled()) return;
 

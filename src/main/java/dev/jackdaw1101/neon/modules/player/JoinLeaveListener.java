@@ -111,7 +111,9 @@ public class JoinLeaveListener implements Listener {
             hoverText.isEmpty() ? Arrays.asList(getDefaultHoverText(event.getPlayer(), true)) : hoverText
         );
 
-        Bukkit.getPluginManager().callEvent(neonEvent);
+        Bukkit.getScheduler().runTask(Neon.getInstance(), () -> {
+            Bukkit.getPluginManager().callEvent(neonEvent);
+        });
 
         if (neonEvent.isCancelled()) return;
 
