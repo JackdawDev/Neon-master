@@ -17,12 +17,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class Bedwars1058Integration implements Integration, Listener {
 
     private Neon plugin;
     private ChatAPI api;
+    private List<String> soloGroups;
+    private Map<UUID, Long> shoutCooldowns;
 
     @Override
     public void register(Neon plugin) {
@@ -30,6 +35,9 @@ public class Bedwars1058Integration implements Integration, Listener {
 
         this.plugin = (Neon) plugin;
         this.api = new ChatAPI(this.plugin);
+        this.shoutCooldowns = new HashMap<>();
+
+        this.soloGroups = plugin.getSettings().getConfig().getStringList("BEDWARS-CHAT.SOLO-GROUPS");
 
         if (!Bukkit.getPluginManager().isPluginEnabled("BedWars1058")) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] BedWars1058 is not installed. Skipping integration.");
@@ -56,6 +64,11 @@ public class Bedwars1058Integration implements Integration, Listener {
         IArena arena = api.getArenaUtil().getArenaByPlayer(sender);
         if (arena == null) return;
 
+        if (arena.isSpectator(sender) || !arena.isPlayer(sender)) {
+            handleSpectatorChat(event, sender, (Arena) arena);
+            return;
+        }
+
         switch (arena.getStatus()) {
             case waiting:
             case starting:
@@ -64,6 +77,44 @@ public class Bedwars1058Integration implements Integration, Listener {
             case playing:
                 handlePlayingChat(event, sender, (Arena) arena);
                 break;
+        }
+    }
+
+    private void handleSpectatorChat(ChatMessageEvent event, Player sender, Arena arena) {
+        ConfigurationSection spectatorChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SPECTATOR");
+        if (spectatorChat == null) return;
+        event.setCancelled(true);
+
+        String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(spectatorChat.getString("FORMAT"))
+            .replace("<player>", sender.getName())
+            .replace("<arena>", arena.getArenaName())
+            .replace("<message>", event.getMessage())
+            .replace("<arena_displayname>", arena.getDisplayName()));
+
+        List<String> hoverLines = spectatorChat.getStringList("HOVER");
+        if (hoverLines.isEmpty()) hoverLines.add("&7No hover text.");
+
+        String hoverText = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(String.join("\n", hoverLines))
+            .replace("<player>", sender.getName())
+            .replace("<arena>", arena.getArenaName())
+            .replace("<teamname>", CC.GRAY + "[SPECTATOR]")
+            .replace("<arena_displayname>", arena.getDisplayName()));
+
+        for (Player viewer : arena.getSpectators()) {
+            api.sendFormattedMessage(
+                viewer,
+                format,
+                hoverText,
+                spectatorChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
+                spectatorChat.getBoolean("HOVER-ENABLED"),
+                spectatorChat.getBoolean("CLICK-EVENT"),
+                spectatorChat.getBoolean("RUN-COMMAND"),
+                spectatorChat.getBoolean("SUGGEST-COMMAND")
+            );
+        }
+
+        if (plugin.getSettings().getBoolean("CHAT-IN-CONSOLE")) {
+            api.sendMessageToConsole(format);
         }
     }
 
@@ -85,9 +136,6 @@ public class Bedwars1058Integration implements Integration, Listener {
             .replace("<arena>", arena.getArenaName())
             .replace("<arena_displayname>", arena.getDisplayName()));
 
-
-        //event.setCancelled(true);
-
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
                 viewer,
@@ -106,17 +154,63 @@ public class Bedwars1058Integration implements Integration, Listener {
 
     private void handlePlayingChat(ChatMessageEvent event, Player sender, Arena arena) {
         ConfigurationSection playingChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.PLAYING");
-        if (playingChat == null) return;
-        event.setCancelled(true);
+        ConfigurationSection shoutChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SHOUT");
+        if (playingChat == null || shoutChat == null) return;
 
         ITeam team = arena.getTeam(sender);
-        String teamColor = (team != null) ? team.getColor().chat().toString() : "&f";
+        if (team == null) return;
 
+        String message = event.getMessage();
+        boolean isShout = message.startsWith("!");
+
+        boolean isSoloGame = soloGroups.contains(arena.getGroup());
+
+        if (isShout) {
+            if (isSoloGame) {
+                sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("BEDWARS.SHOUT-DISABLED-MESSAGE")));
+                event.setCancelled(true);
+                return;
+            }
+
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("BEDWARS.SHOUT-BYPASS"))) {
+                int shoutCooldown = plugin.getSettings().getConfig().getInt("BEDWARS-CHAT.SHOUT-COOLDOWN", 5);
+                if (shoutCooldown > 0) {
+                    long lastShout = shoutCooldowns.getOrDefault(sender.getUniqueId(), 0L);
+                    long currentTime = System.currentTimeMillis() / 1000;
+                    long remaining = shoutCooldown - (currentTime - lastShout);
+
+                    if (remaining > 0) {
+                        sender.sendMessage(ColorHandler.color(plugin.getMessageManager()
+                            .getString("BEDWARS.SHOUT-COOLDOWN-MESSAGE")
+                            .replace("<time>", String.valueOf(remaining))));
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+
+            message = message.substring(1).trim();
+            if (message.isEmpty()) {
+                event.setCancelled(true);
+                return;
+            }
+
+            if (!sender.hasPermission(plugin.getPermissionManager().getString("BEDWARS.SHOUT-BYPASS"))) {
+                shoutCooldowns.put(sender.getUniqueId(), System.currentTimeMillis() / 1000);
+            }
+
+            handleShoutChat(event, sender, arena, message);
+            return;
+        }
+
+        event.setCancelled(true);
+
+        String teamColor = team.getColor().chat().toString();
         String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(playingChat.getString("FORMAT"))
             .replace("<player>", sender.getName())
             .replace("<arena>", arena.getArenaName())
             .replace("<teamcolor>", teamColor)
-            .replace("<message>", event.getMessage())
+            .replace("<message>", message)
             .replace("<teamname>", teamColor + "[" + team.getName() + "]")
             .replace("<teamletter>", team.getName())
             .replace("<arena_displayname>", arena.getDisplayName()));
@@ -137,11 +231,9 @@ public class Bedwars1058Integration implements Integration, Listener {
             hoverText = PlaceholderAPI.setPlaceholders(sender, hoverText);
         }
 
-        //event.setCancelled(true);
-
-        for (Player viewer : arena.getPlayers()) {
+        for (Player member : team.getMembers()) {
             api.sendFormattedMessage(
-                viewer,
+                member,
                 format,
                 hoverText,
                 playingChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
@@ -149,6 +241,64 @@ public class Bedwars1058Integration implements Integration, Listener {
                 playingChat.getBoolean("CLICK-EVENT"),
                 playingChat.getBoolean("RUN-COMMAND"),
                 playingChat.getBoolean("SUGGEST-COMMAND")
+            );
+        }
+
+        if (plugin.getSettings().getBoolean("CHAT-IN-CONSOLE")) {
+            api.sendMessageToConsole(format);
+        }
+    }
+
+    private void handleShoutChat(ChatMessageEvent event, Player sender, Arena arena, String message) {
+        ConfigurationSection shoutChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SHOUT");
+        if (shoutChat == null) return;
+        event.setCancelled(true);
+
+        ITeam team = arena.getTeam(sender);
+        if (team == null) return;
+
+        String teamColor = team.getColor().chat().toString();
+        String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(shoutChat.getString("FORMAT"))
+            .replace("<player>", sender.getName())
+            .replace("<arena>", arena.getArenaName())
+            .replace("<teamcolor>", teamColor)
+            .replace("<message>", message)
+            .replace("<teamname>", teamColor + "[" + team.getName() + "]")
+            .replace("<teamletter>", team.getName())
+            .replace("<arena_displayname>", arena.getDisplayName()));
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            format = PlaceholderAPI.setPlaceholders(sender, format);
+        }
+
+        List<String> hoverLines = shoutChat.getStringList("HOVER");
+        if (hoverLines.isEmpty()) hoverLines.add("&7No hover text.");
+
+        String hoverText = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(String.join("\n", hoverLines))
+            .replace("<player>", sender.getName())
+            .replace("<arena>", arena.getArenaName())
+            .replace("<arena_displayname>", arena.getDisplayName())
+            .replace("<player>", sender.getName())
+            .replace("<teamcolor>", teamColor)
+            .replace("<message>", message)
+            .replace("<teamname>", teamColor + "[" + team.getName() + "]")
+            .replace("<teamletter>", team.getName())
+            .replace("<arena_displayname>", arena.getDisplayName()));
+
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            hoverText = PlaceholderAPI.setPlaceholders(sender, hoverText);
+        }
+
+        for (Player viewer : arena.getPlayers()) {
+            api.sendFormattedMessage(
+                viewer,
+                format,
+                hoverText,
+                shoutChat.getString("CLICK-COMMAND").replace("<player>", sender.getName()),
+                shoutChat.getBoolean("HOVER-ENABLED"),
+                shoutChat.getBoolean("CLICK-EVENT"),
+                shoutChat.getBoolean("RUN-COMMAND"),
+                shoutChat.getBoolean("SUGGEST-COMMAND")
             );
         }
 
