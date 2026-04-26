@@ -39,7 +39,11 @@ all features are customizeable through the settings.yml!
 
 - Per World Chat
 
-_ COmpatiblity with BedWars Plugins
+_ Compatiblity with BedWars Plugins
+
+- Bubble chat
+
+- Radius Chat
 
 # You cannot re release the plugin without permission or re-sell the plugin
 
@@ -223,6 +227,13 @@ public class NeonAPI {
     public Class<?> getAddonMainClass(String addonName);
 
     public String getNeonPrefix();
+
+    public IChat getNeonChat() {return NeonChat;}
+    public IAntiSwear getAntiSwear() {return AntiSwear;}
+    public IAutoResponse getAutoResponse() {return AutoResponse;}
+    public IChatToggle getChatToggle() {return ChatToggle;}
+    public ILogins getLogins() {return Logins;}
+    public IGrammar getGrammerApi() {return GrammerApi;}
 }
 ```
 💡 Example Usage
