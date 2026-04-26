@@ -3,7 +3,7 @@
 #| \ | |      by Jackdaw1101                              #
 #|  \| |/ _ \/ _ \| '_ \      Messages Configuration For  #
 #| |\  |  __/ (_) | | | |     Neon!                       #
-# |_| \_|\___|\___/|_| |_|   (1.2.1)                      #
+# |_| \_|\___|\___/|_| |_|   (1.2.6)                      #
 ###########################################################
 #
 ####################################################
@@ -16,6 +16,10 @@
 # &#0000FF
 # <rainbow>Message</rainbow>
 # <color-name>Message</color-name>
+#
+# Internal LuckPerms Placeholders:
+# <lp_prefix> = Prefix Of Player (luckPerms)
+# <lp_suffix> = Suffix Of Player (luckPerms)
 #
 # Internal Placeholders (all support HEX)
 # - {prefix} - Prefix of plugin editable in messages.yml (usable in all files)
@@ -69,7 +73,10 @@ THIRD-THEME: '&d'
 ####################################################
 #
 # reloaded successfully: when the player reload the plugin by /neon reload
-RELOADED-SUCCESSFULLY: "{prefix} &aReloaded Successfully!"
+RELOADED-SUCCESSFULLY: "{prefix} &aPlugin reloaded successfully!"
+#
+# Load with Errors
+RELOADED-PARTIALLY: "{prefix} &ePlugin reloaded partially. Some components failed to reload. Check console for details."
 #
 # reload error: when plugin fail to reload files
 RELOAD-ERROR: "{prefix} &cThere was an Exception while trying to reload!"
@@ -136,20 +143,6 @@ AUTO-RESPONSE-PREFIX: "&7[&a&lAUTO RESPONSE&7]"
 FORMAT: "{prefix} {auto_response_prefix}&8: &e%answer%"
 #
 ########################################################
-#     Messages & Reply System  (Not Available Yet)     #
-########################################################
-#
-# (!) Predicted for 0.0.2 - So Currently the /msg Wont be Handled by Neon
-# Messages System Errors
-ERRORS:
-  PLAYER-NOT-ONLINE: "{prefix} &cThe player you are trying to message is not online."
-  CANNOT-MESSAGE-SELF: "{prefix} &cYou cannot send a message to yourself."
-  NO-RECENT-MESSAGE: "{prefix} &cYou have no recent messages to reply to."
-  INVALID-COMMAND: "{prefix} &cInvalid Command!"
-  MESSAGE-USAGE: "{prefix} {main_theme}/message {second_theme}<player> {third_theme}<message>"
-  REPLY-USAGE: "{prefix} {main_theme}/r {third_theme}<message>"
-#
-########################################################
 #              Anti Advertisement System               #
 ########################################################
 #
@@ -170,7 +163,7 @@ ANTI-LINK:
 # {percentage}
 # {player}
 # {max_percentage}
-ANTI-CAPS-WARNING: "&cPlease avoid excessive caps {player}! Your message was {percentage}% caps (max {max_percentage}%)"
+ANTI-CAPS-WARNING: "{prefix} &cPlease avoid excessive caps {player}! Your message was {percentage}% caps (max {max_percentage}%)"
 #
 ########################################################
 #                Chat Mention System                   #

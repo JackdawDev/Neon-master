@@ -7,6 +7,8 @@ import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -17,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.util.List;
@@ -101,7 +104,6 @@ public class WelcomeListener implements Listener {
             sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
         }
 
-       // sendMessage(player, finalMessages, soundToPlay, welcomeEvent);
     }
 
     private void clearChat(Player player, int lines) {
@@ -117,6 +119,7 @@ public class WelcomeListener implements Listener {
         if (hoverEnabled && event.getHoverMessages() != null && !event.getHoverMessages().isEmpty()) {
             String hoverText = ColorHandler.color(String.join("\n", event.getHoverMessages()));
             hoverText = PlaceholderAPI.setPlaceholders(player, hoverText);
+            hoverText = handleLuckPermsPrefixSuffix(player, hoverText);
             hoverComponent = new TextComponent(hoverText);
         }
 
@@ -131,6 +134,7 @@ public class WelcomeListener implements Listener {
 
         for (String line : messages) {
             line = ColorHandler.color(PlaceholderAPI.setPlaceholders(player, line));
+            line = handleLuckPermsPrefixSuffix(player, line);
             TextComponent messageComponent = new TextComponent(line);
 
             if (hoverEnabled && hoverComponent != null) {
@@ -158,5 +162,24 @@ public class WelcomeListener implements Listener {
                 XSounds.playSound(player, sound, 1.0f, 1.0f);
             }
         }
+    }
+
+    private String handleLuckPermsPrefixSuffix(Player player, String format) {
+        if (!isLuckPermsInstalled()) return format;
+
+        LuckPerms luckPerms = this.plugin.getServer().getServicesManager().getRegistration(LuckPerms.class).getProvider();
+        User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+        if (user != null) {
+            String prefix = user.getCachedData().getMetaData().getPrefix();
+            String suffix = user.getCachedData().getMetaData().getSuffix();
+            format = format.replace("<lp_prefix>", (prefix != null ? prefix : ""))
+                    .replace("<lp_suffix>", (suffix != null ? suffix : ""));
+        }
+        return ColorHandler.color(format);
+    }
+
+    private boolean isLuckPermsInstalled() {
+        Plugin LP = plugin.getServer().getPluginManager().getPlugin("LuckPerms");
+        return LP != null && LP.isEnabled();
     }
 }

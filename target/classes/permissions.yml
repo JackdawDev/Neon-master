@@ -3,7 +3,7 @@
 # | \ | |      by Jackdaw1101                              #
 # |  \| |/ _ \/ _ \| '_ \   Permissions Configuration For  #
 # | |\  |  __/ (_) | | | |  Neon!                          #
-# |_| \_|\___|\___/|_| |_|   (1.2.1)                       #
+# |_| \_|\___|\___/|_| |_|   (1.2.6)                       #
 ############################################################
 #
 # All Permissions are editable here
@@ -172,3 +172,10 @@ TOGGLE-ALERTS: "neon.alerts.toggle"
 # Shout delay Bypass
 BEDWARS:
   SHOUT-BYPASS: "bw.shout.bypass"
+#
+########################################################
+#                     Bubble Chat                      #
+########################################################
+#
+POPUP-BUBBLE:
+  PERMISSION: "neon.bubblechat.show"

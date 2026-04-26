@@ -178,14 +178,20 @@ if (neonPlugin == null || !neonPlugin.isEnabled()) {
 ```
 
 ```java
+import dev.jackdaw1101.neon.API.modules.grammar.IGrammar;
+import dev.jackdaw1101.neon.API.modules.moderation.IAntiSwear;
+import dev.jackdaw1101.neon.API.modules.moderation.IAutoResponse;
+import dev.jackdaw1101.neon.API.modules.moderation.IChatToggle;
+import dev.jackdaw1101.neon.API.modules.moderation.ILogins;
+
 // Available APIs
-  AutoResponseAPI api = Bukkit.getServicesManager().load(AutoResponseAPI.class);
-  AntiSwearAPI api = Bukkit.getServicesManager().load(AntiSwearAPI.class);
-  NeonJoinLeaveAPI api = Bukkit.getServicesManager().load(NeonJoinLeaveAPI.class);
-  ChatToggleAPI api = Bukkit.getServicesManager().load(ChatToggleAPI.class);
-  GrammarAPI api = Bukkit.getServicesManager().load(GrammarAPI.class);
-  NeonAPI api = Bukkit.getServicesManager().load(NeonAPI.class);
-  AddonManager addonManager = Bukkit.getServicesManager().load(AddonManager.class);
+IAutoResponse api = Bukkit.getServicesManager().load(AutoResponseAPI.class);
+        IAntiSwear api = Bukkit.getServicesManager().load(AntiSwearAPI.class);
+        ILogins api = Bukkit.getServicesManager().load(NeonJoinLeaveAPI.class);
+        IChatToggle api = Bukkit.getServicesManager().load(ChatToggleAPI.class);
+        IGrammar api = Bukkit.getServicesManager().load(GrammarAPI.class);
+        NeonAPI api = Bukkit.getServicesManager().load(NeonAPI.class);
+        AddonManager addonManager = Bukkit.getServicesManager().load(AddonManager.class);
 ```
 
 ## 🚀 NeonAPI
@@ -231,7 +237,7 @@ public void onEnable() {
 Manage automatic chat responses
 
 ```java
-public interface AutoResponseAPI {
+public interface IAutoResponse {
 // Add/remove responses
 void addResponse(String triggerWord, List<String> responses);
 void removeResponse(String triggerWord);
@@ -263,7 +269,7 @@ autoResponseAPI.addResponse("hello", Arrays.asList(
 **Advanced profanity filtering system**
 
 ```java
-public interface AntiSwearAPI {
+public interface IAntiSwear {
    
     void addToBlacklist(String word);
     
@@ -315,7 +321,7 @@ antiSwearAPI.addTemporaryWhitelistWord("allowedword");
 Advanced join/leave message customization system
 
 ```java
-public interface NeonJoinLeaveAPI {
+public interface ILogins {
     void sendCustomJoinMessage(Player player, String message, 
                              List<String> hoverText, 
                              String clickCommand, 
@@ -381,7 +387,7 @@ api.setJoinClickCommand("msg {player}", ClickAction.SUGGEST_COMMAND);
 Player chat toggle management system
 
 ```java
-public interface ChatToggleAPI {
+public interface IChatToggle {
     
     void toggleChat(Player player);
     
@@ -412,7 +418,7 @@ if (chatToggleAPI.isChatToggled(player)) {
 Advanced message grammar correction system
 
 ```java
-public interface GrammarAPI {
+public interface IGrammar {
 
     // Auto-Correction Management
     void addAutoCorrectWord(String incorrect, String correct);
@@ -818,7 +824,8 @@ public void setCancelled(boolean cancel);
 
     // Player Data
     public Player getPlayer();
-    
+    public Player getSender();
+
     // Message Configuration
     public String getJoinMessage();
     public void setJoinMessage(String message);

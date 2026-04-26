@@ -5,7 +5,8 @@
 #|_| \_|\___|\___/|_| |_|      by Jackdaw1101           #
 #########################################################
 #
-# Your File Generated on v1.2.1-ALPHA
+# Your File Generated on v1.2.6-ALPHA
+# most of the locales will not be reloaded by /neon reload and require a server restart!
 #
 ####################################################
 #                  Hex Color Help                  #
@@ -214,20 +215,20 @@ PER-WORLD-CHATS:
 #
 JOIN-GROUPS:
   owner:
-    FORMAT: "&c[Owner] %player_name% joined the game!"
+    FORMAT: "&c[Owner] <player> joined the game!"
     PERMISSION: "neon.join.owner"
     PRIORITY: 100
     HOVER:
       - "&7Welcome our beloved &cOwner&7!"
-      - "&eClick to greet %player_name%!"
+      - "&eClick to greet <player>!"
     HOVER-ENABLED: true
     CLICK-EVENT: true
     RUN-COMMAND: false
     SUGGEST-COMMAND: true
-    CLICK-COMMAND: "/msg %player_name% Welcome back, legend!"
+    CLICK-COMMAND: "/msg <player> Welcome back, legend!"
   #
   admin:
-    FORMAT: "&b[Admin] %player_name% has arrived!"
+    FORMAT: "&b[Admin] <player> has arrived!"
     PERMISSION: "neon.join.admin"
     PRIORITY: 90
     HOVER:
