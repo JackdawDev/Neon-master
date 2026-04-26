@@ -234,6 +234,7 @@ public class NeonAPI {
     public IChatToggle getChatToggle() {return ChatToggle;}
     public ILogins getLogins() {return Logins;}
     public IGrammar getGrammerApi() {return GrammerApi;}
+    
 }
 ```
 💡 Example Usage
