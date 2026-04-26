@@ -2,6 +2,7 @@ package dev.jackdaw1101.neon.utils.webhooks;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.CC;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -27,7 +28,7 @@ public class AntiAdvertiseWebhookManager {
     }
 
     public void sendWebhook(Player player, String message, String type) {
-        boolean debugMode = plugin.getSettings().getBoolean("DEBUG-MODE");
+        boolean debugMode = DebugUtil.isDebugEnabled();
 
         if (!isWebhookEnabled) {
             return;
@@ -37,12 +38,12 @@ public class AntiAdvertiseWebhookManager {
 
         String title = (String) plugin.getDiscordManager().getString("ANTI-LINK.FORMAT.title");
         if (title.equals("ANTI-LINK.FORMAT.title")) {
-            Bukkit.getConsoleSender().sendMessage(CC.YELLOW +"[Neon] Config for title is missing or not set properly! Defaulting to 'Swear'");
+            DebugUtil.debug(CC.YELLOW +"[Neon] Config for title is missing or not set properly! Defaulting to 'Swear'");
         }
 
         List<String> descriptionLines = plugin.getDiscordManager().getStringList("ANTI-LINK.FORMAT.description");
         if (descriptionLines.isEmpty()) {
-                Bukkit.getConsoleSender().sendMessage(CC.YELLOW +"[Neon] Config for description is missing or not set properly! Using default description.");
+            DebugUtil.debug(CC.YELLOW +"[Neon] Config for description is missing or not set properly! Using default description.");
         }
 
         descriptionLines = formatDescription(descriptionLines, player, message);
@@ -58,7 +59,7 @@ public class AntiAdvertiseWebhookManager {
         jsonPayload.put("embeds", new JSONObject[]{embedObject});
 
         if (debugMode) {
-            Bukkit.getConsoleSender().sendMessage(CC.YELLOW +"[Neon-Debug] Sending Webhook Payload: " + CC.AQUA + jsonPayload);
+            DebugUtil.debug(CC.YELLOW +"[Neon-Debug] Sending Webhook Payload: " + CC.AQUA + jsonPayload);
         }
 
         sendToWebhook(webhookUrl, jsonPayload.toString());
@@ -67,19 +68,19 @@ public class AntiAdvertiseWebhookManager {
 
     private String determineWebhookUrl() {
         String webhookUrl = this.defaultWebhookUrl;
-        boolean debugMode = plugin.getSettings().getBoolean("DEBUG-MODE");
+        boolean debugMode = DebugUtil.isDebugEnabled();
 
         if (this.defaultWebhookUrl.equalsIgnoreCase("GLOBAL")) {
-            webhookUrl = (String) plugin.getDiscordManager().getString("ANTI-LINK.URL");
+            webhookUrl = (String) plugin.getDiscordManager().getString("URL");
         }
 
         if (webhookUrl == null || webhookUrl.isEmpty()) {
             if (debugMode) {
-                Bukkit.getConsoleSender().sendMessage(CC.D_RED + "[Neon-Debug] Webhook URL is empty or null!");
+                DebugUtil.debug(CC.D_RED + "[Neon-Debug] Webhook URL is empty or null!");
             }
         } else {
             if (debugMode) {
-                Bukkit.getConsoleSender().sendMessage(CC.GREEN + "[Neon-Debug] Using Webhook URL: " + CC.YELLOW + webhookUrl);
+                DebugUtil.debug(CC.GREEN + "[Neon-Debug] Using Webhook URL: " + CC.YELLOW + webhookUrl);
         }}
         return webhookUrl;
     }
@@ -102,7 +103,7 @@ public class AntiAdvertiseWebhookManager {
     }
 
     private void sendToWebhook(String webhookUrl, String jsonPayload) {
-        boolean debugMode = plugin.getSettings().getBoolean("DEBUG-MODE");
+        boolean debugMode = DebugUtil.isDebugEnabled();
 
         new BukkitRunnable() {
             @Override
@@ -121,15 +122,15 @@ public class AntiAdvertiseWebhookManager {
                     int responseCode = connection.getResponseCode();
                     if (responseCode == 200) {
                         if (debugMode) {
-                            Bukkit.getConsoleSender().sendMessage(CC.GREEN + "[Neon-Debug] Webhook sent successfully to " + webhookUrl);}
+                            DebugUtil.debug(CC.GREEN + "[Neon-Debug] Webhook sent successfully to " + webhookUrl);}
                     } else {
                         if (debugMode) {
-                            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon-Debug] Failed to send webhook to " + CC.DARK_RED+ webhookUrl + CC.RED + ". Response code: " + CC.D_RED + responseCode);}
+                            DebugUtil.debug(CC.RED + "[Neon-Debug] Failed to send webhook to " + CC.DARK_RED+ webhookUrl + CC.RED + ". Response code: " + CC.D_RED + responseCode);}
                     }
                     connection.disconnect();
                 } catch (Exception e) {
                     if (debugMode) {
-                        Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon-Debug] Error sending webhook: " + CC.D_RED + e.getMessage());}
+                        DebugUtil.debug(CC.RED + "[Neon-Debug] Error sending webhook: " + CC.D_RED + e.getMessage());}
                     e.printStackTrace();
                 }
             }
