@@ -106,11 +106,10 @@ public final class Neon extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        if (!initializeVersionHandler()) {
-            return;
-        }
-
+        loadConfigurations();
         load();
+        initializeVersionHandler();
+
     }
 
     @Override
@@ -148,34 +147,25 @@ public final class Neon extends JavaPlugin {
 
     public void load() {
         long startTime = System.currentTimeMillis();
-        String debugVersion = DebugUtil.getDebugVersion(getNeonAPI().getNeonVersion());
 
-        // Load Configurations
-        loadConfigurations();
-
-        // Validate Configuration
         if (!checkConfigVersion()) {
             DebugUtil.debug(CC.RED + "[Neon] Unable To Load Configurations: Invalid Config Version");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        // Create Directories
         createDirectories();
 
-        // Initialize API
         initializeApi();
 
-        // Initialize Database
+        String debugVersion = DebugUtil.getDebugVersion(getNeonAPI().getNeonVersion());
+
         initializeDatabase();
 
-        // Register Commands
         registerCommands();
 
-        // Register Events and Features
         registerEventsAndFeatures();
 
-        // Initialize Integrations
         initializeIntegrations();
 
         displayLoadInformation(startTime, debugVersion);
@@ -184,7 +174,7 @@ public final class Neon extends JavaPlugin {
     }
 
     private void loadConfigurations() {
-        DebugUtil.debug(CC.GRAY + "[Neon] Loading Configurations...");
+        ConfigFile.debug(CC.GRAY + "[Neon] Loading Configurations...");
 
         settings = new ConfigFile(this, "settings.yml");
         messageManager = new ConfigFile(this, "messages.yml");
@@ -193,7 +183,6 @@ public final class Neon extends JavaPlugin {
         locales = new ConfigFile(this, "locale.yml");
         database = new ConfigFile(this, "database.yml");
 
-        // Apply placeholders to messages
         messageManager.replacePlaceholdersInConfig(
                 "{prefix}", messageManager.getString("PREFIX"),
                 "{main_theme}", messageManager.getString("MAIN-THEME"),

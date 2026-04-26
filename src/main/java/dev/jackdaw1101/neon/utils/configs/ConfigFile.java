@@ -2,8 +2,8 @@ package dev.jackdaw1101.neon.utils.configs;
 
 import com.tchristofferson.configupdater.ConfigUpdater;
 import dev.jackdaw1101.neon.API.NeonAPI;
+import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.utils.DebugUtil;
 import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,9 +40,18 @@ public class ConfigFile {
             init();
         } catch (IOException e) {
             e.printStackTrace();
-            DebugUtil.debug(ChatColor.RED + "[Neon] Error initializing config file: " + configName);
+            debug(ChatColor.RED + "[Neon] Error initializing config file: " + configName);
         }
     }
+
+    public static void debug(String message) {
+        if (message.contains("[Neon]") || message.contains("[Neon-Debug]")) {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        } else {
+            Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&7[Neon-Debug] " + message));
+        }
+    }
+
 
     public boolean reloadLocales() {
         try {
@@ -160,7 +169,7 @@ public class ConfigFile {
                 save();
             }
         } catch (Exception e) {
-            DebugUtil.debug("Failed to merge defaults for " + configName + ": " + e.getMessage());
+            debug("Failed to merge defaults for " + configName + ": " + e.getMessage());
         }
     }
 
@@ -174,7 +183,7 @@ public class ConfigFile {
 
             saveWithComments();
         } catch (IOException e) {
-            DebugUtil.debug("Failed to save config: " + configName);
+            debug("Failed to save config: " + configName);
             e.printStackTrace();
         }
     }
@@ -211,7 +220,7 @@ public class ConfigFile {
                 Files.write(file.toPath(), newLines, StandardCharsets.UTF_8);
             }
         } catch (IOException e) {
-            DebugUtil.debug("Failed to save comments for " + configName + ": " + e.getMessage());
+            debug("Failed to save comments for " + configName + ": " + e.getMessage());
         }
     }
 
@@ -230,7 +239,7 @@ public class ConfigFile {
 
             return true;
         } catch (Exception e) {
-            DebugUtil.debug(ChatColor.RED + "[Neon] Failed to reload config: " + configName);
+            debug(ChatColor.RED + "[Neon] Failed to reload config: " + configName);
             e.printStackTrace();
             return false;
         }
