@@ -3,6 +3,7 @@ package dev.jackdaw1101.neon.modules.moderation;
 import dev.jackdaw1101.neon.API.modules.events.AntiUnicodeEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.Bukkit;
@@ -85,6 +86,7 @@ public class AntiUnicodeSystem implements Listener {
         }
 
         if (event.shouldKick()) {
+            DebugUtil.debugChecked("&7"+player.getName()+" &7was kicked by anti unicode!");
             player.kickPlayer(event.getKickMessage());
         }
     }
