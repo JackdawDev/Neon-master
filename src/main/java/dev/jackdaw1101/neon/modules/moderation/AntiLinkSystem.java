@@ -1,6 +1,7 @@
 package dev.jackdaw1101.neon.modules.moderation;
 
 import dev.jackdaw1101.neon.API.modules.events.AntiLinkTriggerEvent;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.webhooks.AntiAdvertiseWebhookManager;
 import dev.jackdaw1101.neon.utils.logs.AntiAdvertiseLogger;
 import dev.jackdaw1101.neon.manager.commands.AlertManager;
@@ -62,18 +63,18 @@ public class AntiLinkSystem implements Listener {
 
             if (detectedLink != null) {
                 AntiLinkTriggerEvent event = new AntiLinkTriggerEvent(
-                    player,
-                    message,
-                    sanitizedMessage,
-                    detectedLink,
-                    plugin.getSettings().getString("ANTI-LINK.CANCEL-TYPE"),
-                    plugin.getSettings().getBoolean("ANTI-LINK.ALERT-ADMINS"),
-                    plugin.getSettings().getBoolean("ANTI-LINK.LOG"),
-                    true,
-                    plugin.getSettings().getString("ANTI-LINK.WARN-SOUND"),
-                    plugin.getSettings().getString("ANTI-LINK.ALERT-SOUND"),
-                    ColorHandler.color(plugin.getMessageManager().getString("ANTI-LINK.WARNING-MESSAGE")),
-                    ColorHandler.color(plugin.getMessageManager().getString("ANTI-LINK.ALERT-MESSAGE"))
+                        player,
+                        message,
+                        sanitizedMessage,
+                        detectedLink,
+                        plugin.getSettings().getString("ANTI-LINK.CANCEL-TYPE"),
+                        plugin.getSettings().getBoolean("ANTI-LINK.ALERT-ADMINS"),
+                        plugin.getSettings().getBoolean("ANTI-LINK.LOG"),
+                        true,
+                        plugin.getSettings().getString("ANTI-LINK.WARN-SOUND"),
+                        plugin.getSettings().getString("ANTI-LINK.ALERT-SOUND"),
+                        ColorHandler.color(plugin.getMessageManager().getString("ANTI-LINK.WARNING-MESSAGE")),
+                        ColorHandler.color(plugin.getMessageManager().getString("ANTI-LINK.ALERT-MESSAGE"))
                 );
 
                 Bukkit.getScheduler().runTask(plugin, () -> {
@@ -107,7 +108,7 @@ public class AntiLinkSystem implements Listener {
                         });
                         break;
                     default:
-                        Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Invalid CANCEL-TYPE for Anti-Link in Settings. Using 'silent' as default.");
+                        DebugUtil.debug(CC.RED + "[Neon] Invalid CANCEL-TYPE for Anti-Link in Settings. Using 'silent' as default.");
                         cancellable.setCancelled(true);
                         if (event.shouldAlertAdmins()) {
                             notifyAdmins(player, message, event);
@@ -129,16 +130,19 @@ public class AntiLinkSystem implements Listener {
 
     private void notifyAdmins(Player player, String message, AntiLinkTriggerEvent event) {
         String formattedAlert = event.getAlertMessage()
-            .replace("<player>", player.getName())
-            .replace("%message%", message)
-            .replace("%link%", event.getDetectedLink());
+                .replace("<player>", player.getName())
+                .replace("%message%", message)
+                .replace("%link%", event.getDetectedLink());
 
         String permission = this.plugin.getPermissionManager().getString("ANTI-LINK-ADMIN-ALERT");
 
         for (Player admin : Bukkit.getOnlinePlayers()) {
             if (admin != null && admin.hasPermission(permission)) {
-                admin.sendMessage(formattedAlert);
-                playSound(admin, event.getAlertSound());
+                if (!Neon.getInstance().getAlertManager().isAlertsDisabled(admin)) {
+                    admin.sendMessage(formattedAlert);
+                    playSound(admin, event.getAlertSound());
+                }
+                DebugUtil.debugChecked(formattedAlert);
             }
         }
     }
