@@ -3,6 +3,7 @@ package dev.jackdaw1101.neon.modules.automated;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import net.md_5.bungee.api.chat.*;
@@ -10,174 +11,305 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AnnouncementManager {
 
     private final Neon plugin;
-    private final Map<String, AnnouncementTask> tasks = new HashMap<>();
+    private final Map<String, AnnouncementTask> tasks = new ConcurrentHashMap<>();
+    private final Map<String, Long> lastSendTime = new ConcurrentHashMap<>();
+    private BukkitTask schedulerTask;
+    private boolean enabled;
+    private long lastReloadCheck = 0;
+    private long lastKnownLocaleModification = 0;
+
+    private final Map<String, CachedAnnouncement> announcementCache = new ConcurrentHashMap<>();
 
     public AnnouncementManager(Neon plugin) {
         this.plugin = plugin;
-        boolean isAnnouncementEnabled = (Boolean) this.plugin.getSettings().getBoolean("ANNOUNCEMENTS.ENABLED");
-        if (!isAnnouncementEnabled) return;
+        reload();
+    }
+
+    /**
+     * Reload the announcement manager
+     */
+    public void reload() {
+
+        stopAllAnnouncements();
+
+        announcementCache.clear();
+        lastSendTime.clear();
+
+        this.enabled = plugin.getSettings().getBoolean("ANNOUNCEMENTS.ENABLED");
+
+        if (!enabled) {
+            if (plugin.getSettings().getBoolean("DEBUG-MODE")) {
+                plugin.getLogger().info("Announcements are disabled in config.");
+            }
+            return;
+        }
+
+        loadAnnouncements();
+
         startDynamicScheduler();
 
+        updateLastModificationTime();
+
+        DebugUtil.debugChecked("&aAnnouncement manager reloaded with " + tasks.size() + " announcements");
+
+    }
+
+    private void updateLastModificationTime() {
+        try {
+
+            java.io.File localeFile = new java.io.File(plugin.getDataFolder(), "locale.yml");
+            if (localeFile.exists()) {
+                lastKnownLocaleModification = localeFile.lastModified();
+            }
+        } catch (Exception e) {
+
+        }
+        lastReloadCheck = System.currentTimeMillis();
+    }
+
+    private boolean shouldReload() {
+
+        if (System.currentTimeMillis() - lastReloadCheck < 30000) {
+            return false;
+        }
+
+        try {
+            java.io.File localeFile = new java.io.File(plugin.getDataFolder(), "locale.yml");
+            if (localeFile.exists() && localeFile.lastModified() > lastKnownLocaleModification) {
+                lastKnownLocaleModification = localeFile.lastModified();
+                return true;
+            }
+        } catch (Exception e) {
+
+
+        }
+
+        lastReloadCheck = System.currentTimeMillis();
+        return false;
+    }
+
+    private void loadAnnouncements() {
+        ConfigurationSection announcementsSection = plugin.getLocales().getConfig().getConfigurationSection("ANNOUNCEMENTS");
+
+        if (announcementsSection == null) {
+            DebugUtil.debugErrorChecked("No announcements section found in locale.yml");
+            return;
+        }
+
+        for (String key : announcementsSection.getKeys(false)) {
+            ConfigurationSection announcement = announcementsSection.getConfigurationSection(key);
+            if (announcement == null) continue;
+
+            cacheAnnouncement(key, announcement);
+        }
+    }
+
+    private void cacheAnnouncement(String key, ConfigurationSection section) {
+
+        List<String> text = section.getStringList("TEXT");
+        if (text == null || text.isEmpty()) {
+                DebugUtil.debugInfoChecked("Announcement '" + key + "' has no text, skipping");
+            return;
+        }
+
+        int interval = section.getInt("INTERVAL", 60);
+        if (interval < 5) {
+            interval = 60;
+            DebugUtil.debugInfoChecked("Announcement '" + key + "' interval too low, set to 60");
+
+        }
+
+        CachedAnnouncement cached = new CachedAnnouncement(
+                key,
+                interval,
+                section.getBoolean("REQUIRE-PERMISSION", false),
+                section.getString("PERMISSION", ""),
+                text,
+                section.getBoolean("HOVER", false),
+                section.getStringList("HOVER-CONTENT"),
+                section.getBoolean("CLICK-COMMAND", false),
+                section.getString("COMMAND", ""),
+                section.getBoolean("SUGGEST-COMMAND", false),
+                section.getString("COMMAND-TO-SUGGEST", ""),
+                section.getBoolean("PLAY-SOUND", false),
+                section.getString("SOUND", ""),
+                section.getBoolean("OPEN-URL", false),
+                section.getString("URL", "")
+        );
+
+        announcementCache.put(key, cached);
+
+        AnnouncementTask task = new AnnouncementTask(cached);
+        task.runTaskTimerAsynchronously(plugin, getInitialDelay(interval), interval * 20L);
+        tasks.put(key, task);
+
+        if (plugin.getSettings().getBoolean("DEBUG-MODE")) {
+            DebugUtil.debugChecked("&aLoaded announcement: " + key + " (interval: " + interval + "s)");
+        }
+    }
+
+    private long getInitialDelay(int interval) {
+
+        return (long) (Math.random() * interval * 20);
     }
 
     private void startDynamicScheduler() {
-        new BukkitRunnable() {
+        if (schedulerTask != null && !schedulerTask.isCancelled()) {
+            schedulerTask.cancel();
+        }
+
+        schedulerTask = new BukkitRunnable() {
             @Override
             public void run() {
-                updateSchedulers();
+
+                if (shouldReload()) {
+
+                    Bukkit.getScheduler().runTask(plugin, AnnouncementManager.this::reload);
+                    return;
+                }
+
+                checkForUpdates();
             }
-        }.runTaskTimerAsynchronously(plugin, 0L, 100L);
+        }.runTaskTimerAsynchronously(plugin, 100L, 100L);
     }
 
-    private void updateSchedulers() {
+    private void checkForUpdates() {
         ConfigurationSection announcementsSection = plugin.getLocales().getConfig().getConfigurationSection("ANNOUNCEMENTS");
-
         if (announcementsSection == null) return;
 
         tasks.keySet().removeIf(key -> {
-            if (!announcementsSection.contains(key)) {
+            if (!announcementsSection.contains(key) && announcementCache.containsKey(key)) {
                 tasks.get(key).cancel();
+                announcementCache.remove(key);
+                    DebugUtil.debugChecked("Removed announcement: " + key);
                 return true;
             }
             return false;
         });
 
         for (String key : announcementsSection.getKeys(false)) {
-            ConfigurationSection announcement = announcementsSection.getConfigurationSection(key);
-            if (announcement == null) continue;
+            ConfigurationSection section = announcementsSection.getConfigurationSection(key);
+            if (section == null) continue;
 
-            int interval = announcement.getInt("INTERVAL", 60);
+            int interval = section.getInt("INTERVAL", 60);
 
-            if (tasks.containsKey(key)) {
-                AnnouncementTask existingTask = tasks.get(key);
-                if (existingTask.getInterval() != interval) {
-                    existingTask.cancel();
-                    tasks.put(key, createAndScheduleTask(key, interval));
-                }
+            if (!announcementCache.containsKey(key)) {
+
+                cacheAnnouncement(key, section);
+                    DebugUtil.debugChecked("Added new announcement: " + key);
             } else {
-                tasks.put(key, createAndScheduleTask(key, interval));
+
+                CachedAnnouncement existing = announcementCache.get(key);
+                if (existing != null && existing.hasChanged(section)) {
+
+                    tasks.get(key).cancel();
+                    announcementCache.remove(key);
+                    cacheAnnouncement(key, section);
+                        DebugUtil.debugChecked("Updated announcement: " + key);
+                }
             }
         }
     }
 
-    private AnnouncementTask createAndScheduleTask(String key, int interval) {
-        AnnouncementTask task = new AnnouncementTask(key, interval);
-        task.runTaskTimerAsynchronously(plugin, 0L, interval * 20L);
-        return task;
+    private void stopAllAnnouncements() {
+        tasks.values().forEach(task -> {
+            try {
+                task.cancel();
+            } catch (Exception e) {
+
+            }
+        });
+        tasks.clear();
+
+        if (schedulerTask != null && !schedulerTask.isCancelled()) {
+            schedulerTask.cancel();
+            schedulerTask = null;
+        }
     }
 
-    private void sendAnnouncement(String key) {
-        ConfigurationSection announcement = plugin.getLocales().getConfig().getConfigurationSection("ANNOUNCEMENTS." + key);
-        if (announcement == null) return;
+    private void sendAnnouncement(CachedAnnouncement cached) {
 
-        boolean requirePermission = announcement.getBoolean("REQUIRE-PERMISSION", false);
-        String permission = announcement.getString("PERMISSION", "");
+        long now = System.currentTimeMillis();
+        Long lastSend = lastSendTime.get(cached.getKey());
+        if (lastSend != null && now - lastSend < (cached.getInterval() * 1000L) - 1000) {
+            return; // Skip if sent too recently
+        }
+        lastSendTime.put(cached.getKey(), now);
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            if (!requirePermission || player.hasPermission(permission)) {
-                sendAnnouncementToPlayer(player, announcement);
+            if (!cached.isRequirePermission() || player.hasPermission(cached.getPermission())) {
+                sendAnnouncementToPlayer(player, cached);
             }
         }
     }
 
-    private void sendAnnouncementToPlayer(Player player, ConfigurationSection announcement) {
-        boolean isdebug = plugin.getSettings().getBoolean("DEBUG-MODE");
+    private void sendAnnouncementToPlayer(Player player, CachedAnnouncement cached) {
+        boolean isDebug = DebugUtil.isDebugEnabled();
 
-        List<String> text = announcement.getStringList("TEXT");
-        boolean hover = announcement.getBoolean("HOVER", false);
-        List<String> hoverContent = announcement.getStringList("HOVER-CONTENT");
-        boolean clickCommand = announcement.getBoolean("CLICK-COMMAND", false);
-        String command = announcement.getString("COMMAND", "");
+        try {
 
-        boolean suggestCommand = announcement.getBoolean("SUGGEST-COMMAND", false);
-        String commandToSuggest = announcement.getString("COMMAND-TO-SUGGEST", "");
+            String message = String.join("\n", cached.getText());
+            message = ColorHandler.color(message);
 
-        boolean playSound = announcement.getBoolean("PLAY-SOUND", false);
-        String soundName = announcement.getString("SOUND", "");
+            BaseComponent[] components = new TextComponent[]{new TextComponent(message)};
 
-        boolean openUrl = announcement.getBoolean("OPEN-URL", false);
-        String url = announcement.getString("URL", "");
+            if (cached.isHover() && cached.getHoverContent() != null && !cached.getHoverContent().isEmpty()) {
+                components = addHoverEffect(components, cached.getHoverContent(), player);
+            }
 
-        String message = String.join("\n", text);
-        message = ColorHandler.color(message);
+            if (cached.isClickCommand() && cached.getCommand() != null && !cached.getCommand().isEmpty()) {
+                components = addClickCommand(components, cached.getCommand());
+            } else if (cached.isSuggestCommand() && cached.getCommandToSuggest() != null && !cached.getCommandToSuggest().isEmpty()) {
+                components = addSuggestCommand(components, cached.getCommandToSuggest());
+            } else if (cached.isOpenUrl() && cached.getUrl() != null && !cached.getUrl().isEmpty()) {
+                components = addOpenUrl(components, cached.getUrl());
+            }
 
-        if (text == null && isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Text content is null");
-            return;
+            player.spigot().sendMessage(components);
+
+            if (cached.isPlaySound() && cached.getSoundName() != null && !cached.getSoundName().isEmpty()) {
+                playSound(player, cached.getSoundName());
+            }
+        } catch (Exception e) {
+            if (isDebug) {
+                DebugUtil.debug("Error sending announcement '" + cached.getKey() + "' to " + player.getName() + ": " + e.getMessage());
+            }
         }
+    }
 
-        if (hover && hoverContent == null && isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Hover is enabled but the content is null");
-            return;
-        }
-
-        if (clickCommand && command == null && isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Click command enabled but command is null");
-            return;
-        }
-
-        if (openUrl && url == null && isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Open URL is enabled but the url is null");
-            return;
-        }
-
-        if (playSound && soundName == null && isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Sound Enabled but theres no sound");
-            return;
-        }
-
-        if (suggestCommand && commandToSuggest == null && isdebug) {
-            Bukkit.getConsoleSender().sendMessage(CC.RED + "[Neon] Announcement Error: Command suggestion enabled but the command to suggest is null");
-            return;
-        }
-
-        BaseComponent[] components = new TextComponent[]{new TextComponent(message)};
-
-
-        if (hover && hoverContent != null) {
-            components = addHoverEffect(components, hoverContent, player);
-        }
-
-
-        if (clickCommand && command != null && !command.isEmpty()) {
-            components = addClickCommand(components, command);
-        } else if (suggestCommand && commandToSuggest != null && !commandToSuggest.isEmpty()) {
-            components = addSuggestCommand(components, commandToSuggest);
-        } else if (openUrl && url != null && !url.isEmpty()) {
-            components = addOpenUrl(components, url);
-        }
-
-        player.spigot().sendMessage(components);
-
-        if (playSound) {
+    private void playSound(Player player, String soundName) {
+        try {
             if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-                if (playSound) {
-                    ISound.playSound(player, soundName, 1.0f, 1.0f);
-                }
+                ISound.playSound(player, soundName, 1.0f, 1.0f);
             } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-                if (playSound) {
-                    XSounds.playSound(player, soundName, 1.0f, 1.0f);
-                }
+                XSounds.playSound(player, soundName, 1.0f, 1.0f);
+            }
+        } catch (Exception e) {
+            if (plugin.getSettings().getBoolean("DEBUG-MODE")) {
+                DebugUtil.debug("Failed to play sound '" + soundName + "': " + e.getMessage());
             }
         }
     }
 
     private BaseComponent[] addHoverEffect(BaseComponent[] components, List<String> hoverContent, Player player) {
         String hoverText = hoverContent.stream()
-                .map(line -> ColorHandler.color(line))
+                .map(ColorHandler::color)
                 .reduce((line1, line2) -> line1 + "\n" + line2)
                 .orElse("");
 
         for (BaseComponent component : components) {
-            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hoverText).create()));
+            component.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                    new ComponentBuilder(hoverText).create()));
         }
         return components;
     }
@@ -204,24 +336,111 @@ public class AnnouncementManager {
     }
 
     /**
-     * Inner class for managing individual announcement tasks with an interval.
+     * Clean up resources when plugin disables
      */
-    private class AnnouncementTask extends BukkitRunnable {
+    public void shutdown() {
+        stopAllAnnouncements();
+        announcementCache.clear();
+        lastSendTime.clear();
+    }
+
+    /**
+     * Inner class for caching announcement data
+     */
+    private static class CachedAnnouncement {
         private final String key;
         private final int interval;
+        private final boolean requirePermission;
+        private final String permission;
+        private final List<String> text;
+        private final boolean hover;
+        private final List<String> hoverContent;
+        private final boolean clickCommand;
+        private final String command;
+        private final boolean suggestCommand;
+        private final String commandToSuggest;
+        private final boolean playSound;
+        private final String soundName;
+        private final boolean openUrl;
+        private final String url;
 
-        public AnnouncementTask(String key, int interval) {
+        public CachedAnnouncement(String key, int interval, boolean requirePermission, String permission,
+                                  List<String> text, boolean hover, List<String> hoverContent,
+                                  boolean clickCommand, String command, boolean suggestCommand,
+                                  String commandToSuggest, boolean playSound, String soundName,
+                                  boolean openUrl, String url) {
             this.key = key;
             this.interval = interval;
+            this.requirePermission = requirePermission;
+            this.permission = permission != null ? permission : "";
+            this.text = text != null ? text : java.util.Collections.emptyList();
+            this.hover = hover;
+            this.hoverContent = hoverContent != null ? hoverContent : java.util.Collections.emptyList();
+            this.clickCommand = clickCommand;
+            this.command = command != null ? command : "";
+            this.suggestCommand = suggestCommand;
+            this.commandToSuggest = commandToSuggest != null ? commandToSuggest : "";
+            this.playSound = playSound;
+            this.soundName = soundName != null ? soundName : "";
+            this.openUrl = openUrl;
+            this.url = url != null ? url : "";
+        }
+
+        public String getKey() { return key; }
+        public int getInterval() { return interval; }
+        public boolean isRequirePermission() { return requirePermission; }
+        public String getPermission() { return permission; }
+        public List<String> getText() { return text; }
+        public boolean isHover() { return hover; }
+        public List<String> getHoverContent() { return hoverContent; }
+        public boolean isClickCommand() { return clickCommand; }
+        public String getCommand() { return command; }
+        public boolean isSuggestCommand() { return suggestCommand; }
+        public String getCommandToSuggest() { return commandToSuggest; }
+        public boolean isPlaySound() { return playSound; }
+        public String getSoundName() { return soundName; }
+        public boolean isOpenUrl() { return openUrl; }
+        public String getUrl() { return url; }
+
+        public boolean hasChanged(ConfigurationSection section) {
+            return interval != section.getInt("INTERVAL", 60) ||
+                    requirePermission != section.getBoolean("REQUIRE-PERMISSION", false) ||
+                    !permission.equals(section.getString("PERMISSION", "")) ||
+                    hover != section.getBoolean("HOVER", false) ||
+                    clickCommand != section.getBoolean("CLICK-COMMAND", false) ||
+                    !command.equals(section.getString("COMMAND", "")) ||
+                    suggestCommand != section.getBoolean("SUGGEST-COMMAND", false) ||
+                    !commandToSuggest.equals(section.getString("COMMAND-TO-SUGGEST", "")) ||
+                    playSound != section.getBoolean("PLAY-SOUND", false) ||
+                    !soundName.equals(section.getString("SOUND", "")) ||
+                    openUrl != section.getBoolean("OPEN-URL", false) ||
+                    !url.equals(section.getString("URL", ""));
+        }
+    }
+
+    /**
+     * Inner class for managing individual announcement tasks
+     */
+    private class AnnouncementTask extends BukkitRunnable {
+        private final CachedAnnouncement cached;
+
+        public AnnouncementTask(CachedAnnouncement cached) {
+            this.cached = cached;
         }
 
         public int getInterval() {
-            return interval;
+            return cached.getInterval();
         }
 
         @Override
         public void run() {
-            sendAnnouncement(key);
+
+            if (!enabled) {
+                this.cancel();
+                return;
+            }
+
+            sendAnnouncement(cached);
         }
     }
 }
