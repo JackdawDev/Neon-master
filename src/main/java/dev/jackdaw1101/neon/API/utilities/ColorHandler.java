@@ -1,10 +1,8 @@
 package dev.jackdaw1101.neon.API.utilities;
 
 import dev.jackdaw1101.neon.Neon;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,9 +17,6 @@ public class ColorHandler {
     public static final String SECONDTHEME = Neon.getInstance().getMessageManager().getString("SECOND-THEME");
     public static final String THIRDTHEME = Neon.getInstance().getMessageManager().getString("THIRD-THEME");
 
-    private static final MiniMessage miniMessage = MiniMessage.miniMessage();
-    private static final LegacyComponentSerializer legacySerializer = LegacyComponentSerializer.legacySection();
-
     static {
         if (USE_BUKKIT_CHAT_COLOR) {
             Bukkit.getConsoleSender().sendMessage(CC.GRAY + "[Neon] Using legacy color formatting as you are running a 1.15 or below Server");
@@ -31,11 +26,16 @@ public class ColorHandler {
     }
 
     private static boolean isLegacyVersion() {
-        String version = Bukkit.getBukkitVersion().split("-")[0];
-        String[] split = version.split("\\.");
-        int major = Integer.parseInt(split[0]);
-        int minor = Integer.parseInt(split[1]);
-        return major < 1 || (major == 1 && minor < 16);
+        try {
+            String version = Bukkit.getBukkitVersion().split("-")[0];
+            String[] split = version.split("\\.");
+            int major = Integer.parseInt(split[0]);
+            int minor = Integer.parseInt(split[1]);
+            return major < 1 || (major == 1 && minor < 16);
+        } catch (Exception e) {
+
+            return false;
+        }
     }
 
     /**
@@ -47,51 +47,36 @@ public class ColorHandler {
         if (text == null || text.isEmpty()) return "";
 
         if (USE_BUKKIT_CHAT_COLOR) {
-            return org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
+            return ChatColor.translateAlternateColorCodes('&', text);
         } else {
-            return applyHexColors(text);
+            return processModernColors(text);
         }
     }
 
     /**
-     * Colorizes text using MiniMessage formatting
+     * Colorizes text and returns a legacy string (for APIs that need it)
      * @param text The text to colorize
-     * @return Colorized Component
+     * @return Colorized text in legacy format
      */
-    public static Component colorComponent(String text) {
-        if (text == null || text.isEmpty()) return Component.empty();
-        return miniMessage.deserialize(applyPlaceholders(text));
+    public static String colorLegacy(String text) {
+        return color(text);
     }
 
     /**
-     * Converts a MiniMessage Component to legacy formatted string
-     * @param component The component to convert
-     * @return Legacy formatted string
+     * Main processing method for modern Minecraft versions (1.16+)
      */
-    public static String componentToLegacy(Component component) {
-        return legacySerializer.serialize(component);
-    }
+    private static String processModernColors(String text) {
 
-    private static String applyHexColors(String text) {
-        try {
-            Component component = miniMessage.deserialize(text);
-            text = legacySerializer.serialize(component);
-            text = org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
-            text = replaceAmpersandHexColors(text);
-            text = replaceHtmlHexColors(text);
-            text = replaceMiniMessageGradient(text);
-            text = replaceRainbowColors(text);
-            text = replaceNamedColors(text);
-            text = applyPlaceholders(text);
-        } catch (Exception e) {
-            text = org.bukkit.ChatColor.translateAlternateColorCodes('&', text);
-            text = replaceAmpersandHexColors(text);
-            text = replaceHtmlHexColors(text);
-            text = replaceMiniMessageGradient(text);
-            text = replaceRainbowColors(text);
-            text = replaceNamedColors(text);
-            text = applyPlaceholders(text);
-        }
+        text = applyPlaceholders(text);
+
+        text = processNamedColors(text);
+        text = processHexColorTags(text);
+        text = processInlineHexColors(text);
+        text = processRainbowTags(text);
+        text = processGradientTags(text);
+
+        text = ChatColor.translateAlternateColorCodes('&', text);
+
         return text;
     }
 
@@ -116,19 +101,24 @@ public class ColorHandler {
         NAMED_COLORS.put("white", "FFFFFF");
     }
 
-    private static String replaceNamedColors(String input) {
-        Pattern namedColorPattern = Pattern.compile("<(black|dark_blue|dark_green|dark_aqua|dark_red|dark_purple|gold|gray|dark_gray|blue|green|aqua|red|light_purple|yellow|white)>(.*?)</\\1>");
+    /**
+     * Process named color tags like <red>text</red>
+     */
+    private static String processNamedColors(String input) {
+        Pattern namedColorPattern = Pattern.compile("<(black|dark_blue|dark_green|dark_aqua|dark_red|dark_purple|gold|gray|dark_gray|blue|green|aqua|red|light_purple|yellow|white)>(.*?)</\\1>", Pattern.DOTALL);
         Matcher matcher = namedColorPattern.matcher(input);
         StringBuffer buffer = new StringBuffer();
 
         while (matcher.find()) {
             String colorName = matcher.group(1);
             String text = matcher.group(2);
-
             String hexColor = NAMED_COLORS.get(colorName);
+
             if (hexColor != null) {
-                String formattedColor = hexToChatColor(hexColor);
-                matcher.appendReplacement(buffer, formattedColor + text);
+
+                text = processModernColors(text);
+                String replacement = hexToMinecraftFormat(hexColor) + text;
+                matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement));
             }
         }
         matcher.appendTail(buffer);
@@ -137,28 +127,10 @@ public class ColorHandler {
     }
 
     /**
-     * Converts hex color codes of format &#0000FF to Minecraft color codes.
+     * Process HTML-style hex color tags like <#FF0000>text</#FF0000>
      */
-    private static String replaceAmpersandHexColors(String input) {
-        Pattern hexPattern = Pattern.compile("&#([0-9a-fA-F]{6})");
-        Matcher matcher = hexPattern.matcher(input);
-        StringBuffer buffer = new StringBuffer();
-
-        while (matcher.find()) {
-            String hexCode = matcher.group(1);
-            String formattedColor = hexToChatColor(hexCode);
-            matcher.appendReplacement(buffer, formattedColor);
-        }
-        matcher.appendTail(buffer);
-
-        return buffer.toString();
-    }
-
-    /**
-     * Converts hex color codes of format <#0000FF>Message</#FFFFFF> to Minecraft color codes.
-     */
-    private static String replaceHtmlHexColors(String input) {
-        Pattern hexPattern = Pattern.compile("<#([0-9a-fA-F]{6})>(.*?)</#([0-9a-fA-F]{6})>");
+    private static String processHexColorTags(String input) {
+        Pattern hexPattern = Pattern.compile("<#([0-9a-fA-F]{6})>(.*?)</#([0-9a-fA-F]{6})>", Pattern.DOTALL);
         Matcher matcher = hexPattern.matcher(input);
         StringBuffer buffer = new StringBuffer();
 
@@ -167,13 +139,87 @@ public class ColorHandler {
             String text = matcher.group(2);
             String endHex = matcher.group(3);
 
+            text = processModernColors(text);
+
             if (!startHex.equalsIgnoreCase(endHex)) {
                 String gradientText = applyGradient(startHex, endHex, text);
-                matcher.appendReplacement(buffer, gradientText);
+                matcher.appendReplacement(buffer, Matcher.quoteReplacement(gradientText));
             } else {
-                String solidColorText = hexToChatColor(startHex) + text;
-                matcher.appendReplacement(buffer, solidColorText);
+                String solidColorText = hexToMinecraftFormat(startHex) + text;
+                matcher.appendReplacement(buffer, Matcher.quoteReplacement(solidColorText));
             }
+        }
+        matcher.appendTail(buffer);
+
+        return buffer.toString();
+    }
+
+    /**
+     * Process inline hex colors like &#FF0000 or &#FF0000text (the format you mentioned)
+     * This handles patterns like &#A40000O&#AD0000w correctly
+     */
+    private static String processInlineHexColors(String input) {
+
+        Pattern inlineHexPattern = Pattern.compile("&#([0-9a-fA-F]{6})([^&]*)");
+        Matcher matcher = inlineHexPattern.matcher(input);
+        StringBuffer buffer = new StringBuffer();
+
+        while (matcher.find()) {
+            String hexCode = matcher.group(1);
+            String followingText = matcher.group(2);
+
+            String replacement = hexToMinecraftFormat(hexCode);
+            if (!followingText.isEmpty()) {
+
+                followingText = processModernColors(followingText);
+                replacement += followingText;
+            }
+
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(buffer);
+
+        return buffer.toString();
+    }
+
+    /**
+     * Process gradient tags like <gradient:#FF0000:#00FF00>text</gradient>
+     */
+    private static String processGradientTags(String input) {
+        Pattern gradientPattern = Pattern.compile("<gradient:#([0-9a-fA-F]{6}):#([0-9a-fA-F]{6})>(.*?)</gradient>", Pattern.DOTALL);
+        Matcher matcher = gradientPattern.matcher(input);
+        StringBuffer buffer = new StringBuffer();
+
+        while (matcher.find()) {
+            String startHex = matcher.group(1);
+            String endHex = matcher.group(2);
+            String text = matcher.group(3);
+
+            text = processModernColors(text);
+            String gradientText = applyGradient(startHex, endHex, text);
+
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(gradientText));
+        }
+        matcher.appendTail(buffer);
+
+        return buffer.toString();
+    }
+
+    /**
+     * Process rainbow tags like <rainbow>text</rainbow>
+     */
+    private static String processRainbowTags(String input) {
+        Pattern rainbowPattern = Pattern.compile("<rainbow>(.*?)</rainbow>", Pattern.DOTALL);
+        Matcher matcher = rainbowPattern.matcher(input);
+        StringBuffer buffer = new StringBuffer();
+
+        while (matcher.find()) {
+            String text = matcher.group(1);
+
+            text = processModernColors(text);
+            String rainbowText = applyRainbow(text);
+
+            matcher.appendReplacement(buffer, Matcher.quoteReplacement(rainbowText));
         }
         matcher.appendTail(buffer);
 
@@ -184,8 +230,10 @@ public class ColorHandler {
      * Applies a gradient effect to the text, transitioning from startColor to endColor.
      */
     private static String applyGradient(String startHex, String endHex, String text) {
+        if (text == null || text.isEmpty()) return "";
+
         int length = text.length();
-        if (length == 0) return "";
+        if (length == 1) return hexToMinecraftFormat(startHex) + text;
 
         int[] startRGB = hexToRGB(startHex);
         int[] endRGB = hexToRGB(endHex);
@@ -193,75 +241,66 @@ public class ColorHandler {
 
         for (int i = 0; i < length; i++) {
             double ratio = (double) i / (length - 1);
-            int r = (int) (startRGB[0] + ratio * (endRGB[0] - startRGB[0]));
-            int g = (int) (startRGB[1] + ratio * (endRGB[1] - startRGB[1]));
-            int b = (int) (startRGB[2] + ratio * (endRGB[2] - startRGB[2]));
+            int r = (int) Math.round(startRGB[0] + ratio * (endRGB[0] - startRGB[0]));
+            int g = (int) Math.round(startRGB[1] + ratio * (endRGB[1] - startRGB[1]));
+            int b = (int) Math.round(startRGB[2] + ratio * (endRGB[2] - startRGB[2]));
+
+            r = Math.max(0, Math.min(255, r));
+            g = Math.max(0, Math.min(255, g));
+            b = Math.max(0, Math.min(255, b));
 
             String hexColor = String.format("%02X%02X%02X", r, g, b);
-            gradientText.append(hexToChatColor(hexColor)).append(text.charAt(i));
+            gradientText.append(hexToMinecraftFormat(hexColor)).append(text.charAt(i));
         }
 
         return gradientText.toString();
-    }
-
-    private static String replaceRainbowColors(String input) {
-        Pattern rainbowPattern = Pattern.compile("<rainbow>(.*?)</rainbow>");
-        Matcher matcher = rainbowPattern.matcher(input);
-        StringBuffer buffer = new StringBuffer();
-
-        while (matcher.find()) {
-            String text = matcher.group(1);
-            String rainbowText = applyRainbow(text);
-            matcher.appendReplacement(buffer, rainbowText);
-        }
-        matcher.appendTail(buffer);
-
-        return buffer.toString();
     }
 
     /**
      * Applies a rainbow effect to the text.
      */
     private static String applyRainbow(String text) {
-        int length = text.length();
-        if (length == 0) return "";
+        if (text == null || text.isEmpty()) return "";
 
+        int length = text.length();
         String[] rainbowColors = {
-            "FF0000",
-            "FF7F00",
-            "FFFF00",
-            "00FF00",
-            "0000FF",
-            "4B0082",
-            "9400D3"
+                "FF0000", // Red
+                "FF7F00", // Orange
+                "FFFF00", // Yellow
+                "00FF00", // Green
+                "0000FF", // Blue
+                "4B0082", // Indigo
+                "9400D3"  // Violet
         };
 
         StringBuilder rainbowText = new StringBuilder();
 
         for (int i = 0; i < length; i++) {
             String hexColor = rainbowColors[i % rainbowColors.length];
-            rainbowText.append(hexToChatColor(hexColor)).append(text.charAt(i));
+            rainbowText.append(hexToMinecraftFormat(hexColor)).append(text.charAt(i));
         }
 
         return rainbowText.toString();
     }
 
-    private static String replaceMiniMessageGradient(String input) {
-        Pattern miniMessagePattern = Pattern.compile("<gradient:#([0-9a-fA-F]{6}):#([0-9a-fA-F]{6})>(.*?)</gradient>");
-        Matcher matcher = miniMessagePattern.matcher(input);
-        StringBuffer buffer = new StringBuffer();
+    /**
+     * Converts a hex color string to Minecraft's internal format (net.md_5.bungee.api.ChatColor style)
+     * This format is required for hex colors to work properly in 1.16+
+     */
+    private static String hexToMinecraftFormat(String hex) {
 
-        while (matcher.find()) {
-            String startHex = matcher.group(1);
-            String endHex = matcher.group(2);
-            String text = matcher.group(3);
-
-            String gradientText = applyGradient(startHex, endHex, text);
-            matcher.appendReplacement(buffer, gradientText);
+        hex = hex.toUpperCase();
+        if (hex.length() != 6) {
+            return ""; // Invalid hex
         }
-        matcher.appendTail(buffer);
 
-        return buffer.toString();
+        return "§x" +
+                "§" + hex.charAt(0) +
+                "§" + hex.charAt(1) +
+                "§" + hex.charAt(2) +
+                "§" + hex.charAt(3) +
+                "§" + hex.charAt(4) +
+                "§" + hex.charAt(5);
     }
 
     /**
@@ -269,25 +308,38 @@ public class ColorHandler {
      */
     private static int[] hexToRGB(String hex) {
         return new int[]{
-            Integer.parseInt(hex.substring(0, 2), 16),
-            Integer.parseInt(hex.substring(2, 4), 16),
-            Integer.parseInt(hex.substring(4, 6), 16)
+                Integer.parseInt(hex.substring(0, 2), 16),
+                Integer.parseInt(hex.substring(2, 4), 16),
+                Integer.parseInt(hex.substring(4, 6), 16)
         };
     }
 
-    private static String hexToChatColor(String hex) {
-        char colorChar = '§';
-        return colorChar + "x"
-            + colorChar + hex.charAt(0) + colorChar + hex.charAt(1)
-            + colorChar + hex.charAt(2) + colorChar + hex.charAt(3)
-            + colorChar + hex.charAt(4) + colorChar + hex.charAt(5);
+    private static String applyPlaceholders(String text) {
+        if (text == null) return "";
+        return text
+                .replace("{prefix}", PREFIX != null ? PREFIX : "")
+                .replace("{main_theme}", MAINTHEME != null ? MAINTHEME : "")
+                .replace("{second_theme}", SECONDTHEME != null ? SECONDTHEME : "")
+                .replace("{third_theme}", THIRDTHEME != null ? THIRDTHEME : "");
     }
 
-    private static String applyPlaceholders(String text) {
-        return text
-            .replace("{prefix}", PREFIX)
-            .replace("{main_theme}", MAINTHEME)
-            .replace("{second_theme}", SECONDTHEME)
-            .replace("{third_theme}", THIRDTHEME);
+    /**
+     * Strips all color codes from a string
+     * @param text The text to strip colors from
+     * @return Text without any color codes
+     */
+    public static String stripColor(String text) {
+        if (text == null) return "";
+        return ChatColor.stripColor(text);
+    }
+
+    /**
+     * Translates alternate color codes using the specified character
+     * @param altChar The alternate color code character
+     * @param text The text to translate
+     * @return Translated text
+     */
+    public static String translateAlternateColorCodes(char altChar, String text) {
+        return ChatColor.translateAlternateColorCodes(altChar, text);
     }
 }
