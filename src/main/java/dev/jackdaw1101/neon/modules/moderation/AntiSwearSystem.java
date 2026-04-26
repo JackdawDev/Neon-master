@@ -9,6 +9,8 @@ import dev.jackdaw1101.neon.manager.commands.AlertManager;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.implementions.IAntiSwearImpl;
+import dev.jackdaw1101.neon.API.modules.moderation.IAntiSwear;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.Bukkit;
@@ -27,6 +29,7 @@ public class AntiSwearSystem implements Listener {
     private final Neon plugin;
     private final AlertManager alertManager;
     private final SwearManager swearManager;
+    private final IAntiSwear antiSwearAPI;
     private final Pattern ignorePattern;
     private final Set<String> temporaryBlacklist = new HashSet<>();
     private final Set<String> temporaryWhitelist = new HashSet<>();
@@ -35,133 +38,95 @@ public class AntiSwearSystem implements Listener {
         this.plugin = plugin;
         this.alertManager = alertManager;
         this.swearManager = swearManager;
+        this.antiSwearAPI = new IAntiSwearImpl(plugin, swearManager);
         this.ignorePattern = Pattern.compile("[^a-zA-Z]");
         Bukkit.getPluginManager().registerEvents(this, plugin);
     }
 
+    public IAntiSwear getAPI() {
+        return antiSwearAPI;
+    }
 
     public void addToBlacklist(String word) {
-        List<String> blacklist = getBlacklist();
-        if (!blacklist.contains(word.toLowerCase())) {
-            blacklist.add(word.toLowerCase());
-            plugin.getSettings().set("ANTI-SWEAR.BLACKLIST", blacklist);
-            plugin.getSettings().save();
-        }
+        antiSwearAPI.addToBlacklist(word);
     }
 
     public void removeFromBlacklist(String word) {
-        List<String> blacklist = getBlacklist();
-        if (blacklist.remove(word.toLowerCase())) {
-            plugin.getSettings().set("ANTI-SWEAR.BLACKLIST", blacklist);
-            plugin.getSettings().save();
-        }
+        antiSwearAPI.removeFromBlacklist(word);
     }
 
     public void addToWhitelist(String word) {
-        List<String> whitelist = getWhitelist();
-        if (!whitelist.contains(word.toLowerCase())) {
-            whitelist.add(word.toLowerCase());
-            plugin.getSettings().set("ANTI-SWEAR.WHITELIST", whitelist);
-            plugin.getSettings().save();
-        }
+        antiSwearAPI.addToWhitelist(word);
     }
 
     public void removeFromWhitelist(String word) {
-        List<String> whitelist = getWhitelist();
-        if (whitelist.remove(word.toLowerCase())) {
-            plugin.getSettings().set("ANTI-SWEAR.WHITELIST", whitelist);
-            plugin.getSettings().save();
-        }
+        antiSwearAPI.removeFromWhitelist(word);
     }
 
     public void addTemporaryBlacklistWord(String word) {
+        antiSwearAPI.addTemporaryBlacklistWord(word);
         temporaryBlacklist.add(word.toLowerCase());
     }
 
     public void removeTemporaryBlacklistWord(String word) {
+        antiSwearAPI.removeTemporaryBlacklistWord(word);
         temporaryBlacklist.remove(word.toLowerCase());
     }
 
     public void addTemporaryWhitelistWord(String word) {
+        antiSwearAPI.addTemporaryWhitelistWord(word);
         temporaryWhitelist.add(word.toLowerCase());
     }
 
     public void removeTemporaryWhitelistWord(String word) {
+        antiSwearAPI.removeTemporaryWhitelistWord(word);
         temporaryWhitelist.remove(word.toLowerCase());
     }
 
     public void clearTemporaryBlacklist() {
+        antiSwearAPI.clearTemporaryBlacklist();
         temporaryBlacklist.clear();
     }
 
     public void clearTemporaryWhitelist() {
+        antiSwearAPI.clearTemporaryWhitelist();
         temporaryWhitelist.clear();
     }
 
     public List<String> getBlacklist() {
-        return plugin.getSettings().getStringList("ANTI-SWEAR.BLACKLIST");
+        return antiSwearAPI.getBlacklist();
     }
 
     public List<String> getWhitelist() {
-        return plugin.getSettings().getStringList("ANTI-SWEAR.WHITELIST");
-    }
-
-    /**
-     * Checks if a player's message contains any swear words
-     * @param player The player to check permissions for
-     * @param message The message to check
-     * @return true if the message contains a swear word and player doesn't have bypass permission, false otherwise
-     */
-    public boolean checkForSwear(Player player, String message) {
-
-        if (player.hasPermission(plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
-            return false;
-        }
-
-
-        String sanitizedMessage = sanitizeMessage(message.toLowerCase());
-        List<String> blacklist = getCombinedBlacklist();
-        List<String> whitelist = getCombinedWhitelist();
-
-
-        for (String swear : blacklist) {
-
-            if (whitelist.stream().anyMatch(sanitizedMessage::contains)) {
-                continue;
-            }
-
-
-            if (sanitizedMessage.contains(swear)) {
-                return true;
-            }
-        }
-
-        return false;
+        return antiSwearAPI.getWhitelist();
     }
 
     public Set<String> getTemporaryBlacklist() {
-        return Collections.unmodifiableSet(temporaryBlacklist);
+        return antiSwearAPI.getTemporaryBlacklist();
     }
 
     public Set<String> getTemporaryWhitelist() {
-        return Collections.unmodifiableSet(temporaryWhitelist);
+        return antiSwearAPI.getTemporaryWhitelist();
     }
 
     public int getSwearStrikes(Player player) {
-        return swearManager.getStrikes(player);
+        return antiSwearAPI.getSwearStrikes(player);
     }
 
     public void resetSwearStrikes(Player player) {
-        swearManager.resetStrikes(player);
+        antiSwearAPI.resetSwearStrikes(player);
     }
 
     public void setSwearStrikes(Player player, int strikes) {
-        swearManager.resetStrikes(player);
-        for (int i = 0; i < strikes; i++) {
-            swearManager.addSwear(player);
-        }
+        antiSwearAPI.setSwearStrikes(player, strikes);
     }
 
+    public boolean checkForSwear(Player player, String message) {
+        if (player.hasPermission(plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
+            return false;
+        }
+        return antiSwearAPI.containsSwear(message);
+    }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
@@ -181,53 +146,65 @@ public class AntiSwearSystem implements Listener {
         handleSwearCheck(event.getPlayer(), event.getMessage(), event);
     }
 
+    private String prepareMessageForCheck(String message) {
+        boolean ignoreSpaces = plugin.getSettings().getBoolean("ANTI-SWEAR.IGNORE-SPACES");
+
+        if (ignoreSpaces) {
+            // Remove all spaces for bypass detection
+            return message.replaceAll("\\s+", "");
+        }
+        return message;
+    }
 
     private void handleSwearCheck(Player player, String message, Cancellable cancellable) {
         if (player.hasPermission(plugin.getPermissionManager().getString("ANTI-SWEAR-BYPASS"))) {
             return;
         }
 
-        String sanitizedMessage = sanitizeMessage(message.toLowerCase());
-        List<String> blacklist = getCombinedBlacklist();
-        List<String> whitelist = getCombinedWhitelist();
-        String censorSymbol = plugin.getSettings().getString("ANTI-SWEAR.CENSOR.SYMBOL");
+        String messageToCheck = prepareMessageForCheck(message);
+
+        if (!antiSwearAPI.containsSwear(messageToCheck)) {
+            return;
+        }
+
+        String detectedWord = findDetectedWord(messageToCheck);
+        String censoredMessage = antiSwearAPI.censorMessage(message);
+
+        SwearDetectEvent detectEvent = new SwearDetectEvent(
+                player,
+                message,
+                detectedWord,
+                censoredMessage
+        );
+
+        // Call event synchronously
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            Bukkit.getPluginManager().callEvent(detectEvent);
+        });
+
+        if (!detectEvent.isCancelled()) {
+            handleSwearViolation(
+                    player,
+                    detectEvent.getMessage(),
+                    detectEvent.getDetectedWord(),
+                    plugin.getSettings().getString("ANTI-SWEAR.CENSOR.SYMBOL"),
+                    cancellable,
+                    detectEvent.shouldNotifyAdmins(),
+                    detectEvent.shouldLogToConsole()
+            );
+        }
+    }
+
+    private String findDetectedWord(String message) {
+        String sanitized = antiSwearAPI.sanitizeMessage(message);
+        List<String> blacklist = antiSwearAPI.getBlacklist();
 
         for (String swear : blacklist) {
-            if (whitelist.stream().anyMatch(sanitizedMessage::contains)) {
-                continue;
-            }
-
-            if (sanitizedMessage.contains(swear)) {
-
-                String censored = sanitizedMessage.replaceAll("(?i)" + Pattern.quote(swear),
-                    new String(new char[swear.length()]).replace("\0", censorSymbol));
-
-
-                    SwearDetectEvent detectEvent = new SwearDetectEvent(
-                    player,
-                    message,
-                    swear,
-                    censored
-                );
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    Bukkit.getPluginManager().callEvent(detectEvent);
-                });
-
-
-                if (!detectEvent.isCancelled()) {
-                    handleSwearViolation(
-                        player,
-                        detectEvent.getMessage(),
-                        detectEvent.getDetectedWord(),
-                        censorSymbol,
-                        cancellable,
-                        detectEvent.shouldNotifyAdmins(),
-                        detectEvent.shouldLogToConsole()
-                    );
-                }
-                return;
+            if (sanitized.contains(swear)) {
+                return swear;
             }
         }
+        return "unknown";
     }
 
     private void handleSwearViolation(Player player, String originalMessage, String swearWord,
@@ -241,7 +218,7 @@ public class AntiSwearSystem implements Listener {
 
         switch (cancelType) {
             case "censor":
-                String censoredMessage = censorMessage(originalMessage, swearWord, censorSymbol);
+                String censoredMessage = antiSwearAPI.censorMessage(originalMessage);
                 AntiSwearWebhookManager webhookManager = new AntiSwearWebhookManager(plugin);
                 webhookManager.sendWebhook(player, originalMessage, "censor");
 
@@ -281,77 +258,25 @@ public class AntiSwearSystem implements Listener {
         if (strikes >= punishLimit && punishEnabled) {
             String command = plugin.getSettings().getString("PUNISH.COMMAND");
 
-
             SwearPunishEvent event = new SwearPunishEvent(player, "", strikes, command);
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                    Bukkit.getPluginManager().callEvent(event);
-                });
 
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                Bukkit.getPluginManager().callEvent(event);
+            });
 
             String finalCommand = event.getPunishCommand();
 
             Bukkit.getScheduler().runTask(plugin, () ->
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand.replace("%player%", player.getName())));
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalCommand.replace("%player%", player.getName())));
             swearManager.resetStrikes(player);
-        }
-    }
-
-
-    private String sanitizeMessage(String message) {
-        boolean threeReturnE = plugin.getSettings().getBoolean("ANTI-SWEAR.SENSITIVE-CHECK-THREE-RETURN-E");
-
-        if (threeReturnE) {
-            message = message
-                .replace("3", "e")
-                .replace("1", "i")
-                .replace("!", "i")
-                .replace("@", "a")
-                .replace("7", "t")
-                .replace("0", "o")
-                .replace("5", "s")
-                .replace("$", "s")
-                .replace("8", "b");
-        } else {
-            message = message
-                .replace("3", "s")
-                .replace("1", "i")
-                .replace("!", "i")
-                .replace("@", "a")
-                .replace("7", "t")
-                .replace("0", "o")
-                .replace("5", "s")
-                .replace("$", "s")
-                .replace("8", "b");
-        }
-
-        return message.replaceAll("\\p{Punct}|\\d", "").trim();
-    }
-
-    private String censorMessage(String message, String swear, String censorSymbol) {
-        String cleanedSwear = ignorePattern.matcher(swear).replaceAll("").toLowerCase();
-        StringBuilder replacement = new StringBuilder();
-        for (int i = 0; i < swear.length(); i++) {
-            replacement.append(censorSymbol);
-        }
-
-        StringBuilder regexBuilder = new StringBuilder("(?i)");
-        for (char c : cleanedSwear.toCharArray()) {
-            regexBuilder.append("[^a-zA-Z]*");
-            regexBuilder.append(Pattern.quote(String.valueOf(c)));
-        }
-
-        try {
-            return message.replaceAll(regexBuilder.toString(), replacement.toString());
-        } catch (Exception e) {
-            return message;
         }
     }
 
     private void notifyAdmins(Player player, String message) {
         String alert = plugin.getMessageManager().getString("ADMIN-ALERT");
         String formattedAlert = ColorHandler.color(alert
-            .replace("<player>", player.getName())
-            .replace("%message%", message));
+                .replace("<player>", player.getName())
+                .replace("%message%", message));
 
         String permission = plugin.getPermissionManager().getString("ADMIN-ALERT");
 
@@ -365,7 +290,7 @@ public class AntiSwearSystem implements Listener {
 
     private void playWarnSound(Player player) {
         if (plugin.getSettings().getBoolean("ISOUNDS-UTIL") &&
-            plugin.getSettings().getBoolean("ANTI-SWEAR.WARN-SOUND-ENABLED")) {
+                plugin.getSettings().getBoolean("ANTI-SWEAR.WARN-SOUND-ENABLED")) {
             ISound.playSound(player, plugin.getSettings().getString("ANTI-SWEAR.WARN-SOUND"), 1.0f, 1.0f);
         } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
             XSounds.playSound(player, plugin.getSettings().getString("ANTI-SWEAR.WARN-SOUND"), 1.0f, 1.0f);
@@ -376,7 +301,7 @@ public class AntiSwearSystem implements Listener {
         if (plugin.getSettings().getBoolean("ANTI-SWEAR.ALERT-SOUND-ENABLED")) {
             if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
                 admin.playSound(admin.getLocation(),
-                    Sound.valueOf(plugin.getSettings().getString("ANTI-SWEAR.ALERT-SOUND")), 1.0f, 1.0f);
+                        Sound.valueOf(plugin.getSettings().getString("ANTI-SWEAR.ALERT-SOUND")), 1.0f, 1.0f);
             } else if (plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
                 XSounds.playSound(admin, plugin.getSettings().getString("ANTI-SWEAR.ALERT-SOUND"), 1.0f, 1.0f);
             }
