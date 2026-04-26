@@ -1,30 +1,31 @@
 package dev.jackdaw1101.neon.modules.chat;
 
-import dev.jackdaw1101.neon.API.modules.events.ChatMessageEvent;
+import dev.jackdaw1101.neon.API.modules.events.NeonPlayerChatEvent;
 import dev.jackdaw1101.neon.manager.moderation.SwearManager;
 import dev.jackdaw1101.neon.utils.logs.ChatLogger;
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.modules.chat.ChatAPI;
+import dev.jackdaw1101.neon.API.modules.chat.IChat;
 import dev.jackdaw1101.neon.modules.moderation.AntiSwearSystem;
 import dev.jackdaw1101.neon.manager.commands.AlertManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class ChatFormat implements Listener {
     private final Neon plugin;
-    private final ChatAPI chatAPI;
+    private final IChat IChat;
     private final AntiSwearSystem antiSwearSystem;
 
     public ChatFormat(Neon plugin) {
         this.plugin = plugin;
-        this.chatAPI = new ChatAPI(plugin);
+        this.IChat = new IChat(plugin);
         this.antiSwearSystem = new AntiSwearSystem(plugin, new AlertManager(plugin), new SwearManager(plugin));
     }
 
-    @EventHandler
+    @EventHandler()
     public void onChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
 
@@ -54,47 +55,43 @@ public class ChatFormat implements Listener {
             }
 
 
-            message = this.chatAPI.processMessageColorCodes(sender, message);
+            message = this.IChat.processMessageColorCodes(sender, message);
 
 
-            String format = chatAPI.getChatFormat(sender);
+            String format = IChat.getChatFormat(sender);
 
             String clickCommand = this.plugin.getSettings().getString("CLICK-COMMAND");
 
 
-            String hoverText = this.chatAPI.processHoverLines(sender, message);
+            String hoverText = this.IChat.processHoverLines(sender, message);
 
 
             format = format.replace("{MESSAGE}", message);
             clickCommand = clickCommand.replace("<player>", sender.getName());
 
 
-            ChatMessageEvent chatMessageEvent = new ChatMessageEvent(sender, message, hoverText, clickCommand);
-
+            NeonPlayerChatEvent neonPlayerChatEvent = new NeonPlayerChatEvent(sender, message, hoverText, clickCommand);
 
             String finalFormat = format;
             Bukkit.getScheduler().runTask(plugin, () -> {
-                plugin.getServer().getPluginManager().callEvent(chatMessageEvent);
+                plugin.getServer().getPluginManager().callEvent(neonPlayerChatEvent);
 
-                if (chatMessageEvent.isCancelled()) return;
+                if (neonPlayerChatEvent.isCancelled()) return;
 
-                String finalMessage = chatMessageEvent.getMessage();
-                String finalHoverText = chatMessageEvent.getHoverText();
+                String finalMessage = neonPlayerChatEvent.getMessage();
+                String finalHoverText = neonPlayerChatEvent.getHoverText();
 
                 for (Player viewer : event.getRecipients()) {
-                    this.chatAPI.sendFormattedMessage(viewer, finalFormat, finalHoverText,
-                        chatMessageEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled,
+                    this.IChat.sendFormattedMessage(sender, viewer, finalFormat, finalHoverText,
+                        neonPlayerChatEvent.getClickCommand(), isHoverEnabled, isClickEventEnabled,
                         isRunCommandEnabled, isSuggestCommand);
+
                 }
 
                 if (isChatInConsoleEnabled) {
-                    this.chatAPI.sendMessageToConsole(finalFormat);
+                    this.IChat.sendMessageToConsole(finalFormat);
                 }
             });
-
-            if (isChatInConsoleEnabled) {
-                this.chatAPI.sendMessageToConsole(format);
-            }
         }
     }
 }
