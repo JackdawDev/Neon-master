@@ -4,8 +4,8 @@ import com.andrei1058.bedwars.api.BedWars;
 import com.andrei1058.bedwars.api.arena.IArena;
 import com.andrei1058.bedwars.api.arena.team.ITeam;
 import com.andrei1058.bedwars.arena.Arena;
-import dev.jackdaw1101.neon.API.modules.chat.ChatAPI;
-import dev.jackdaw1101.neon.API.modules.events.ChatMessageEvent;
+import dev.jackdaw1101.neon.API.modules.chat.IChat;
+import dev.jackdaw1101.neon.API.modules.events.NeonPlayerChatEvent;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.Neon;
@@ -25,7 +25,7 @@ import java.util.UUID;
 public class Bedwars1058Integration implements Integration, Listener {
 
     private Neon plugin;
-    private ChatAPI api;
+    private IChat api;
     private List<String> soloGroups;
     private Map<UUID, Long> shoutCooldowns;
 
@@ -34,7 +34,7 @@ public class Bedwars1058Integration implements Integration, Listener {
         if (!(plugin instanceof Neon)) return;
 
         this.plugin = (Neon) plugin;
-        this.api = new ChatAPI(this.plugin);
+        this.api = new IChat(this.plugin);
         this.shoutCooldowns = new HashMap<>();
 
         this.soloGroups = plugin.getSettings().getConfig().getStringList("BEDWARS-CHAT.SOLO-GROUPS");
@@ -49,7 +49,7 @@ public class Bedwars1058Integration implements Integration, Listener {
     }
 
     @EventHandler
-    public void onChatMessage(ChatMessageEvent event) {
+    public void onChatMessage(NeonPlayerChatEvent event) {
         if (!plugin.getSettings().getBoolean("BEDWARS1058-SUPPORT")) return;
         if (!Bukkit.getPluginManager().isPluginEnabled("BedWars1058")) return;
 
@@ -80,7 +80,7 @@ public class Bedwars1058Integration implements Integration, Listener {
         }
     }
 
-    private void handleSpectatorChat(ChatMessageEvent event, Player sender, Arena arena) {
+    private void handleSpectatorChat(NeonPlayerChatEvent event, Player sender, Arena arena) {
         ConfigurationSection spectatorChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SPECTATOR");
         if (spectatorChat == null) return;
         event.setCancelled(true);
@@ -102,6 +102,7 @@ public class Bedwars1058Integration implements Integration, Listener {
 
         for (Player viewer : arena.getSpectators()) {
             api.sendFormattedMessage(
+                    sender,
                 viewer,
                 format,
                 hoverText,
@@ -118,7 +119,7 @@ public class Bedwars1058Integration implements Integration, Listener {
         }
     }
 
-    private void handleWaitingLobbyChat(ChatMessageEvent event, Player sender, Arena arena) {
+    private void handleWaitingLobbyChat(NeonPlayerChatEvent event, Player sender, Arena arena) {
         ConfigurationSection waitingChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.WAITING-LOBBY");
         if (waitingChat == null) return;
         event.setCancelled(true);
@@ -138,6 +139,7 @@ public class Bedwars1058Integration implements Integration, Listener {
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
+                    sender,
                 viewer,
                 format,
                 hoverText,
@@ -152,7 +154,7 @@ public class Bedwars1058Integration implements Integration, Listener {
         api.sendMessageToConsole(format);
     }
 
-    private void handlePlayingChat(ChatMessageEvent event, Player sender, Arena arena) {
+    private void handlePlayingChat(NeonPlayerChatEvent event, Player sender, Arena arena) {
         ConfigurationSection playingChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.PLAYING");
         ConfigurationSection shoutChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SHOUT");
         if (playingChat == null || shoutChat == null) return;
@@ -233,6 +235,7 @@ public class Bedwars1058Integration implements Integration, Listener {
 
         for (Player member : team.getMembers()) {
             api.sendFormattedMessage(
+                    sender,
                 member,
                 format,
                 hoverText,
@@ -249,7 +252,7 @@ public class Bedwars1058Integration implements Integration, Listener {
         }
     }
 
-    private void handleShoutChat(ChatMessageEvent event, Player sender, Arena arena, String message) {
+    private void handleShoutChat(NeonPlayerChatEvent event, Player sender, Arena arena, String message) {
         ConfigurationSection shoutChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SHOUT");
         if (shoutChat == null) return;
         event.setCancelled(true);
@@ -291,6 +294,7 @@ public class Bedwars1058Integration implements Integration, Listener {
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
+                    sender,
                 viewer,
                 format,
                 hoverText,
