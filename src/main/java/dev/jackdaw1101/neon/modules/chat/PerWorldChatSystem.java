@@ -1,9 +1,10 @@
 package dev.jackdaw1101.neon.modules.chat;
 
-import dev.jackdaw1101.neon.API.modules.chat.ChatAPI;
-import dev.jackdaw1101.neon.API.modules.events.ChatMessageEvent;
+import dev.jackdaw1101.neon.API.modules.chat.IChat;
+import dev.jackdaw1101.neon.API.modules.events.NeonPlayerChatEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,15 +16,15 @@ import java.util.List;
 public class PerWorldChatSystem implements Listener {
 
     private final Neon plugin;
-    private final ChatAPI api;
+    private final IChat api;
 
     public PerWorldChatSystem(Neon plugin) {
         this.plugin = plugin;
-        this.api = new ChatAPI(plugin);
+        this.api = new IChat(plugin);
     }
 
     @EventHandler
-    public void onChatMessage(ChatMessageEvent event) {
+    public void onChatMessage(NeonPlayerChatEvent event) {
         Player sender = event.getSender();
         String worldName = sender.getWorld().getName();
 
@@ -51,11 +52,15 @@ public class PerWorldChatSystem implements Listener {
         String hoverText = ColorHandler.color(String.join("\n", hoverLines))
             .replace("<player>", sender.getName());
 
+        DebugUtil.debugChecked("&7per world message was sent from &a" + worldName + " &7by &a" + sender + " &7with conctent: &e" + event.getMessage());
+
         event.setCancelled(true);
+
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
             if (viewer.getWorld().equals(sender.getWorld())) {
                 api.sendFormattedMessage(
+                        sender,
                     viewer,
                     format,
                     hoverText,

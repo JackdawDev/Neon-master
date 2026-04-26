@@ -80,7 +80,8 @@ public class NeonCommand implements CommandExecutor {
                 player.sendMessage(ColorHandler.color(" "));
                 player.sendMessage(ColorHandler.color("&fVersion: &7v" + plugin.getDescription().getVersion()));
                 player.sendMessage(ColorHandler.color("&fDiscord: &ejackdawytmr"));
-                player.sendMessage(ColorHandler.color("&fInstagram: &e@Jackdaw.Java"));                player.sendMessage(ColorHandler.color(" "));
+                player.sendMessage(ColorHandler.color("&fInstagram: &e@Jackdawqk"));
+                player.sendMessage(ColorHandler.color(" "));
                 player.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
             } else {
                 sender.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
@@ -89,7 +90,7 @@ public class NeonCommand implements CommandExecutor {
                 sender.sendMessage(ColorHandler.color(" "));
                 sender.sendMessage(ColorHandler.color("&fVersion: &7v" + plugin.getDescription().getVersion()));
                 sender.sendMessage(ColorHandler.color("&fDiscord: &ejackdawytmr"));
-                sender.sendMessage(ColorHandler.color("&fInstagram: &e@Jackdaw.Java"));
+                sender.sendMessage(ColorHandler.color("&fInstagram: &e@Jackdawqk"));
                 sender.sendMessage(ColorHandler.color(" "));
                 sender.sendMessage(ColorHandler.color("&e&m-----------&f&m--------------------------------&e&m-----------"));
             }

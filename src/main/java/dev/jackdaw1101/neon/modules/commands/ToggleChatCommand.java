@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.modules.commands;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.implementions.ChatToggleAPIImpl;
+import dev.jackdaw1101.neon.implementions.IChatToggleImpl;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 public class ToggleChatCommand implements CommandExecutor {
 
     private final Neon plugin;
-    private final ChatToggleAPIImpl api;
+    private final IChatToggleImpl api;
     private final String toggleOnMessage;
     private final String toggleOffMessage;
     private final String noPermissionMessage;
@@ -28,7 +28,7 @@ public class ToggleChatCommand implements CommandExecutor {
 
     public ToggleChatCommand(Neon plugin) {
         this.plugin = plugin;
-        this.api = new ChatToggleAPIImpl(plugin);
+        this.api = new IChatToggleImpl(plugin);
 
 
         this.toggleOnMessage = ColorHandler.color(plugin.getMessageManager().getString("CHAT-ON"));

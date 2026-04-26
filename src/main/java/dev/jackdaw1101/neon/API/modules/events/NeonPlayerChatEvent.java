@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class ChatMessageEvent extends Event {
+public class NeonPlayerChatEvent extends Event {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Player sender;
@@ -13,7 +13,7 @@ public class ChatMessageEvent extends Event {
     private String clickCommand;
     private boolean isCancelled;
 
-    public ChatMessageEvent(Player sender, String message, String hoverText, String clickCommand) {
+    public NeonPlayerChatEvent(Player sender, String message, String hoverText, String clickCommand) {
         this.sender = sender;
         this.message = message;
         this.hoverText = hoverText;
@@ -24,6 +24,11 @@ public class ChatMessageEvent extends Event {
     public Player getSender() {
         return sender;
     }
+
+    public Player getPlayer() {
+        return sender;
+    }
+
 
     public String getMessage() {
         return message;
