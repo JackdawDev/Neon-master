@@ -1,10 +1,12 @@
 package dev.jackdaw1101.neon.modules.automated;
 
-import dev.jackdaw1101.neon.API.modules.moderation.AutoResponseAPI;
-import dev.jackdaw1101.neon.implementions.AutoResponseAPIImpl;
+import dev.jackdaw1101.neon.API.modules.events.NeonPlayerChatEvent;
+import dev.jackdaw1101.neon.API.modules.moderation.IAutoResponse;
+import dev.jackdaw1101.neon.implementions.IAutoResponseImpl;
 import dev.jackdaw1101.neon.API.modules.events.AutoResponseEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -14,27 +16,26 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import java.util.List;
 
 public class AutoResponse implements Listener {
     private final Neon plugin;
-    private final AutoResponseAPIImpl api;
+    private final IAutoResponseImpl api;
 
     public AutoResponse(Neon plugin) {
         this.plugin = plugin;
-        this.api = new AutoResponseAPIImpl(plugin);
-        plugin.getServer().getServicesManager().register(AutoResponseAPI.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
+        this.api = new IAutoResponseImpl(plugin);
+        plugin.getServer().getServicesManager().register(IAutoResponse.class, api, plugin, org.bukkit.plugin.ServicePriority.Normal);
     }
 
     @EventHandler
-    public void onChat(AsyncPlayerChatEvent event) {
+    public void onChat(NeonPlayerChatEvent event) {
         if (event.isCancelled() || !plugin.getSettings().getBoolean("AUTO-RESPONSE-ENABLED")) {
             return;
         }
 
-        Player player = event.getPlayer();
+        Player player = event.getSender();
         String message = event.getMessage().toLowerCase();
 
         for (String triggerWord : api.getAllResponses().keySet()) {
@@ -43,13 +44,13 @@ public class AutoResponse implements Listener {
                 if (responses.isEmpty()) continue;
 
                 AutoResponseEvent responseEvent = new AutoResponseEvent(
-                    player,
-                    triggerWord,
-                    responses,
-                    api.getGlobalHoverText(),
-                    api.getGlobalSound(),
-                    api.isSoundEnabled(),
-                    api.isHoverEnabled()
+                        player,
+                        triggerWord,
+                        responses,
+                        api.getGlobalHoverText(),
+                        api.getGlobalSound(),
+                        api.isSoundEnabled(),
+                        api.isHoverEnabled()
                 );
 
                 Bukkit.getScheduler().runTask(plugin, () -> {
@@ -58,8 +59,14 @@ public class AutoResponse implements Listener {
 
                 if (responseEvent.isCancelled()) return;
 
-                sendResponse(player, responseEvent);
-                return;
+                Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                    try {
+                        sendResponse(player, responseEvent);
+                    } catch (Exception e) {
+                        DebugUtil.debugError("Failed to call response event: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }, 1L * plugin.getSettings().getInt("ASYNC.AUTO-RESPONSE-FIX_TICKS"));
             }
         }
     }
