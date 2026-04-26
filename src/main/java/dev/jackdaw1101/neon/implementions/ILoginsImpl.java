@@ -1,24 +1,28 @@
 package dev.jackdaw1101.neon.implementions;
 
-import dev.jackdaw1101.neon.API.modules.moderation.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.ILogins;
 import dev.jackdaw1101.neon.utils.configs.ConfigFile;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import me.clip.placeholderapi.PlaceholderAPI;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.user.User;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
+public class ILoginsImpl implements ILogins {
     private final Neon plugin;
     private final ConfigFile settings;
 
-    public NeonJoinLeaveAPIImpl(Neon plugin) {
+    public ILoginsImpl(Neon plugin) {
         this.plugin = plugin;
         this.settings = plugin.getSettings();
     }
@@ -28,13 +32,14 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
 
         String processedMessage = ColorHandler.color(message.replace("<player>", player.getName()));
         processedMessage = PlaceholderAPI.setPlaceholders(player, processedMessage);
-
+        processedMessage = handleLuckPermsPrefixSuffix(player, processedMessage);
 
         List<String> processedHoverText = null;
         if (hoverText != null && !hoverText.isEmpty()) {
             processedHoverText = new ArrayList<>();
             for (String line : hoverText) {
                 String processedLine = ColorHandler.color(line.replace("<player>", player.getName()));
+                processedLine = handleLuckPermsPrefixSuffix(player, processedLine);
                 processedHoverText.add(PlaceholderAPI.setPlaceholders(player, processedLine));
             }
         }
@@ -88,12 +93,14 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
 
         String processedMessage = ColorHandler.color(message.replace("<player>", player.getName()));
         processedMessage = PlaceholderAPI.setPlaceholders(player, processedMessage);
+        processedMessage = handleLuckPermsPrefixSuffix(player, processedMessage);
 
         List<String> processedHoverText = null;
         if (hoverText != null && !hoverText.isEmpty()) {
             processedHoverText = new ArrayList<>();
             for (String line : hoverText) {
                 String processedLine = ColorHandler.color(line.replace("<player>", player.getName()));
+                processedLine = handleLuckPermsPrefixSuffix(player, processedLine);
                 processedHoverText.add(PlaceholderAPI.setPlaceholders(player, processedLine));
             }
         }
@@ -212,5 +219,24 @@ public class NeonJoinLeaveAPIImpl implements NeonJoinLeaveAPI {
     @Override
     public void reloadConfig() {
         settings.reload();
+    }
+
+    private String handleLuckPermsPrefixSuffix(Player player, String format) {
+        if (!isLuckPermsInstalled()) return format;
+
+        LuckPerms luckPerms = this.plugin.getServer().getServicesManager().getRegistration(LuckPerms.class).getProvider();
+        User user = luckPerms.getUserManager().getUser(player.getUniqueId());
+        if (user != null) {
+            String prefix = user.getCachedData().getMetaData().getPrefix();
+            String suffix = user.getCachedData().getMetaData().getSuffix();
+            format = format.replace("<lp_prefix>", (prefix != null ? prefix : ""))
+                    .replace("<lp_suffix>", (suffix != null ? suffix : ""));
+        }
+        return ColorHandler.color(format);
+    }
+
+    private boolean isLuckPermsInstalled() {
+        Plugin LP = plugin.getServer().getPluginManager().getPlugin("LuckPerms");
+        return LP != null && LP.isEnabled();
     }
 }

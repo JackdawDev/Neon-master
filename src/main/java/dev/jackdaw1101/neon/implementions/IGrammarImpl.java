@@ -1,17 +1,17 @@
 package dev.jackdaw1101.neon.implementions;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.modules.grammar.GrammarAPI;
+import dev.jackdaw1101.neon.API.modules.grammar.IGrammar;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GrammarAPIImpl implements GrammarAPI {
+public class IGrammarImpl implements IGrammar {
     private final Neon plugin;
     private final Map<String, String> customAutoCorrectWords = new HashMap<>();
 
-    public GrammarAPIImpl(Neon plugin) {
+    public IGrammarImpl(Neon plugin) {
         this.plugin = plugin;
 
         customAutoCorrectWords.put("i", "I");

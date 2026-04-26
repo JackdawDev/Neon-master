@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.implementions;
 
 import dev.jackdaw1101.neon.Neon;
-import dev.jackdaw1101.neon.API.modules.moderation.AutoResponseAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.IAutoResponse;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -10,11 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AutoResponseAPIImpl implements AutoResponseAPI {
+public class IAutoResponseImpl implements IAutoResponse {
     private final Neon plugin;
     private final Map<String, List<String>> customResponses = new HashMap<>();
 
-    public AutoResponseAPIImpl(Neon plugin) {
+    public IAutoResponseImpl(Neon plugin) {
         this.plugin = plugin;
         loadFromConfig();
     }

@@ -2,7 +2,7 @@ package dev.jackdaw1101.neon.API.modules.grammar;
 
 import java.util.Map;
 
-public interface GrammarAPI {
+public interface IGrammar {
     void addAutoCorrectWord(String incorrect, String correct);
     void removeAutoCorrectWord(String incorrect);
     void setAutoCorrectEnabled(boolean enabled);

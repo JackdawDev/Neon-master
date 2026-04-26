@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.Set;
 import java.util.UUID;
 
-public interface ChatToggleAPI {
+public interface IChatToggle {
     void toggleChat(Player player);
     void setChatToggled(Player player, boolean toggled);
     boolean isChatToggled(Player player);

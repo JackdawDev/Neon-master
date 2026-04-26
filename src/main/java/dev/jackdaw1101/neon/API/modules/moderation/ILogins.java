@@ -3,7 +3,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-public interface NeonJoinLeaveAPI {
+public interface ILogins {
     void sendCustomJoinMessage(Player player, String message, List<String> hoverText, String clickCommand, ClickAction clickAction);
     void sendCustomLeaveMessage(Player player, String message, List<String> hoverText, String clickCommand, ClickAction clickAction);
 

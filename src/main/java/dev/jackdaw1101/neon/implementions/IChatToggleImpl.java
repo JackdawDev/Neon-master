@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.implementions;
 
 import dev.jackdaw1101.neon.database.ChatToggleDatabase;
-import dev.jackdaw1101.neon.API.modules.moderation.ChatToggleAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.IChatToggle;
 import dev.jackdaw1101.neon.API.player.ToggleChatEvent;
 import dev.jackdaw1101.neon.database.togglechat.MemoryChatToggleDatabase;
 import dev.jackdaw1101.neon.database.togglechat.MongoDBChatToggleDatabase;
@@ -16,11 +16,11 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class ChatToggleAPIImpl implements ChatToggleAPI {
+public class IChatToggleImpl implements IChatToggle {
     private final Neon plugin;
     private ChatToggleDatabase database;
 
-    public ChatToggleAPIImpl(Neon plugin) {
+    public IChatToggleImpl(Neon plugin) {
         this.plugin = plugin;
         initializeDatabase();
     }

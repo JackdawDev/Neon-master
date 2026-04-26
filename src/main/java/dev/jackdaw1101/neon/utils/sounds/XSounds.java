@@ -11,5 +11,9 @@ public class XSounds {
             xSound.play(player, volume, pitch);
         }
     }
+
+    public static String getUtilVersion() {
+        return "1.2-BETA";
+    }
 }
 

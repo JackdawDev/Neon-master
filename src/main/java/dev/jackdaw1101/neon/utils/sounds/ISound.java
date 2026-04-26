@@ -77,6 +77,10 @@ public class ISound {
         return VERSION;
     }
 
+    public static String getUtilVersion() {
+        return "1.0-BETA";
+    }
+
     private static int getMajorVersion() {
         String[] split = VERSION.split("_");
         return Integer.parseInt(split[1]);

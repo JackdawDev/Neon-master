@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Set;
 
-public interface AntiSwearAPI {
+public interface IAntiSwear {
     boolean isSwearWord(String word);
     boolean containsSwear(String message);
     void addToBlacklist(String word);

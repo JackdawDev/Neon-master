@@ -3,7 +3,7 @@ package dev.jackdaw1101.neon.API.modules.moderation;
 import java.util.List;
 import java.util.Map;
 
-public interface AutoResponseAPI {
+public interface IAutoResponse {
     void addResponse(String triggerWord, List<String> responses);
     void removeResponse(String triggerWord);
     void updateResponse(String triggerWord, List<String> responses);
