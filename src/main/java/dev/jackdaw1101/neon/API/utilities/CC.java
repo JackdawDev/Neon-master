@@ -149,4 +149,9 @@ public final class CC {
         ID_PURPLE = D_PURPLE + I;
         IL_PURPLE = L_PURPLE + I;
     }
+
+    public static String translate(String string) {
+        string = ChatColor.translateAlternateColorCodes('&', string);
+        return string;
+    }
 }
