@@ -1,8 +1,9 @@
 package dev.jackdaw1101.neon.modules.player;
 
 import dev.jackdaw1101.neon.API.player.NeonPlayerJoinEvent;
-import dev.jackdaw1101.neon.API.modules.moderation.NeonJoinLeaveAPI;
+import dev.jackdaw1101.neon.API.modules.moderation.ILogins;
 import dev.jackdaw1101.neon.Neon;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
@@ -31,7 +32,7 @@ public class GroupJoinMessageHandler {
 
             String permission = section.getString("PERMISSION");
             int priority = section.getInt("PRIORITY", 0);
-            String format = section.getString("FORMAT", "&f%player_name%");
+            String format = section.getString("FORMAT", "&f<player>");
             boolean hoverEnabled = section.getBoolean("HOVER-ENABLED", false);
             List<String> hoverText = section.getStringList("HOVER");
             boolean clickEnabled = section.getBoolean("CLICK-EVENT", false);
@@ -83,7 +84,7 @@ public class GroupJoinMessageHandler {
         NeonPlayerJoinEvent.ClickAction clickAction = null;
 
         if (clickEnabled) {
-            clickCommand = bestGroup.getClickCommand().replace("%player_name%", player.getName());
+            clickCommand = bestGroup.getClickCommand().replace("<player>", player.getName());
             if (bestGroup.isSuggestCommand()) {
                 clickAction = NeonPlayerJoinEvent.ClickAction.SUGGEST_COMMAND;
             } else if (bestGroup.isRunCommand()) {
@@ -118,18 +119,18 @@ public class GroupJoinMessageHandler {
             return;
         }
 
-        NeonJoinLeaveAPI neonJoinLeaveAPI = Bukkit.getServicesManager().load(NeonJoinLeaveAPI.class);
-        if (neonJoinLeaveAPI == null) {
-            Bukkit.getLogger().warning("[Neon] NeonJoinLeaveAPI not found! Cannot send join message for " + player.getName());
+        ILogins ILogins = Bukkit.getServicesManager().load(ILogins.class);
+        if (ILogins == null) {
+            DebugUtil.debugError("[Neon] NeonJoinLeaveAPI not found! Cannot send join message for " + player.getName());
             return;
         }
 
         String joinMessage = event.getJoinMessage();
         List<String> hoverText = event.isHoverEnabled() ? event.getHoverText() : null;
         String clickCommand = event.isClickEnabled() ? event.getClickCommand() : null;
-        NeonJoinLeaveAPI.ClickAction clickAction = event.isClickEnabled() ? convertClickAction(event.getClickAction()) : NeonJoinLeaveAPI.ClickAction.RUN_COMMAND;
+        ILogins.ClickAction clickAction = event.isClickEnabled() ? convertClickAction(event.getClickAction()) : dev.jackdaw1101.neon.API.modules.moderation.ILogins.ClickAction.RUN_COMMAND;
 
-        neonJoinLeaveAPI.sendCustomJoinMessage(
+        ILogins.sendCustomJoinMessage(
             player,
             joinMessage,
             hoverText,
@@ -139,19 +140,19 @@ public class GroupJoinMessageHandler {
     }
 
 
-    private NeonJoinLeaveAPI.ClickAction convertClickAction(NeonPlayerJoinEvent.ClickAction clickAction) {
+    private ILogins.ClickAction convertClickAction(NeonPlayerJoinEvent.ClickAction clickAction) {
         if (clickAction == null) {
-            return NeonJoinLeaveAPI.ClickAction.RUN_COMMAND;
+            return ILogins.ClickAction.RUN_COMMAND;
         }
         switch (clickAction) {
             case RUN_COMMAND:
-                return NeonJoinLeaveAPI.ClickAction.RUN_COMMAND;
+                return ILogins.ClickAction.RUN_COMMAND;
             case SUGGEST_COMMAND:
-                return NeonJoinLeaveAPI.ClickAction.SUGGEST_COMMAND;
+                return ILogins.ClickAction.SUGGEST_COMMAND;
             case OPEN_URL:
-                return NeonJoinLeaveAPI.ClickAction.OPEN_URL;
+                return ILogins.ClickAction.OPEN_URL;
             default:
-                return NeonJoinLeaveAPI.ClickAction.RUN_COMMAND;
+                return ILogins.ClickAction.RUN_COMMAND;
         }
     }
 
