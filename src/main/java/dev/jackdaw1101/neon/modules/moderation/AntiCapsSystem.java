@@ -4,6 +4,7 @@ import dev.jackdaw1101.neon.API.modules.events.AntiCapsEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.Bukkit;
@@ -56,7 +57,7 @@ public class AntiCapsSystem implements Listener {
 
             if (warningMessage == null || warningMessage.isEmpty()) {
                 warningMessage = "&cPlease avoid using excessive capital letters! (Your message was {percentage}% caps, max is {max_percentage}%)";
-                plugin.getLogger().warning("ANTI-CAPS-WARNING message not found in config, using default");
+                DebugUtil.debugError("ANTI-CAPS-WARNING message not found in config, using default");
             }
 
 
@@ -67,9 +68,9 @@ public class AntiCapsSystem implements Listener {
 
 
             warningMessage = ColorHandler.color(warningMessage);
-            boolean isdebug = plugin.getSettings().getBoolean("DEBUG-MODE");
+            boolean isdebug = DebugUtil.isDebugEnabled();
             if (isdebug) {
-                plugin.getLogger().info("Final formatted warning: " + warningMessage);
+                DebugUtil.debug("Final formatted warning: " + warningMessage);
             }
 
             AntiCapsEvent capsEvent = new AntiCapsEvent(
@@ -98,7 +99,7 @@ public class AntiCapsSystem implements Listener {
             if (capsEvent.shouldCancel()) {
                 cancellable.setCancelled(true);
                 if (isdebug) {
-                    Bukkit.getConsoleSender().sendMessage(CC.GRAY + capsEvent.getPlayer().getName() + " Triggered Anti Caps");
+                    DebugUtil.debug(CC.GRAY + capsEvent.getPlayer().getName() + " Triggered Anti Caps");
                 }
                 player.sendMessage(capsEvent.getWarningMessage());
 
