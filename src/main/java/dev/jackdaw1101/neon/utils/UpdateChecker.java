@@ -63,7 +63,7 @@ public class UpdateChecker {
     public void autoUpdate() {
         try {
             if (plugin.getSettings().getBoolean("UPDATE-SYSTEM.AUTO-UPDATE")) {
-                Bukkit.getConsoleSender().sendMessage(CC.GRAY + "§7[Neon] Starting auto-update...");
+                DebugUtil.debug(CC.GRAY + "§7[Neon] Starting auto-update...");
 
                 File pluginFile = new File(plugin.getClass().getProtectionDomain().getCodeSource().getLocation().toURI());
                 File tempFile = new File(pluginFile.getParentFile(), plugin.getName() + "-new.jar");
@@ -85,10 +85,10 @@ public class UpdateChecker {
 
                 Files.move(tempFile.toPath(), pluginFile.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
 
-                Bukkit.getConsoleSender().sendMessage("§7[Neon] Successfully updated plugin! Restart the server to apply changes.");
+                DebugUtil.debug("§7[Neon] Successfully updated plugin! Restart the server to apply changes.");
             }
             } catch(Exception e){
-                Bukkit.getConsoleSender().sendMessage("§c[Neon] Failed to auto-update: " + e.getMessage());
+            DebugUtil.debug("§c[Neon] Failed to auto-update: " + e.getMessage());
                 e.printStackTrace();
             }
     }
@@ -98,12 +98,12 @@ public class UpdateChecker {
      * Displays a pretty update message.
      */
     public void sendUpdateMessage(String newVersion) {
-        Bukkit.getConsoleSender().sendMessage("§7§m----------------------------------------");
-        Bukkit.getConsoleSender().sendMessage("§eAn update is available for Neon!");
-        Bukkit.getConsoleSender().sendMessage("§fCurrent version: §c" + plugin.getDescription().getVersion());
-        Bukkit.getConsoleSender().sendMessage("§fNew version: §a" + newVersion);
-        Bukkit.getConsoleSender().sendMessage("§6Download it from: §bhttps://www.spigotmc.org/resources/" + resourceId);
-        Bukkit.getConsoleSender().sendMessage("§7§m----------------------------------------");
+        DebugUtil.debug("§7§m----------------------------------------");
+        DebugUtil.debug("§eAn update is available for Neon!");
+        DebugUtil.debug("§fCurrent version: §c" + plugin.getDescription().getVersion());
+        DebugUtil.debug("§fNew version: §a" + newVersion);
+        DebugUtil.debug("§6Download it from: §bhttps://www.spigotmc.org/resources/" + resourceId);
+        DebugUtil.debug("§7§m----------------------------------------");
     }
 
     /**
