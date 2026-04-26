@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.modules.automated;
 
 import dev.jackdaw1101.neon.API.modules.events.GrammarCheckEvent;
-import dev.jackdaw1101.neon.implementions.GrammarAPIImpl;
+import dev.jackdaw1101.neon.implementions.IGrammarImpl;
 import dev.jackdaw1101.neon.Neon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,11 +11,11 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 public class GrammarAPI implements Listener {
     private final Neon plugin;
-    private final GrammarAPIImpl api;
+    private final IGrammarImpl api;
 
     public GrammarAPI(Neon plugin) {
         this.plugin = plugin;
-        this.api = new GrammarAPIImpl(plugin);
+        this.api = new IGrammarImpl(plugin);
     }
 
     @EventHandler
@@ -57,7 +57,7 @@ public class GrammarAPI implements Listener {
         event.setMessage(correctedMessage);
     }
 
-    public GrammarAPIImpl getAPI() {
+    public IGrammarImpl getAPI() {
         return api;
     }
 }

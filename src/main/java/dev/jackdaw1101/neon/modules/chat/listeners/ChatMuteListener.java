@@ -1,12 +1,15 @@
 package dev.jackdaw1101.neon.modules.chat.listeners;
 
+import dev.jackdaw1101.neon.API.modules.events.NeonPlayerChatEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.manager.chat.ChatMuteManager;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
+import dev.jackdaw1101.neon.utils.DebugUtil;
 import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -22,9 +25,10 @@ public class ChatMuteListener implements Listener {
         this.chatMuteManager = plugin.getChatMuteManager();
     }
 
-    @EventHandler(ignoreCancelled = true)
-    public void muteChat(AsyncPlayerChatEvent event) {
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void muteNeonChat(NeonPlayerChatEvent event) {
         Player player = event.getPlayer();
+        if (!plugin.getSettings().getBoolean("MUTE-CHAT.MUTE-NEON-CHAT")) return;
 
         if (player.hasPermission(plugin.getPermissionManager().getString("MUTE-CHAT-BYPASS")) ||
                 !chatMuteManager.isChatMuted()) return;
@@ -39,6 +43,31 @@ public class ChatMuteListener implements Listener {
                 XSounds.playSound(player, (String) plugin.getSettings().getString("MUTE-CHAT.DENIED-MESSAGE-SOUND"), 1.0f, 1.0f);
             }
         }
+
+        DebugUtil.debugChecked("&7" + player + " tried to send message while chat was muted! message: " + event.getMessage());
+        event.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void muteAsyncChat(AsyncPlayerChatEvent event) {
+        Player player = event.getPlayer();
+        if (!plugin.getSettings().getBoolean("MUTE-CHAT.MUTE-ASYNC-CHAT")) return;
+
+        if (player.hasPermission(plugin.getPermissionManager().getString("MUTE-CHAT-BYPASS")) ||
+                !chatMuteManager.isChatMuted()) return;
+
+        player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("MUTE-CHAT.DENIED-MESSAGE")));
+        if (plugin.getSettings().getBoolean("MUTE-CHAT.USE-SOUND-FOR-BLOCKED-MESSAGES")) {
+            if (plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
+                if (plugin.getSettings().getBoolean("MUTE-CHAT.USE-SOUND-FOR-BLOCKED-MESSAGES")) {
+                    ISound.playSound(player, (String) plugin.getSettings().getString("MUTE-CHAT.DENIED-MESSAGE-SOUND"), 1.0f, 1.0f);
+                }
+            } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
+                XSounds.playSound(player, (String) plugin.getSettings().getString("MUTE-CHAT.DENIED-MESSAGE-SOUND"), 1.0f, 1.0f);
+            }
+        }
+
+        DebugUtil.debugChecked("&7" + player + " tried to send message while chat was muted! message: " + event.getMessage());
         event.setCancelled(true);
     }
 
@@ -65,6 +94,8 @@ public class ChatMuteListener implements Listener {
                         XSounds.playSound(player, (String) plugin.getSettings().getString("MUTE-CHAT.BLOCKED-COMMAND-SOUND"), 1.0f, 1.0f);
                     }
                 }
+
+                DebugUtil.debugChecked("&7" + player + " tried to use a blocked command while chat was muted! message: " + event.getMessage());
                 event.setCancelled(true);
                 return;
             }
