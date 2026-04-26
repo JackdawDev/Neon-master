@@ -1,6 +1,7 @@
 package dev.jackdaw1101.neon.modules.mention;
 
 
+import dev.jackdaw1101.neon.API.modules.events.NeonPlayerChatEvent;
 import dev.jackdaw1101.neon.API.player.MentionEvent;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
