@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.modules.commands;
+package dev.jackdaw1101.neon.commands.modules.commands;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
@@ -6,15 +6,14 @@ import dev.jackdaw1101.neon.utils.sounds.ISound;
 import dev.jackdaw1101.neon.utils.sounds.XSounds;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ClearChatCommand implements CommandExecutor {
+public class ChatClearCommand {
 
     private final Neon plugin;
 
-    public ClearChatCommand(Neon plugin) {
+    public ChatClearCommand(Neon plugin) {
         this.plugin = plugin;
     }
 
@@ -25,8 +24,7 @@ public class ClearChatCommand implements CommandExecutor {
         }
 
         Player player = (Player) sender;
-
-        String permission = (String) plugin.getPermissionManager().getString("CHAT-CLEAR.PERMISSION");
+        String permission = (String) plugin.getSettings().getString("CHAT-CLEAR.PERMISSION");
         if (!player.hasPermission(permission)) {
             player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("NO-PERMISSION")));
             if ((boolean) plugin.getSettings().getBoolean("NO-PERMISSION.USE-SOUND")) {
@@ -41,10 +39,26 @@ public class ClearChatCommand implements CommandExecutor {
             return false;
         }
 
-        String hasBypass = (String) plugin.getPermissionManager().getString("CHAT-CLEAR.BYPASS-PERMISSION");
+        clearChat(player);
 
+        return true;
+    }
+
+    public void clearChat(CommandSender sender) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("PLAYER-ONLY")));
+            return;
+        }
+
+        Player player = (Player) sender;
+        String hasBypass = (String) plugin.getPermissionManager().getString("CHAT-CLEAR.BYPASS-PERMISSION");
+        String permission = (String) plugin.getPermissionManager().getString("CHAT-CLEAR.PERMISSION");
+        if (!player.hasPermission(permission)) {
+            player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("NO-PERMISSION")));
+            return;
+        }
         int emptyLines = (int) plugin.getSettings().getInt("CHAT-CLEAR.EMPTY-LINES");
-        boolean broadcast = (boolean) plugin.getSettings().getBoolean("CHAT_CLEAR.BROADCAST-TO-PLAYER");
+        boolean broadcast = (boolean) plugin.getSettings().getBoolean("CHAT-CLEAR.BROADCAST-TO-PLAYER");
 
         for (int i = 0; i < emptyLines; i++) {
             Bukkit.broadcastMessage("");
@@ -63,7 +77,5 @@ public class ClearChatCommand implements CommandExecutor {
         if (!player.hasPermission(hasBypass)) {
             player.sendMessage(ColorHandler.color(plugin.getMessageManager().getString("CHAT-CLEAR.BYPASS-MESSAGE").replace("%clearer%", player.getName())));
         }
-
-        return true;
     }
 }

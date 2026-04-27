@@ -5,7 +5,7 @@ import dev.jackdaw1101.neon.API.modules.events.SwearPunishEvent;
 import dev.jackdaw1101.neon.manager.moderation.SwearManager;
 import dev.jackdaw1101.neon.utils.webhooks.AntiSwearWebhookManager;
 import dev.jackdaw1101.neon.utils.logs.AntiSwearLogger;
-import dev.jackdaw1101.neon.manager.commands.AlertManager;
+import dev.jackdaw1101.neon.commands.modules.AlertManager;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
@@ -252,11 +252,11 @@ public class AntiSwearSystem implements Listener {
 
     private void handleSwearPunishment(Player player) {
         int strikes = swearManager.addSwear(player);
-        int punishLimit = plugin.getSettings().getInt("PUNISH.LIMIT");
-        boolean punishEnabled = plugin.getSettings().getBoolean("PUNISH.ENABLED");
+        int punishLimit = plugin.getSettings().getInt("ANTI-SWEAR.PUNISH.LIMIT");
+        boolean punishEnabled = plugin.getSettings().getBoolean("ANTI-SWEAR.PUNISH.ENABLED");
 
         if (strikes >= punishLimit && punishEnabled) {
-            String command = plugin.getSettings().getString("PUNISH.COMMAND");
+            String command = plugin.getSettings().getString("ANTI-SWEAR.PUNISH.COMMAND");
 
             SwearPunishEvent event = new SwearPunishEvent(player, "", strikes, command);
 

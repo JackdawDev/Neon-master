@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.modules.commands;
+package dev.jackdaw1101.neon.commands.modules.commands;
 
 import dev.jackdaw1101.neon.API.command.NeonCommand;
 import dev.jackdaw1101.neon.Neon;

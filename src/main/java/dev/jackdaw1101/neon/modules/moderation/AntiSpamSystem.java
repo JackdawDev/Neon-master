@@ -2,7 +2,7 @@ package dev.jackdaw1101.neon.modules.moderation;
 
 import dev.jackdaw1101.neon.API.modules.events.AntiSpamEvent;
 import dev.jackdaw1101.neon.manager.moderation.SwearManager;
-import dev.jackdaw1101.neon.manager.commands.AlertManager;
+import dev.jackdaw1101.neon.commands.modules.AlertManager;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;
 import dev.jackdaw1101.neon.utils.sounds.ISound;

@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.manager.commands;
+package dev.jackdaw1101.neon.commands.modules;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;

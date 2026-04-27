@@ -1,4 +1,4 @@
-package dev.jackdaw1101.neon.manager.commands.loggers;
+package dev.jackdaw1101.neon.commands.logger;
 
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.utils.logs.CommandLogger;

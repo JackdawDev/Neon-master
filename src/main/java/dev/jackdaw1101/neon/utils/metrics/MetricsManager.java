@@ -17,7 +17,7 @@ public class MetricsManager {
 
         metrics.addCustomChart(new SimplePie("isound", () -> String.valueOf(plugin.getSettings().getBoolean("ISOUNDS-UTIL"))));
         metrics.addCustomChart(new SimplePie("xsound", () -> String.valueOf(plugin.getSettings().getBoolean("XSOUNDS-UTIL"))));
-        metrics.addCustomChart(new SimplePie("chat_format", () -> String.valueOf(plugin.getSettings().getBoolean("CHAT-FORMAT-ENABLED"))));
+        metrics.addCustomChart(new SimplePie("chat_format", () -> String.valueOf(plugin.getSettings().getBoolean("CHAT-FORMAT.ENABLED"))));
         metrics.addCustomChart(new SimplePie("database", () -> String.valueOf(plugin.getDatabaseManager().getString("DATABASE.TYPE"))));
     }
 
