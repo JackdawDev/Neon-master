@@ -1,10 +1,11 @@
 package dev.jackdaw1101.neon.API.modules.events;
 
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class NeonPlayerChatEvent extends Event {
+public class NeonPlayerChatEvent extends Event implements Cancellable {
     private static final HandlerList HANDLERS = new HandlerList();
 
     private final Player sender;
