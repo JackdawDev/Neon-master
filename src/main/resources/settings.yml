@@ -3,7 +3,7 @@
 # | \ | |      by Jackdaw1101                          #
 # |  \| |/ _ \/ _ \| '_ \      Main Configuration For  #
 # | |\  |  __/ (_) | | | |     Neon!                   #
-# |_| \_|\___|\___/|_| |_|   (1.2.6)                   #
+# |_| \_|\___|\___/|_| |_|   (1.2.7)                   #
 ########################################################
 #
 # Don't Touch This!
@@ -126,127 +126,108 @@ ISOUNDS-UTIL: false
 # ENABLED: toggle the system on or off (not required for all values below but is recommended)
 # DELAY-TICKS: Higher values will cause it to execute some tasks like join messages a bit late. Recommended value is 5 - 10
 # AUTO-RESPONSE-FIX_TICK: makes a delay to send auto response so its not before player's message
+#
 ASYNC:
   ENABLED: false
   DELAY-TICKS: 5
   AUTO-RESPONSE-FIX_TICKS: 2
+#
 ########################################################
 #                  ChatFormat                          #
 ########################################################
 #
 # Enable or disable chat format
-# By disabling this, all other features like hover and click event will be disabled as well.
-CHAT-FORMAT-ENABLED: true
+# By disabling this, most/some other features like hover and click event and some critical functions will be gone.
 #
-# Enable or disable hover functionality
-HOVER-ENABLED: true
-#
-# Enable or disable chat click actions
-CLICK-EVENT-ENABLED: true
-#
-# Enable or disable chat click run command. (!) You can't this while you have RUN-COMMAND-ENABLED enabled. You can use one at a time!
+# ENABLED: Enable or disable hover functionality
+# HOVER-ENABLED: enable hover system
+# SUGGEST-COMMAND-ENABLED :
+# RUN-COMMAND-ENABLED:
+# Enable or disable chat click run/suggest command. (!) You can't this while you have RUN-COMMAND-ENABLED enabled. You can use one at a time!
 # this also uses the CLICK-COMMAND value.
 # (!) Enabling both of them will cause it to use Suggest Command as default
-SUGGEST-COMMAND-ENABLED: true
-#
-# Enable or disable chat click run command. (!) You can't this while you have SUGGEST-COMMAND-ENABLED enabled. You can use one at a time!
-# this also uses the CLICK-COMMAND value.
-# (!) Enabling both of them will cause it to use Suggest Command as default
-RUN-COMMAND-ENABLED: false
-#
-# Chat Format: Edit how you want players' chat to look like
+# FORMAT: Edit how you want players' chat to look like
 # Internal LuckPerms Placeholders:
 # <lp_prefix> = Prefix Of Player (luckPerms)
 # <lp_suffix> = Suffix Of Player (luckPerms)
-CHAT-FORMAT: "&7<player>&8: &f%message%"
-#
-# Hover: When players hover over others' messages in chat, they see this
+# HOVER: Hover: When players hover over others' messages in chat, they see this
 # (It parses the placeholders of the message sender)
-HOVER:
-  - "&aName: &7<player>"
-  - "&aHealth: &c%player_health%"
-  - "&aXP Level: &e%player_exp%"
+# CLICK-COMMAND: command for suggest/run on click action
+# CHAT-IN-CONSOLE: send messages to console
+# LOG-CHAT: log chat in a .txt file
 #
-# Click Command: When players click on other players' messages,
-# this command is suggested in their chat bar
-CLICK-COMMAND: "/message <player> "
-#
-# log chat in console
-CHAT-IN-CONSOLE: true
-#
-# log chat in log folder (Neon/Logs/Chat)
-LOG-CHAT: false
+CHAT-FORMAT:
+  ENABLED: true
+  HOVER-ENABLED: true
+  CLICK-EVENT-ENABLED: true
+  SUGGEST-COMMAND-ENABLED: true
+  RUN-COMMAND-ENABLED: false
+  FORMAT: "&7<player>&8: &f%message%"
+  HOVER:
+    - "&aName: &7<player>"
+    - "&aHealth: &c%player_health%"
+    - "&aXP Level: &e%player_exp%"
+  CLICK-COMMAND: "/message <player> "
+  CHAT-IN-CONSOLE: true
+  LOG-CHAT: false
 #
 ########################################################
 #                Welcome Message                       #
 ########################################################
 #
-# Enable or disable the entire welcome system
-ENABLE-WELCOME-SYSTEM: true
+# ENABLED:Enable or disable the entire welcome system
+# ON-JOIN-CHAT-CLEAR: Clear chat on join
+# ON-JOIN-CHAT-CLEAR-LINE: lines sent to clear
+# MESSAGE: context and text of welcoming (supports placeholders)
+# OPEN-URL: url click handler
+# RUN-COMMAND: run command on click action settings
+# SUGGEST-COMMAND: suggest command manager
+# HOVER-TEXT: hover text settings
+# PLAY-SOUND: sound on join
 #
-# Clear the chat when a player joins
-ON-JOIN-CHAT-CLEAR: true
-#
-# Number of empty lines sent when clearing the chat
-ON-JOIN-CHAT-CLEAR-LINE: 10
-#
-# Welcome Message: Customize the welcome messages
-# (Supports color codes and placeholders)
-WELCOME-MESSAGE:
-  - "&3&m------------------------"
-  - "&eWelcome &b&n%player_name%. &eThis Server is running"
-  - "&bNe&don &7v.0.0.1"
-  - "&eVisit our website: &cSoon..."
-  - "&3&m------------------------"
-#
-# Actions on click
-#
-# (!) Do Not Enable All of them
-#
-# Open url on message click
-OPEN-URL:
-  ENABLED: false
-  URL: "https://yourwebsite.com"
-#
-# Run a command on click
-RUN-COMMAND:
+WELCOME-SYSTEM:
   ENABLED: true
-  COMMAND: "/help"
+  ON-JOIN-CHAT-CLEAR: true
+  ON-JOIN-CHAT-CLEAR-LINE: 10
+  MESSAGE:
+    - "&3&m------------------------"
+    - "&eWelcome &b&n%player_name%. &eThis Server is running"
+    - "&bNe&don &7chat manger"
+    - "&eVisit our website: &cSoon..."
+    - "&3&m------------------------"
+  OPEN-URL:
+    ENABLED: false
+    URL: "https://yourwebsite.com"
+  RUN-COMMAND:
+    ENABLED: true
+    COMMAND: "/help"
+  SUGGEST-COMMAND:
+    ENABLED: false
+    COMMAND: "/spawn"
+  HOVER-TEXT:
+    ENABLED: true
+    CONTENT:
+      - "&7%player_name%, &eWelcome to our server!"
+      - "&dClick for more details!"
+  PLAY-SOUND:
+    ENABLED: true
+    SOUND: "LEVEL_UP"
 #
-# Suggest a Command on Click
-SUGGEST-COMMAND:
-  ENABLED: false
-  COMMAND: "/spawn"
-#
-# Hover Message For Welcome Module
-HOVER-TEXT:
-  ENABLED: true
-  CONTENT:
-    - "&7%player_name%, &eWelcome to our server!"
-    - "&dClick for more details!"
-#
-# Play Sound To Player
-PLAY-SOUND:
-  ENABLED: true
-  SOUND: "LEVEL_UP"
 ########################################################
 #                 Chat Clear System                    #
 ########################################################
 #
-# Chat clear system settings
-#
-# The number of empty lines sent when the chat is cleared
+# EMPTY-LINES: The number of empty lines sent when the chat is cleared
+# BROADCAST-TO-PLAYER: Whether to broadcast a message to all players
 CHAT-CLEAR:
   EMPTY-LINES: 100
-  #
-  # Whether or not to broadcast a message to all players
-  # when a player clears the chat
   BROADCAST-TO-PLAYER: true
 #
 #####################################################
 #               Join Leave Manager                  #
-#         (PAPI player expansion required)          #
+#         (PAPI player expansion recommended)       #
 #####################################################
+#
 # This configuration manages join and leave messages for players
 # on your Minecraft server, with support for hover text and
 # PlaceholderAPI placeholders. Customize it as per your needs.
@@ -258,14 +239,30 @@ CHAT-CLEAR:
 #
 # General settings for the join message
 #
-# Would you want all player have the same join message?
-NORMAL-JOIN-MESSAGE: true
-#
-# Do you want players with different Permissions have different Join Messages (per group)?
+# NORMAL-JOIN-MESSAGE: Would you want all player have the same join message?
+# PER-GROUP-JOIN: Do you want players with different Permissions have different Join Messages (per group)?
 # Editable in locales.yml
-PER-GROUP-JOIN: false
+# JOIN: General Settings for Normal
+# LEAVE: General settings for the leave message
 #
-# General Settings for Normal
+# NORMAL-LEAVE-MESSAGE: Would you want all player have the same join message?
+# PER-GROUP-LEAVE: Do you want players with different Permissions have different Join Messages (per group)?
+# Editable in locales.yml
+#
+# JOIN/LEAVE-PAPI-SUPPORT: Support for PlaceholderAPI placeholders
+# If true, placeholders (e.g., %player_name%) in join/leave messages will be replaced with real values.
+# HOVER-SUPPORT: Global setting for hover text support
+# If false, hover text will be disabled globally, regardless of JOIN/LEAVE settings
+# CLICK-SUPPORT: Global setting for click command on text support
+# If false, click command will be disabled globally, regardless of JOIN/LEAVE settings
+#
+NORMAL-JOIN-MESSAGE: true
+PER-GROUP-JOIN: false
+NORMAL-LEAVE-MESSAGE: true
+PER-GROUP-LEAVE: false
+JOIN/LEAVE-PAPI-SUPPORT: true
+HOVER-SUPPORT: true
+CLICK-SUPPORT: true
 JOIN:
   ENABLED: true
   FORMAT: '&e<player> &ahas joined the game!'
@@ -278,17 +275,6 @@ JOIN:
       - ''
       - '&aJoined!'
   CLICK-COMMAND: "/message <player> " # Also used as url
-#
-# General settings for the leave message
-#
-#Would you want all player have the same join message?
-NORMAL-LEAVE-MESSAGE: true
-#
-# Do you want players with different Permissions have different Join Messages (per group)?
-# Editable in locales.yml
-PER-GROUP-LEAVE: false
-#
-# General Settings for Normal
 LEAVE:
   ENABLED: true
   FORMAT: '&e<player> &chas left the game!'
@@ -302,18 +288,6 @@ LEAVE:
       - '&cLeft!'
   CLICK-COMMAND: "/message <player> " # Also used as url
 #
-# Support for PlaceholderAPI placeholders
-# If true, placeholders (e.g., %player_name%) in join/leave messages will be replaced with real values.
-JOIN/LEAVE-PAPI-SUPPORT: true
-#
-# Global setting for hover text support
-# If false, hover text will be disabled globally, regardless of JOIN/LEAVE settings
-HOVER-SUPPORT: true
-#
-# Global setting for click command on text support
-# If false, click command will be disabled globally, regardless of JOIN/LEAVE settings
-CLICK-SUPPORT: true
-#
 ########################################################
 #                 Anti Swear System                    #
 ########################################################
@@ -323,6 +297,14 @@ CLICK-SUPPORT: true
 # IGNORE-SPACES: Turn This on always to prevent Exploits
 # ALERT-ADMINS: Send admin alert message
 # LOG: Log it in a file
+# BLACKLIST: List of blacklisted words to censor
+# WHITELIST: List of words that bypass the blacklist check (ignore swearing if present)
+# CENSOR.SYMBOL: Symbol for censor type
+#
+# punishment settings for anti swear
+# LIMIT: The number of strikes before punishment is enforced
+# ENABLED: Whether the punishment system is enabled (true/false)
+# COMMAND: The command to execute when the player exceeds the punish limit. '%player%' will be replaced with the player's name.
 #
 # SENSITIVE-CHECK: Makes it so the Check Replace Symbols/Numbers With Words
 #
@@ -356,6 +338,7 @@ CLICK-SUPPORT: true
 #
 # WARN-SOUND: The Sound Value
 # ALERT-SOUND: Admin Alert Song Value
+#
 ANTI-SWEAR:
   ENABLED: true
   CHECK-COMMANDS: true
@@ -369,60 +352,73 @@ ANTI-SWEAR:
   SENSITIVE-CHECK: false
   SENSITIVE-CHECK-THREE-RETURN-E: false
   LOG: true
-  #
-  # List of blacklisted words to censor
   BLACKLIST:
     - "fuck"
     - "shit"
-  #
-  # List of words that bypass the blacklist check (ignore swearing if present)
   WHITELIST:
     - "fucker"
-  #
-  # Symbol for censor type
   CENSOR:
-    SYMBOL: "#" # Symbol to replace swear words
+    SYMBOL: "#"
+  PUNISH:
+    LIMIT: 3
+    ENABLED: true
+    COMMAND: "mute %player% 7d Bad Language"
 #
-# punishment settings for anti swear
-# LIMIT: The number of strikes before punishment is enforced
-# ENABLED: Whether the punishment system is enabled (true/false)
-# COMMAND: The command to execute when the player exceeds the punish limit. '%player%' will be replaced with the player's name.
-PUNISH:
-  LIMIT: 3
-  ENABLED: true
-  COMMAND: "mute %player% 7d Bad Language"
 ########################################################
 #                 Anti Spam System                     #
 ########################################################
 #
 # Prevent player from spamming in chat
+#
+# Messages Anti Spam System
+# BLOCK-REPETITIVE-MESSAGE: prevent player from sending the same message twice
+# CHAT-DELAY: set chat cooldown in millis 3000 = 3 second (set 0 to disable)
+# ANTI-REPETITIVE-CHARACTERS: Maximum consecutive repetitions allowed for a character in chat (set 0 to disable)
+# BLOCK-SIMILAR-MESSAGES: block similar messages
+# EXPIRE-ENABLED: Toggle If You Want The System to forget player after a certain amount of time
+# EXPIRE: The Time You want the system to forget player spam in Second(s)
+# SIMILARITY-PERCENTAGE: Percentage threshold for similarity
+# (!) You can't have BLOCK-REPETITIVE-MESSAGE & BLOCK-SIMILAR-MESSAGES enabled at the same time
+#
+# (!) If You Are Using XSound Utils Use minecraft Normal sound ids
+# but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
+#
+# Check Line 33 For More Info About Sounds
+#
+# (!) Use Xsound Util For Better Experience
+#
+# SIMILARITY-SOUND-ENABLED: Toggle Sound For Similarity Blockage
+# SIMILARITY-SOUND: Sound  value For Similarity Blockage
+# REPETITIVE-SOUND-ENABLED: Toggle sound for Exact Duplicate Warn
+# REPETITIVE-SOUND: sound value for Exact Duplicate Blockage
+# ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED: Toggle Sound Play For Repetitive Characters
+# ANTI-REPETITIVE-CHARACTERS-SOUND: Sound Value For Repetitive Characters
+# CHAT-DELAY-SOUND-ENABLED: Toggle Sound For Chat Delay
+# CHAT-DELAY-SOUND: Sound Value For Chat Delay
+#
+#
+# Command Anti Spam System
+# BLOCK-REPETITIVE-COMMANDS: Prevent player from sending a command twice
+# COMMAND-DELAY: delay command in millis 1000 = 1 second (set 0 to disable)
+# WHITELIST: commands that are ignored(bypass) the command anti spam
+# EXPIRE-ENABLED: Toggle If You Want The System to forget player after a certain amount of time
+# EXPIRE: The Time You want the system to forget player spam in Second(s)
+# ANTI-REPETITIVE-CHARACTERS: Maximum consecutive repetitions allowed for a character in commands (set 0 to disable)
+# (!) If You Are Using XSound Utils Use minecraft Normal sound ids
+# but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
+#
+# Check Line 33 For More Info About Sounds
+#
+# (!) Use Xsound Util For Better Experience
+#
+# SPAM-SOUND-ENABLED: Toggle sound for Exact Duplicate Warn
+# SPAM-SOUND: sound value for Exact Duplicate Blockage
+# ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED: Toggle Sound Play For Repetitive Characters
+# ANTI-REPETITIVE-CHARACTERS-SOUND: Sound Value For Repetitive Characters
+# COMMAND-DELAY-SOUND-ENABLED: Toggle Sound For Chat Delay
+# COMMAND-DELAY-SOUND: Sound Value For Chat Delay
+#
 ANTI-SPAM:
-  #
-  # Messages Anti Spam System
-  # BLOCK-REPETITIVE-MESSAGE: prevent player from sending the same message twice
-  # CHAT-DELAY: set chat cooldown in millis 3000 = 3 second (set 0 to disable)
-  # ANTI-REPETITIVE-CHARACTERS: Maximum consecutive repetitions allowed for a character in chat (set 0 to disable)
-  # BLOCK-SIMILAR-MESSAGES: block similar messages
-  # EXPIRE-ENABLED: Toggle If You Want The System to forget player after a certain amount of time
-  # EXPIRE: The Time You want the system to forget player spam in Second(s)
-  # SIMILARITY-PERCENTAGE: Percentage threshold for similarity
-  # (!) You can't have BLOCK-REPETITIVE-MESSAGE & BLOCK-SIMILAR-MESSAGES enabled at the same time
-  #
-  # (!) If You Are Using XSound Utils Use minecraft Normal sound ids
-  # but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
-  #
-  # Check Line 33 For More Info About Sounds
-  #
-  # (!) Use Xsound Util For Better Experience
-  #
-  # SIMILARITY-SOUND-ENABLED: Toggle Sound For Similarity Blockage
-  # SIMILARITY-SOUND: Sound  value For Similarity Blockage
-  # REPETITIVE-SOUND-ENABLED: Toggle sound for Exact Duplicate Warn
-  # REPETITIVE-SOUND: sound value for Exact Duplicate Blockage
-  # ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED: Toggle Sound Play For Repetitive Characters
-  # ANTI-REPETITIVE-CHARACTERS-SOUND: Sound Value For Repetitive Characters
-  # CHAT-DELAY-SOUND-ENABLED: Toggle Sound For Chat Delay
-  # CHAT-DELAY-SOUND: Sound Value For Chat Delay
   CHAT:
     BLOCK-REPETITIVE-MESSAGE: true
     BLOCK-SIMILAR-MESSAGES: false
@@ -439,27 +435,6 @@ ANTI-SPAM:
     EXPIRE: 8
     ANTI-REPETITIVE-CHARACTERS: 4
     CHAT-DELAY: 800
-  #
-  # Command Anti Spam System
-  # BLOCK-REPETITIVE-COMMANDS: Prevent player from sending a command twice
-  # COMMAND-DELAY: delay command in millis 1000 = 1 second (set 0 to disable)
-  # WHITELIST: commands that are ignored(bypass) the command anti spam
-  # EXPIRE-ENABLED: Toggle If You Want The System to forget player after a certain amount of time
-  # EXPIRE: The Time You want the system to forget player spam in Second(s)
-  # ANTI-REPETITIVE-CHARACTERS: Maximum consecutive repetitions allowed for a character in commands (set 0 to disable)
-  # (!) If You Are Using XSound Utils Use minecraft Normal sound ids
-  # but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
-  #
-  # Check Line 33 For More Info About Sounds
-  #
-  # (!) Use Xsound Util For Better Experience
-  #
-  # SPAM-SOUND-ENABLED: Toggle sound for Exact Duplicate Warn
-  # SPAM-SOUND: sound value for Exact Duplicate Blockage
-  # ANTI-REPETITIVE-CHARACTERS-SOUND-ENABLED: Toggle Sound Play For Repetitive Characters
-  # ANTI-REPETITIVE-CHARACTERS-SOUND: Sound Value For Repetitive Characters
-  # COMMAND-DELAY-SOUND-ENABLED: Toggle Sound For Chat Delay
-  # COMMAND-DELAY-SOUND: Sound Value For Chat Delay
   COMMANDS:
     BLOCK-REPETITIVE-COMMANDS: false
     SPAM-SOUND-ENABLED: true
@@ -481,11 +456,9 @@ ANTI-SPAM:
 #                Auto Response System                  #
 ########################################################
 #
-# Enable Auto response system
-AUTO-RESPONSE-ENABLED: true
-#
-# Sound Get Played For Player On Response
-AUTO-RESPONSE-USE-SOUND: true
+# AUTO-RESPONSE-ENABLED: Enable Auto response system
+# AUTO-RESPONSE-USE-SOUND: Sound Get Played For Player On Response
+# AUTO-RESPONSE-SOUND: sound name
 #
 # (!) If You Are Using XSound Utils Use minecraft Normal sound ids
 # but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
@@ -495,15 +468,18 @@ AUTO-RESPONSE-USE-SOUND: true
 # (!) Use Xsound Util For Better Experience
 #
 # The Sound Value
-AUTO-RESPONSE-SOUND: "NOTE"
 #
-# Enable Hover for Auto Response
-AUTO-RESPONSE-HOVER-ENABLED: true
+# AUTO-RESPONSE-HOVER-ENABLED: Enable Hover for Auto Response
 #
 # Auto-response words (<word>: {answer})
 # words In locale.yml
 #
-# Hover messages for auto-responses
+# AUTO-RESPONSE-HOVER: Hover messages for auto-responses
+#
+AUTO-RESPONSE-ENABLED: true
+AUTO-RESPONSE-USE-SOUND: true
+AUTO-RESPONSE-SOUND: "NOTE"
+AUTO-RESPONSE-HOVER-ENABLED: true
 AUTO-RESPONSE-HOVER:
   - "&eYour Name: &7%player_name%"
   - "&eYour health: &c%player_health%"
@@ -521,7 +497,7 @@ ANNOUNCEMENTS:
   ENABLED: true
 #
 ########################################################
-#              Anti Advertisement System               #
+#              Anti Advertisement System (v2.0)        #
 ########################################################
 #
 # ANTI-LINK: allows you to prevent players from sending links in chat
@@ -532,6 +508,7 @@ ANNOUNCEMENTS:
 # LOG: Log Players Messages That Been Flagged For Using Links
 # WARN-SOUND-ENABLED: Play Sound To Player When They Flagged By Anti Advertise
 # ALERT-SOUND-ENABLED: Play Sound To Admin When a Player Get Flagged By Anti Advertise
+# CANCEL-TYPE: Options: silent (only one option for now)
 #
 # (!) If You Are Using XSound Utils Use minecraft Normal sound ids
 # but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
@@ -542,6 +519,7 @@ ANNOUNCEMENTS:
 #
 # WARN-SOUND: The Sound Value
 # ALERT-SOUND: Admin Alert Song Value
+#
 ANTI-LINK:
   ENABLED: true
   CHECK-COMMANDS: true
@@ -554,7 +532,7 @@ ANTI-LINK:
     - "mywebsite.com"
   BYPASSED-COMMANDS:
     - "/skin"
-  CANCEL-TYPE: "silent"  # Options: silent (only one option for now)
+  CANCEL-TYPE: "silent"
   ALERT-ADMINS: true
   LOG: false
 #
@@ -567,12 +545,11 @@ ANTI-LINK:
 # (!) You can not have both enabled at the same time
 # (!) Disabling both or Enabling both of them will cause it to use Suggest Command as default
 #
+# RUN-COMMANDS: Run The Commands When You Click on them
+# SUGGEST-COMMANDS: Suggest The Commands in Your Chat Bar on Click
+#
 NEON-COMMAND:
-  #
-  # Run The Commands When You Click on them
   RUN-COMMANDS: true
-  #
-  # Suggest The Commands in Your Chat Bar on Click
   SUGGEST-COMMANDS: false
 #
 ########################################################
@@ -599,31 +576,28 @@ NO-PERMISSION:
 ########################################################
 #
 # Prevent players from sending messages in all CAPS WORDS!
+#
+# ENABLED: enable the system
+# SOUND-ENABLED: enable playing sound on event
+#
+# (!) If You Are Using XSound Utils Use minecraft Normal sound ids
+# but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
+#
+# Check Line 33 For More Info About Sounds
+#
+# (!) Use Xsound Util For Better Experience
+#
+# Sound Value
+#
+# MIN-MESSAGE-LENGTH: Minimum message length before checking for caps.
+# REQUIRED-PERCENTAGE: Percentage of capital letters required to trigger the filter.
+#
 ANTI-CAPS:
-  #
-  # Set to false to disable the anti-caps system.
   ENABLED: true
-  #
-  # Play Sound When Player Use Too Many CAPS Words
   SOUND-ENABLED: true
-  #
-  # (!) If You Are Using XSound Utils Use minecraft Normal sound ids
-  # but if using Isound Util You Can See the available sounds below (Work Also FOr Xsound Util)
-  #
-  # Check Line 33 For More Info About Sounds
-  #
-  # (!) Use Xsound Util For Better Experience
-  #
-  # Sound Value
   SOUND: "VILLAGER_NO"
-  #
-  # If true, will check commands for excessive caps.
   CHECK-COMMANDS: false
-  #
-  # Minimum message length before checking for caps.
   MIN-MESSAGE-LENGTH: 5
-  #
-  # Percentage of capital letters required to trigger the filter.
   REQUIRED-PERCENTAGE: 70
 #
 ########################################################
@@ -632,6 +606,7 @@ ANTI-CAPS:
 #
 # Log The Commands Used By The Players
 # Might Have Bad Effect On Performance if players are constantly using commands
+#
 LOG-COMMANDS: true
 #
 ########################################################
@@ -781,6 +756,7 @@ ANTI-UNICODE:
 # USE-SOUND-FOR-BLOCKED-MESSAGES: Send A Sound To Player When One Of Their Messages is Blocked
 # DENIED-MESSAGE-SOUND: Sound For Blocked Messages
 # BLOCKED-COMMAND-SOUND: Sound For Blocked Commands
+#
 MUTE-CHAT:
   ENABLED: true
   MUTE-ASYNC-CHAT: false
@@ -812,16 +788,17 @@ CHAT-TOGGLE:
 ########################################################
 #
 # Enable/Disable Some of Neon Commands
+#
+# MUTE-CHAT: Would You Like To Enable /mutechat Command (This Does Not Have Effect on /neon mutechat Command)
+#
 COMMANDS:
-  #
-  # Would You Like To Enable /mutechat Command (This Does Not Have Effect on /neon mutechat Command)
   MUTE-CHAT: true
 #
 ########################################################
 #                Per World Chat System                 #
 ########################################################
 #
-# Per World CHat System
+# Per World Chat System
 # You can edit worlds in locale.yml
 # if you want to enable this feature set this to true
 PER-WORLD-CHAT-ENABLED: false
@@ -840,14 +817,12 @@ PER-WORLD-CHAT-ENABLED: false
 # Available placeholders: <player>, <arena>, <message>, <teamcolor>
 # (!) Disable Bedwars1058 & Bedwars2023 Chat Format
 #
-# Enable the Integration
-BEDWARS1058-SUPPORT: false
-#
-# Enable Bedwars2023 Integration
-BEDWARS2023-SUPPORT: false
-#
-# Settings Related (For both BW1058 & BW2023)
+# BEDWARS1058-SUPPORT: Enable the Integration
+# BEDWARS2023-SUPPORT: Enable Bedwars2023 Integration
+# BEDWARS-CHAT: Settings Related (For both BW1058 & BW2023)
 # Hex and Placeholders Supported
+BEDWARS1058-SUPPORT: false
+BEDWARS2023-SUPPORT: false
 BEDWARS-CHAT:
   #
   # Shout delay
@@ -1018,10 +993,10 @@ BEDWARS-CHAT:
 #   RADIUS: the radius after the main radius
 #
 CHAT-RADIUS:
-  ENABLED: true
+  ENABLED: false
   RADIUS: 5
   SECONDARY-RADIUS:
-    ENABLED: true
+    ENABLED: false
     RADIUS: 9
 #
 ########################################################
@@ -1036,20 +1011,47 @@ CHAT-RADIUS:
 # EXTRA-HEIGHT-PER-CHAR: the amount of height added per char (the longer the message the higher the holo)
 # MAX-LINE-LENGTH: length of the line
 # LINE-SPACING: the space between lines
-# COLOR: specified color code of the messages (supports hex), can't be enabled with random
+# COLOR: specified color code of the messages (supports hex and placeholder api (no internal)), can't be enabled with random
 # RANDOM-COLOR: chooses random colors each time
 # PERMISSION-REQUIRED: should the sender have a specific permission to be able to have
 # their message shown as a Bubble?
+# FOLLOW-PLAYER: should the pup up bubble stay where it was sent or follow who has sent it?
+# FORMAT: format of bubble supports placeholders
+# Available placeholders:
+# <message> - The player's message
+# <sender> - Player's username
+# <displayname> - Player's display name
+# <world> - Current world name
+# <health> - Player's health (0-20)
+#
+# PlaceholderAPI placeholders are also supported (if installed)
+# Example: %player_name%, %player_health%, %vault_prefix%
+#
+# BedWars1058 placeholders (if installed):
+# <bw_team> - Player's team name
+# <bw_team_color> - Player's team color
+# <bw_players> - Total players in arena
+# <bw_alive> - Alive players count
+# <bw_spectators> - Spectators count
+#
+# BedWars2023 placeholders (if installed):
+# <bw_team> - Player's team name
+# <bw_team_color> - Player's team color
+# <bw_players> - Total players in arena
+# <bw_alive> - Alive players count
+# <bw_spectators> - Spectators count
 #
 POPUP-BUBBLE:
-  ENABLED: true
+  ENABLED: false
   DURATION-TICKS: 60
-  BASE-HEIGHT: 1.2
+  BASE-HEIGHT: 1.8
   EXTRA-HEIGHT-PER-CHAR: 0.008
   MAX-LINE-LENGTH: 35
   LINE-SPACING: 0.28
   COLOR: "&f"
   RANDOM-COLOR: false
   PERMISSION-REQUIRED: false
+  FOLLOW-PLAYER: true
+  FORMAT:
+    - "<sender>: <message>"
 #
-

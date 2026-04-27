@@ -6,7 +6,7 @@
 
   <groupId>dev.Jackdaw1101</groupId>
   <artifactId>Neon</artifactId>
-  <version>1.2.6-ALPHA</version>
+  <version>1.2.7-ALPHA</version>
   <packaging>jar</packaging>
 
   <name>Neon</name>
