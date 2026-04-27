@@ -34,7 +34,7 @@ public class WelcomeListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!(boolean) plugin.getSettings().getBoolean("ENABLE-WELCOME-SYSTEM")) {
+        if (!(boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.ENABLED")) {
             return;
         }
 
@@ -62,19 +62,19 @@ public class WelcomeListener implements Listener {
         int delayTicks = plugin.getSettings().getInt("ASYNC.DELAY-TICKS");
         if (delayEnabled) {
             Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
-                    clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
+                if ((boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.ON-JOIN-CHAT-CLEAR")) {
+                    clearChat(player, (int) plugin.getSettings().getInt("WELCOME-SYSTEM.ON-JOIN-CHAT-CLEAR-LINE"));
                 }
                 }, delayTicks);
         } else {
-            if ((boolean) plugin.getSettings().getBoolean("ON-JOIN-CHAT-CLEAR")) {
-                clearChat(player, (int) plugin.getSettings().getInt("ON-JOIN-CHAT-CLEAR-LINE"));
+            if ((boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.ON-JOIN-CHAT-CLEAR")) {
+                clearChat(player, (int) plugin.getSettings().getInt("WELCOME-SYSTEM.ON-JOIN-CHAT-CLEAR-LINE"));
             }
         }
 
 
 
-        List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-MESSAGE");
+        List<String> messages = (List<String>) plugin.getSettings().getStringList("WELCOME-SYSTEM.MESSAGE");
         if (messages == null) return;
 
 
@@ -113,7 +113,7 @@ public class WelcomeListener implements Listener {
     }
 
     private void sendMessage(Player player, List<String> messages, String sound, WelcomeEvent event) {
-        boolean hoverEnabled = (boolean) plugin.getSettings().getBoolean("HOVER-TEXT.ENABLED");
+        boolean hoverEnabled = (boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.HOVER-TEXT.ENABLED");
         TextComponent hoverComponent = null;
 
         if (hoverEnabled && event.getHoverMessages() != null && !event.getHoverMessages().isEmpty()) {
@@ -123,14 +123,14 @@ public class WelcomeListener implements Listener {
             hoverComponent = new TextComponent(hoverText);
         }
 
-        boolean openUrlEnabled = (boolean) plugin.getSettings().getBoolean("OPEN-URL.ENABLED");
-        String openUrl = (String) plugin.getSettings().getString("OPEN-URL.URL");
+        boolean openUrlEnabled = (boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.OPEN-URL.ENABLED");
+        String openUrl = (String) plugin.getSettings().getString("WELCOME-SYSTEM.OPEN-URL.URL");
 
-        boolean clickCommandEnabled = (boolean) plugin.getSettings().getBoolean("RUN-COMMAND.ENABLED");
-        String clickCommand = (String) plugin.getSettings().getString("RUN-COMMAND.COMMAND");
+        boolean clickCommandEnabled = (boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.RUN-COMMAND.ENABLED");
+        String clickCommand = (String) plugin.getSettings().getString("WELCOME-SYSTEM.RUN-COMMAND.COMMAND");
 
-        boolean suggestCommandEnabled = (boolean) plugin.getSettings().getBoolean("SUGGEST-COMMAND.ENABLED");
-        String suggestCommand = (String) plugin.getSettings().getString("SUGGEST-COMMAND.COMMAND");
+        boolean suggestCommandEnabled = (boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.SUGGEST-COMMAND.ENABLED");
+        String suggestCommand = (String) plugin.getSettings().getString("WELCOME-SYSTEM.SUGGEST-COMMAND.COMMAND");
 
         for (String line : messages) {
             line = ColorHandler.color(PlaceholderAPI.setPlaceholders(player, line));
@@ -154,11 +154,11 @@ public class WelcomeListener implements Listener {
 
 
         if ((boolean) plugin.getSettings().getBoolean("ISOUNDS-UTIL")) {
-            if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
+            if ((boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
                 ISound.playSound(player, sound, 1.0f, 1.0f);
             }
         } else if ((boolean) plugin.getSettings().getBoolean("XSOUNDS-UTIL")) {
-            if ((boolean) plugin.getSettings().getBoolean("PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
+            if ((boolean) plugin.getSettings().getBoolean("WELCOME-SYSTEM.PLAY-SOUND.ENABLED") && !sound.isEmpty()) {
                 XSounds.playSound(player, sound, 1.0f, 1.0f);
             }
         }

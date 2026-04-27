@@ -54,12 +54,14 @@ public class PerWorldChatSystem implements Listener {
 
         DebugUtil.debugChecked("&7per world message was sent from &a" + worldName + " &7by &a" + sender + " &7with conctent: &e" + event.getMessage());
 
+        String message = event.getMessage();
         event.setCancelled(true);
 
 
         for (Player viewer : Bukkit.getOnlinePlayers()) {
             if (viewer.getWorld().equals(sender.getWorld())) {
                 api.sendFormattedMessage(
+                        message,
                         sender,
                     viewer,
                     format,

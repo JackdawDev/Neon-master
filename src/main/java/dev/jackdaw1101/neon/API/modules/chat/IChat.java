@@ -18,11 +18,14 @@ import java.util.*;
 
 public class IChat {
     private final Neon plugin;
-    private final PopUpBubbleChat popUpBubbleChat;
+    private PopUpBubbleChat popUpBubbleChat;
 
     public IChat(Neon plugin) {
         this.plugin = plugin;
         this.popUpBubbleChat = plugin.getPopUpBubbleChat();
+        if (this.popUpBubbleChat == null) {
+            this.popUpBubbleChat = new PopUpBubbleChat(plugin);
+        }
     }
 
     public String processMessageColorCodes(Player sender, String message) {
@@ -36,7 +39,7 @@ public class IChat {
     }
 
     public String getChatFormat(Player sender) {
-        String format = ColorHandler.color(this.plugin.getSettings().getString("CHAT-FORMAT").toString());
+        String format = ColorHandler.color(this.plugin.getSettings().getString("CHAT-FORMAT.FORMAT").toString());
 
         if (isLuckPermsInstalled()) {
             format = handleLuckPermsPrefixSuffix(sender, format);
@@ -67,7 +70,7 @@ public class IChat {
         return hoverText.toString();
     }
 
-    public void sendFormattedMessage(Player sender, Player viewer, String format, String hoverText,
+    public void sendFormattedMessage(String message, Player sender, Player viewer, String format, String hoverText,
                                      String clickCommand, boolean isHoverEnabled, boolean isClickEventEnabled,
                                      boolean isRunCommandEnabled, boolean isSuggestCommand) {
         String finalFormat = format;
@@ -119,8 +122,9 @@ public class IChat {
         viewer.spigot().sendMessage(chatMessage);
 
         if (shouldSendPopUp && !popUpRecipients.isEmpty() &&
-                plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED")) {
-            String rawMessage = extractRawMessage(format);
+                plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED") && popUpBubbleChat != null) {
+            //String rawMessage = extractRawMessageFromChat(format, sender);
+            String rawMessage = message;
             if (plugin.getSettings().getBoolean("POPUP-BUBBLE.PERMISSION-REQUIRED")) {
                 if (sender.hasPermission(plugin.getPermissionManager().getString("POPUP-BUBBLE.PERMISSION"))) {
                     popUpBubbleChat.sendPopUpBubble(sender, rawMessage, popUpRecipients);
@@ -128,36 +132,6 @@ public class IChat {
             } else {
                 popUpBubbleChat.sendPopUpBubble(sender, rawMessage, popUpRecipients);
             }
-        }
-    }
-
-    public void broadcastWithPopUp(Player sender, String message, String hoverText, String clickCommand,
-                                   boolean isHoverEnabled, boolean isClickEventEnabled,
-                                   boolean isRunCommandEnabled, boolean isSuggestCommand) {
-
-        List<Player> mainRadiusRecipients = new ArrayList<>();
-
-        for (Player viewer : Bukkit.getOnlinePlayers()) {
-            if (plugin.getSettings().getBoolean("CHAT-RADIUS.ENABLED")) {
-                int mainRadius = plugin.getSettings().getInt("CHAT-RADIUS.RADIUS");
-                double distance = sender.getLocation().distance(viewer.getLocation());
-
-                if (distance <= mainRadius) {
-                    mainRadiusRecipients.add(viewer);
-                    sendFormattedMessage(sender, viewer, message, hoverText, clickCommand,
-                            isHoverEnabled, isClickEventEnabled, isRunCommandEnabled, isSuggestCommand);
-                } else {
-                    sendFormattedMessage(sender, viewer, message, hoverText, clickCommand,
-                            isHoverEnabled, isClickEventEnabled, isRunCommandEnabled, isSuggestCommand);
-                }
-            } else {
-                sendFormattedMessage(sender, viewer, message, hoverText, clickCommand,
-                        isHoverEnabled, isClickEventEnabled, isRunCommandEnabled, isSuggestCommand);
-            }
-        }
-
-        if (plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED") && !mainRadiusRecipients.isEmpty()) {
-            popUpBubbleChat.sendPopUpBubble(sender, message, mainRadiusRecipients);
         }
     }
 
@@ -211,12 +185,21 @@ public class IChat {
         return result.toString();
     }
 
-    private String extractRawMessage(String formattedMessage) {
-        String raw = ChatColor.stripColor(formattedMessage);
-        raw = raw.replace("<player>", "").replace("{MESSAGE}", "").replace("%message%", "");
+    private String extractRawMessageFromChat(String formattedMessage, Player sender) {
+        String raw = formattedMessage;
+        int messageStart = raw.indexOf("{MESSAGE}");
+        if (messageStart != -1) {
+            raw = raw.substring(messageStart + 9);
+            int messageEnd = raw.indexOf("}");
+            if (messageEnd != -1) {
+                raw = raw.substring(0, messageEnd);
+            }
+        }
+        raw = ChatColor.stripColor(raw);
+        raw = raw.replace("<player>", "").replace("%message%", "").replace("{MESSAGE}", "");
         raw = raw.replace("<lp_prefix>", "").replace("<lp_suffix>", "");
         raw = raw.replaceAll("\\s+", " ").trim();
-        return raw.isEmpty() ? "Message" : raw;
+        return raw.isEmpty() ? sender.getName() : raw;
     }
 
     public void sendMessageToConsole(String format) {
