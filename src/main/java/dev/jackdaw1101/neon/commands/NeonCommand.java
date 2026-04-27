@@ -1,7 +1,7 @@
 package dev.jackdaw1101.neon.commands;
 
-import dev.jackdaw1101.neon.modules.commands.ChatMuteCommand;
-import dev.jackdaw1101.neon.modules.commands.ChatClearCommand;
+import dev.jackdaw1101.neon.commands.modules.commands.ChatMuteCommand;
+import dev.jackdaw1101.neon.commands.modules.commands.ChatClearCommand;
 import dev.jackdaw1101.neon.Neon;
 import dev.jackdaw1101.neon.API.utilities.CC;
 import dev.jackdaw1101.neon.API.utilities.ColorHandler;

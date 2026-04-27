@@ -263,7 +263,7 @@ public class NeonAPI {
     private final IChat NeonChat = new IChat(Neon.getInstance()) {
 
         public String processMessageColorCodes(Player sender, String message) {
-            return sender.hasPermission(Neon.getInstance().getPermissionManager().getString("COLOR-CODES"))
+            return sender.hasPermission(plugin.getPermissionManager().getString("COLOR-CODES"))
                     ? ChatColor.translateAlternateColorCodes('&', message)
                     : removeColorCodes(message);
         }
@@ -273,7 +273,7 @@ public class NeonAPI {
         }
 
         public String getChatFormat(Player sender) {
-            String format = ColorHandler.color(Neon.getInstance().getSettings().getString("CHAT-FORMAT").toString());
+            String format = ColorHandler.color(plugin.getSettings().getString("CHAT-FORMAT.FORMAT").toString());
 
             if (isLuckPermsInstalled()) {
                 format = handleLuckPermsPrefixSuffix(sender, format);
@@ -287,7 +287,7 @@ public class NeonAPI {
         }
 
         public String processHoverLines(Player sender, String message) {
-            List<String> hoverLines = (List) Neon.getInstance().getSettings().getStringList("HOVER");
+            List<String> hoverLines = (List) plugin.getSettings().getStringList("HOVER");
             if (hoverLines == null || hoverLines.isEmpty()) {
                 hoverLines = new ArrayList<>(Arrays.asList("&aDefault Hover Line: &7<player>"));
             }
@@ -295,7 +295,7 @@ public class NeonAPI {
             StringBuilder hoverText = new StringBuilder();
             for (String line : hoverLines) {
                 line = line.replace("<player>", sender.getName());
-                if (Neon.getInstance().getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+                if (plugin.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
                     line = PlaceholderAPI.setPlaceholders(sender, line);
                 }
                 hoverText.append(ColorHandler.color(line)).append("\n");
@@ -356,14 +356,14 @@ public class NeonAPI {
             viewer.spigot().sendMessage(chatMessage);
 
             if (shouldSendPopUp && !popUpRecipients.isEmpty() &&
-                    plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED")) {
+                    plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED") && plugin.getPopUpBubbleChat() != null) {
                 String rawMessage = extractRawMessage(format);
                 if (plugin.getSettings().getBoolean("POPUP-BUBBLE.PERMISSION-REQUIRED")) {
                     if (sender.hasPermission(plugin.getPermissionManager().getString("POPUP-BUBBLE.PERMISSION"))) {
-                        Neon.getInstance().getPopUpBubbleChat().sendPopUpBubble(sender, rawMessage, popUpRecipients);
+                        plugin.getPopUpBubbleChat().sendPopUpBubble(sender, rawMessage, popUpRecipients);
                     }
                 } else {
-                    Neon.getInstance().getPopUpBubbleChat().sendPopUpBubble(sender, rawMessage, popUpRecipients);
+                    plugin.getPopUpBubbleChat().sendPopUpBubble(sender, rawMessage, popUpRecipients);
                 }
             }
         }
@@ -393,8 +393,8 @@ public class NeonAPI {
                 }
             }
 
-            if (plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED") && !mainRadiusRecipients.isEmpty()) {
-                Neon.getInstance().getPopUpBubbleChat().sendPopUpBubble(sender, message, mainRadiusRecipients);
+            if (plugin.getSettings().getBoolean("POPUP-BUBBLE.ENABLED") && !mainRadiusRecipients.isEmpty() && plugin.getPopUpBubbleChat() != null) {
+                plugin.getPopUpBubbleChat().sendPopUpBubble(sender, message, mainRadiusRecipients);
             }
         }
 
@@ -460,14 +460,14 @@ public class NeonAPI {
             String consoleMessage = format.replace("<player>", "[Console]");
             consoleMessage = ColorHandler.color(consoleMessage);
             if (plugin.getSettings().getBoolean("CHAT-IN-CONSOLE")) {
-                Neon.getInstance().getServer().getConsoleSender().sendMessage(consoleMessage);
+                plugin.getServer().getConsoleSender().sendMessage(consoleMessage);
             }
         }
 
         private String handleLuckPermsPrefixSuffix(Player player, String format) {
             if (!isLuckPermsInstalled()) return format;
 
-            LuckPerms luckPerms = Neon.getInstance().getServer().getServicesManager().getRegistration(LuckPerms.class).getProvider();
+            LuckPerms luckPerms = plugin.getServer().getServicesManager().getRegistration(LuckPerms.class).getProvider();
             User user = luckPerms.getUserManager().getUser(player.getUniqueId());
             if (user != null) {
                 String prefix = user.getCachedData().getMetaData().getPrefix();

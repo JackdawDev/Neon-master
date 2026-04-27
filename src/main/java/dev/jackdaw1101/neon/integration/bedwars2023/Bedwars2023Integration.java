@@ -83,6 +83,7 @@ public class Bedwars2023Integration implements Integration, Listener {
     private void handleSpectatorChat(NeonPlayerChatEvent event, Player sender, Arena arena) {
         ConfigurationSection spectatorChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.SPECTATOR");
         if (spectatorChat == null) return;
+        String message = event.getMessage();
         event.setCancelled(true);
 
         String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(spectatorChat.getString("FORMAT"))
@@ -102,6 +103,7 @@ public class Bedwars2023Integration implements Integration, Listener {
 
         for (Player viewer : arena.getSpectators()) {
             api.sendFormattedMessage(
+                    message,
                     sender,
                 viewer,
                 format,
@@ -122,6 +124,7 @@ public class Bedwars2023Integration implements Integration, Listener {
     private void handleWaitingLobbyChat(NeonPlayerChatEvent event, Player sender, Arena arena) {
         ConfigurationSection waitingChat = plugin.getSettings().getConfig().getConfigurationSection("BEDWARS-CHAT.WAITING-LOBBY");
         if (waitingChat == null) return;
+        String message = event.getMessage();
         event.setCancelled(true);
 
         String format = PlaceholderAPI.setPlaceholders(sender, ColorHandler.color(waitingChat.getString("FORMAT"))
@@ -139,6 +142,7 @@ public class Bedwars2023Integration implements Integration, Listener {
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
+                    message,
                     sender,
                 viewer,
                 format,
@@ -235,6 +239,7 @@ public class Bedwars2023Integration implements Integration, Listener {
 
         for (Player member : team.getMembers()) {
             api.sendFormattedMessage(
+                    message,
                     sender,
                 member,
                 format,
@@ -294,6 +299,7 @@ public class Bedwars2023Integration implements Integration, Listener {
 
         for (Player viewer : arena.getPlayers()) {
             api.sendFormattedMessage(
+                    message,
                     sender,
                 viewer,
                 format,
